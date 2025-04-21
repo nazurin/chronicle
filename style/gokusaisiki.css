@@ -1,0 +1,224 @@
+/* アニメ,アニメ映画 */
+.main {
+	background-image: url("/img/bg/sozaioukoku/bg_mizu_pm.gif");
+}
+
+.info {
+	color: #fff3f3;
+	background-color: rgb(63, 139, 221);
+}
+
+.info.colle {
+	color: #fff;
+	background-color: hsl(200, 76%, 42%);
+}
+
+.ten {
+	color: inherit;
+}
+
+.hanrei {
+	color: rgb(63, 139, 221);
+}
+
+.selected_category {
+	box-shadow: 0px 1px 10px #ff0048;
+	font-style: italic !important;
+	color: white !important;
+	background: none !important;
+	background-color: red !important;
+	border: 1px double red !important;
+}
+
+.hantyuu_all {
+	font-weight: bold;
+	background: conic-gradient( #EAC0C1 16.666%, #EECFC6 16.666%, #E3C4BB 33.333%, #ECD1BC 33.333%, #F2CFB3 50%, #E1EEB7 50%, #E6F0C5 66.666%, #c4d1ee 66.666%, #b6c7ec 83.333%, #F0BCEA 83.333%);
+	color: #2b1066;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_bungakukei {
+	font-weight: bold;
+	background: conic-gradient( #FFECC0 16.666%, #FDB7DE 16.666%, #F9CBEF 33.333%, #F4B5CD 33.333%, #E8F0AE 50%, #E1EEB7 50%, #F0C5E3 66.666%, #e6bbd7 66.666%, #f0b3db 83.333%, #E6E6E6 83.333%);
+	color: #a65915;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_sityoukei {
+	font-weight: bold;
+	background: conic-gradient( #E68E90 16.666%, #DD633F 16.666%, #8BD3D7 33.333%, #BAF0F2 33.333%, #C2EEF2 50%, #CDF0D8 50%, #E6F0C5 66.666%, #eed8c4 66.666%, #eccfb6 83.333%, #EE9EB4 83.333%);
+	color: #0b5e56;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_souhoukei {
+	font-weight: bold;
+	background: conic-gradient( #DDC0EA 16.666%, #E3C6EE 16.666%, #DABBE3 33.333%, #EBBCEC 33.333%, #F0B3F2 50%, #DFB7EE 50%, #EBC5F0 66.666%, #dfc4ee 66.666%, #e5b6ec 83.333%, #F0BCEA 83.333%);
+	color: #2b1066;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_syousetu,
+.hannyou.type_7,
+.hannyou.type_24,
+.koumoku.type_7:nth-child(2n),
+.koumoku.type_16:nth-child(2n),
+.koumoku.type_24:nth-child(2n) {
+	background-color: hsl(27.8, 75.5%, 86%);
+	color: hsl(33.9, 49.4%, 43.2%);
+}
+
+.koumoku.type_7:nth-child(2n+1),
+.koumoku.type_16:nth-child(2n+1),
+.koumoku.type_24:nth-child(2n+1) {
+	 background-color: hsl(27.8, 75.5%, 93%);
+	 color: hsl(33.9, 49.4%, 43.2%);
+}
+
+.hantyuu_femihonn,
+.hannyou.type_18,
+.koumoku.type_18:nth-child(2n) {
+	background-color: hsl(332, 70%, 90%);
+	color: hsl(338, 88%, 52%);
+}
+
+.koumoku.type_18:nth-child(2n+1) {
+	 background-color: hsl(332, 100%, 97%);
+	 color: hsl(338, 88%, 52%);
+}
+
+.hantyuu_si,
+.hantyuu_sisyuu,
+.hannyou.type_67,
+.hannyou.type_68,
+.koumoku.type_67:nth-child(2n), 
+.koumoku.type_68:nth-child(2n) {
+	background-color: hsl(161.1, 68.6%, 90%);
+	color: hsl(161.1, 88%, 30%);
+}
+
+.koumoku.type_67:nth-child(2n+1),
+.koumoku.type_68:nth-child(2n+1) {
+	 background-color: hsl(161.1, 100%, 97%);
+	 color: hsl(161.1, 88%, 30%);
+}
+
+.hantyuu_anime,
+.hannyou.type_14,
+.hannyou.type_17,
+.koumoku.type_14:nth-child(2n),
+.koumoku.type_17:nth-child(2n) {
+	background-color: hsl(3, 68.6%, 90%);
+	color: hsl(0, 98.6%, 40%);
+}
+
+.koumoku.type_14:nth-child(2n+1),
+.koumoku.type_17:nth-child(2n+1) {
+	background-color: hsl(3.4, 68.6%, 98%);
+	color: hsl(0, 98.6%, 40%);
+}
+
+/* テレビ */
+.hantyuu_tele,
+.hannyou.type_10,
+.koumoku.type_10:nth-child(2n) {
+	background-color: hsl(109.7, 68.6%, 90%);
+	color: hsl(109.7, 68.6%, 30%)
+}
+
+.koumoku.type_10:nth-child(2n+1) {
+	background-color: hsl(109.7, 68.6%, 98%);
+	color: hsl(109.7, 68.6%, 30%);
+}
+
+/* 映画 */
+.hantyuu_eiga,
+.hannyou.type_9,
+.koumoku.type_9:nth-child(2n) {
+	background-color: hsl(183.4, 68.6%, 90%);
+	color: hsl(183.4, 68.6%, 30%);
+}
+
+.koumoku.type_9:nth-child(2n+1) {
+	background-color: hsl(183.4, 68.6%, 98%);
+	color: hsl(183.4, 68.6%, 30%);
+}
+
+/* 本 */
+.hantyuu_honn,
+.hannyou.type_6,
+.koumoku.type_6:nth-child(2n) {
+	background-color: hsl(42.3, 98.6%, 88%);
+	color: hsl(42.3, 98.6%, 33%);
+}
+
+.koumoku.type_6:nth-child(2n+1) {
+	background-color: hsl(42.3, 98.6%, 98%);
+	color: hsl(42.3, 98.6%, 33%);
+}
+
+/* 雑誌 */
+.hantyuu_zassi,
+.hannyou.type_11,
+.koumoku.type_11:nth-child(2n) {
+	background-color: hsl(53.1, 68.6%, 88%);
+	color: hsl(53.1, 68.6%, 30%);
+}
+
+.koumoku.type_11:nth-child(2n+1) {
+	background-color: hsl(53.1, 68.6%, 88%);
+	color: hsl(53.1, 68.6%, 30%);
+}
+
+/* 漫画 */
+.hantyuu_manga,
+.hannyou.type_13,
+.koumoku.type_13:nth-child(2n) {
+	background-color: hsl(0, 0%, 92%);
+	color: hsl(0, 0%, 40%);
+}
+
+.koumoku.type_13:nth-child(2n+1) {
+	background-color: hsl(0, 0%, 98%);
+	color: hsl(0, 0%, 40%);
+}
+
+/* 演劇 */
+.hantyuu_play,
+.hannyou.type_8,
+.koumoku.type_8:nth-child(2n) {
+	background-color: hsl(30.6, 68.6%, 90%);
+	color: hsl(30.6, 98.6%, 20%);
+}
+
+.koumoku.type_8:nth-child(2n+1) {
+	background-color: hsl(30.6, 68.6%, 95%);
+	color: hsl(30.6, 98.6%, 20%);
+}
+
+/* ゲーム */
+.hantyuu_game,
+.hannyou.type_12,
+.hannyou.type_15,
+.hannyou.type_102,
+.koumoku.type_12:nth-child(2n),
+.koumoku.type_15:nth-child(2n),
+.koumoku.type_102:nth-child(2n) {
+	*background-color: hsl(242, 68.6%, 90%);
+	*color: hsl(242, 48.6%, 38%);
+	background-color: hsl(270, 68.6%, 90%);
+	color: hsl(270, 48.5%, 38%);
+}
+
+.koumoku.type_12:nth-child(2n+1),
+.koumoku.type_15:nth-child(2n+1),
+.koumoku.type_102:nth-child(2n+1) {
+	*background-color: hsl(242, 68.6%, 95%);
+	*color: hsl(242, 48.6%, 38%);
+	background-color: hsl(270, 68.6%, 95%);
+	color: hsl(270, 48.5%, 38%);
+}
+
+.hanrei.jyoukyou_itirann div {
+	border: rgba(228, 224, 224, 0.76) 1px dotted;
+}

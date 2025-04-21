@@ -1,0 +1,15 @@
+div[class^='hantyuu_']{
+	color: #ca0f6f;
+	background: linear-gradient(50deg, #ffe5ea, #ffc4ff);
+	text-shadow: 1px 1px 1px white, 1px 1px 5px white;
+}
+
+div.hantyuu_all,
+div.hantyuu_bungakukei,
+div.hantyuu_sityoukei,
+div.hantyuu_souhoukei {
+	background: #825e5e;
+	color: white;
+	text-shadow: 1px 1px 1px #622139;
+	font-weight: bold;
+}

@@ -1,0 +1,263 @@
+body {
+	background: url('/img/bg/b100.jpg');
+}
+
+div.commander {
+	/* display: block; */
+	flex-wrap: wrap-reverse;
+	padding-bottom: 0px;
+}
+
+div.commander > div.hidari > div.navi {
+	border-bottom: none;
+	margin-bottom: 0px;
+}
+
+div.koumoku {
+	padding: 0.125em 1em 0.25em 0.5em;
+}
+
+div.info > div {
+	padding: 0.125em;
+}
+
+div.info > div.sakuhin {
+	width: 100%;
+	border-bottom: 1px solid black;
+	border-right: none;
+	font-weight: bold;
+	text-align: center;
+}
+
+div.info > div.jyou {
+	width: 40%;
+	display: none;
+}
+
+div.info > div.hantyuu {
+	width: 30%;
+	display: none;
+}
+
+div.info > div.ten {
+	width: 30%;
+}
+
+div.koumoku > div.sakuhinmei {
+	width: 100%;
+}
+
+div.koumoku > div.sakuhinmei > span.sakka {
+	display: inline-block;
+}
+
+div.koumoku > div.jyou {
+	width: 10em;
+	padding: 0.125em 1em 0.25em 1em;
+}
+
+div.koumoku > div.jyou > div.jyoukyou {
+	padding: 1px 3px;
+}
+
+div.koumoku > div.hantyuu {
+	width: 7em;
+	padding: 0.125em 2em 0.25em 0em;
+}
+
+div.koumoku > div.activity {
+	margin: 0px 4em 0px 1.4375em;
+}
+
+div.koumoku > div.activity_kousin > form > input[type=number] {
+	width: 6em;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection {
+	display: block;
+}
+
+div.collection_box > div.koumoku {
+	padding: 0.0625em 0.5em;
+}
+
+div.collection_box > div.koumoku > div.midasi {
+	width: 85%;
+}
+
+div.collection_box > div.koumoku > div.count {
+	width: 15%;
+	vertical-align: bottom;
+}
+
+div.colle.koumoku * {
+	line-height: 1.1;
+}
+
+div.colle.koumoku.bikou_1 .sakuhinmei,
+div.colle.koumoku.bikou_ .sakuhinmei,
+div.colle.koumoku.bikou_0 .sakuhinmei {
+	width: 100%;	
+}
+
+div.colle.koumoku > div.bikou.migi {
+	width: initial;
+}
+
+div.colle.koumoku.bikou_ > div.sakuhinmei.bikou_,
+div.colle.koumoku.bikou_0 > div.sakuhinmei.bikou_0 {
+	width: 60%;
+}
+
+div.colle.koumoku.bikou_ > div.sakuhinmei.bikou_ *,
+div.colle.koumoku.bikou_0 > div.sakuhinmei.bikou_0 * {
+	line-height: 1.2;
+}
+
+div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.midasi,
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.midasi {
+	margin-right: 0.5em;
+}
+
+div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.fuku_midasi,
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.fuku_midasi {
+	display: inline-block;
+	margin-left: 0;
+}
+
+div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.sakka,
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.sakka {
+	display: block;
+	font-size: 0.9em;
+}
+
+div.colle.koumoku.bikou_ > div.kansou,
+div.colle.koumoku.bikou_0 > div.kansou {
+	margin-right: 1em;
+}
+
+div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.midasi,
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.midasi {
+	margin-right: 0.5em;
+}
+
+div.colle.koumoku.bikou_ > div.jyou,
+div.colle.koumoku.bikou_0 > div.jyou {
+	width: 40%;
+	padding: 0.125em 0em 0em 0.5em;
+}
+
+div.colle.koumoku.bikou_ > div.hantyuu,
+div.colle.koumoku.bikou_0 > div.hantyuu {
+	display: none;
+}
+
+div.colle.koumoku.bikou_1 > div.sakuhinmei > div > p.fuku_midasi,
+div.colle.koumoku.bikou_1 > div.sakuhinmei > div > p.sakka {
+	font-size: 0.95em;
+	display: block;
+}
+
+div.colle.koumoku.bikou_1 > div.sakuhinmei > div > p.fuku_midasi {
+	margin-left: 0px;
+}
+
+div.colle.koumoku .bikou.hidari {
+	flex-shrink: 0;	
+}
+
+div.colle.koumoku.bikou_2 .hituzenjyouhou {
+	flex-wrap: wrap;
+}
+
+div.colle.koumoku.bikou_2 .hituzenjyouhou {
+	display: block;
+}
+
+div.colle.koumoku.bikou_2 .hituzenjyouhou .sakuhinmei,
+div.colle.koumoku.bikou_2 .hituzenjyouhou .status {
+	flex-shrink: 0;
+}
+
+div.colle.koumoku div.jyou {
+	width: 10em;
+}
+
+div.colle.koumoku div.hantyuu {
+	width: 7em;
+}
+
+div.colle.koumoku .bikou.migi {
+	margin: 2px 2em 0.25em 1em;
+	font-size: 0.95em;
+}
+
+div.colle.koumoku .bikou.sita {
+	margin: 0.25em 2em 0.25em 1em;
+	font-size: 0.95em;
+}
+
+div.colle.koumoku .bikou.ue {
+	display: block;
+}
+
+div.colle.koumoku .bikou.ue span {
+	font-weight: bold;
+	background-color: red;
+	color: yellow;
+	padding: 0em 0.25em;
+	margin-right: 0.25em;
+}
+
+div.colle.koumoku.bikou_3 .kansou {
+	margin: 2px 1.25em 2px 1em;
+}
+
+div.colle.koumoku.bikou_3 .sakuhinmei {
+	width: 100%;	
+	padding-left: 0.25em;
+}
+
+div.colle.koumoku.bikou_3 .sakka {
+	*display: block;
+	*font-size: 0.9em;
+}
+
+div.colle.youyaku {
+	padding-bottom: 2em;
+}
+
+div.rireki_box > div.koumoku {
+	padding: 0px 0.25em;
+}
+
+div.rireki_box > div.koumoku:first-child {
+	border-top: none;
+}
+
+div.rireki_box > div.koumoku > div.hiduke {
+	width: 35%;
+	padding-left: 0.5em;
+}
+
+div.rireki_box > div.koumoku > div.sakuhinmei {
+	width: 65%;
+}
+
+div.rireki_box > div.koumoku > div.jyou {
+	width: 100%;
+	padding: 0px 0px 0px 0.5em;
+}
+
+div.rireki_box > div.koumoku > div.jyou > div.jyoukyou {
+	background-color: transparent;
+	border: none;
+}
+
+div.rireki_box > div.koumoku > div.bikou:not(.ari) {
+	display: none;
+}
+
+div.rireki_box > div.koumoku > div.bikou.ari {
+	margin-left: 1em;
+}
