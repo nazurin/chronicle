@@ -109,7 +109,8 @@ print Kahifu::Template::html_saki("${\(Kahifu::Template::dict('HYOUKA_TITLE'))}<
 if(defined param('id') && param('id')){
 	my $sakuhin_query = "select * from sakuhin where id = ?";
 	my $sakuhin_syutoku = $dbh->prepare($sakuhin_query);
-	$sakuhin_syutoku->execute(param('id'));
+	my $passthrough_id = param('id');
+	$sakuhin_syutoku->execute($passthrough_id);
 	my $sakuhin_info = $sakuhin_syutoku->fetchall_hashref('id');
 	my @sakuhin_colle = split ',', $sakuhin_info->{param('id')}{colle};
 	my $colle_placeholders = join ", ", ("?") x @sakuhin_colle;
@@ -123,14 +124,14 @@ if(defined param('id') && param('id')){
 			print "<div class='bunsyou'>";
 			my $kansou_query = "select * from kansou_long where sid = ?";
 			my $kansou_syutoku = $dbh->prepare($kansou_query);
-			$kansou_syutoku->execute(param('id'));
+			$kansou_syutoku->execute($passthrough_id);
 			my $kansou_info = $kansou_syutoku->fetchall_hashref('sid');
-			print Kahifu::Infra::bunsyou($kansou_info->{param('id')}{kansou});
+			print Kahifu::Infra::bunsyou($kansou_info->{param('id')}{kansou}) if defined $kansou_info->{param('id')}{kansou};
 			print "</div>";
 			print "<div data-kakejiku='kansou_long' class='kakejiku'><span>${\(Kahifu::Template::dict('KANSOU_HENSYUU_DESC'))}<span class='sinsyuku'>＋</span></span></div>" if Kahifu::Template::tenmei;
-			print "<form method='post' id='sakunai_kansou' action='sakunai.pl'><input type='hidden' name='reference' value='${\(param('id'))}'><div data-kakejiku='kansou_long'><textarea name='text' form='sakunai_kansou'>", $kansou_info->{param('id')}{kansou}, "</textarea><input name='kansou_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div></form>";
+			print "<form method='post' id='sakunai_kansou' action='sakunai.pl'><input type='hidden' name='reference' value='${\(param('id'))}'><div data-kakejiku='kansou_long'><textarea name='text' form='sakunai_kansou'>", $kansou_info->{param('id')}{kansou}//'', "</textarea><input name='kansou_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div></form>";
 			print "<div data-kakejiku='ten' class='kakejiku'><span>点数<span class='sinsyuku'>${\(Kahifu::Template::dict('SINSYUKU_PLUS'))}</span></span></div>" if Kahifu::Template::tenmei;
-			print "<form method='post' id='sakunai_tennsuu' action='tensuu.pl'><input type='hidden' name='reference' value='${\(param('id'))}'><div data-kakejiku='ten'><input name='tensuu_kojin' placeholder='私式→", $sakuhin_info->{param('id')}{point}, "' value='", $sakuhin_info->{param('id')}{point}, "'><input name='tensuu_mal_pt' placeholder='ﾏｲｱﾆ→", $sakuhin_info->{param('id')}{mal_pt}, "／10' value='", $sakuhin_info->{param('id')}{mal_pt}, "'><input name='tensuu_al_pt' placeholder='ｱﾆﾘｽﾄ→", $sakuhin_info->{param('id')}{al_pt}, "／100' value='", $sakuhin_info->{param('id')}{al_pt}, "'><input name='tensuu_bl_pt' placeholder='ﾌﾞｸﾛｸﾞ→", $sakuhin_info->{param('id')}{bl_pt}, "／10' value='", $sakuhin_info->{param('id')}{bl_pt}, "'><input name='tensuu_sousin' type='submit' value='送信'></div></form>";
+			print "<form method='post' id='sakunai_tennsuu' action='tensuu.pl'><input type='hidden' name='reference' value='${\(param('id'))}'><div data-kakejiku='ten'><input name='tensuu_kojin' placeholder='私式→", $sakuhin_info->{param('id')}{point}//'', "' value='", $sakuhin_info->{param('id')}{point}//'', "'><input name='tensuu_mal_pt' placeholder='ﾏｲｱﾆ→", $sakuhin_info->{param('id')}{mal_pt}//'', "／10' value='", $sakuhin_info->{param('id')}{mal_pt}//'', "'><input name='tensuu_al_pt' placeholder='ｱﾆﾘｽﾄ→", $sakuhin_info->{param('id')}{al_pt}//'', "／100' value='", $sakuhin_info->{param('id')}{al_pt}//'', "'><input name='tensuu_bl_pt' placeholder='ﾌﾞｸﾛｸﾞ→", $sakuhin_info->{param('id')}{bl_pt}//'', "／10' value='", $sakuhin_info->{param('id')}{bl_pt}//'', "'><input name='tensuu_sousin' type='submit' value='送信'></div></form>";
 		print "</div>";
 		print "<div class='migi'>";
 			print "<div class='tensuu'>", $sakuhin_info->{param('id')}{point}, "点</div>" if defined $sakuhin_info->{param('id')}{point};
@@ -143,7 +144,7 @@ if(defined param('id') && param('id')){
 					print "<a href='${\(url_get_tuke(\%url_get, 'collection', $v->{id}))}'>";
 					print $v->{midasi};
 					print "</a>";
-					print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' }->() )};
+					print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if defined $v->{bikou} && ref(from_json($v->{bikou})) ne 'ARRAY' }->() )};
 				print "</div>";
 			}
 		print "</div>";
@@ -596,7 +597,7 @@ if($paginate == 1){
 				# 感想箱（kansou）を初期化
 				print "<div class='kansou' data-kansou='$v->{id}'>";
 					#print "<p>";
-					print Kahifu::Infra::bunsyou($v->{kansou});
+					print Kahifu::Infra::bunsyou($v->{kansou}) if defined $v->{kansou};
 					print "<a class='tuduki' href='${\(url_get_tuke(\%url_get, 'id', $v->{id}))}'>${\(Kahifu::Template::dict('KANSOU_TUDUKI'))}</a>" if defined $v->{extend} && $v->{extend} == 1;
 					#print "</p>";
 				print "</div>";
@@ -606,15 +607,15 @@ if($paginate == 1){
 					print "<input type='hidden' name='reference' value='$v->{id}'>";
 					print "<div class='midasi_kousin'>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_TITLE'))}</div><div><input type='text' size='30' placeholder='$v->{midasi}' name='midasi' value='$v->{midasi}'></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}'></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SUBTITLE'))}</div><div><input type='text' size='30' placeholder='$v->{fukumidasi}' name='fukumidasi' value='$v->{fukumidasi}'></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</div><div><input type='text' size='20' placeholder='$v->{sakka}' name='sakka' value='$v->{sakka}'></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div><div><input type='text' size='20' placeholder='$v->{betumei}' name='betumei' value='$v->{betumei}'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='", ${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}//'', "'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SUBTITLE'))}</div><div><input type='text' size='30' placeholder='", $v->{fukumidasi}//'', "' name='fukumidasi' value='", $v->{fukumidasi}//'', "'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</div><div><input type='text' size='20' placeholder='", $v->{sakka}//'', "' name='sakka' value='", $v->{sakka}//'', "'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div><div><input type='text' size='20' placeholder='", $v->{betumei}//'', "' name='betumei' value='", $v->{betumei}//'', "'></div></div>";
 					print "</div>";
 					print "<div class='extra'>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_THEME'))}</div><div><input type='text' size='20' placeholder='$v->{theme}' name='theme' value='$v->{theme}'></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_GYOUSUU'))}</div><div><input type='text' size='20' placeholder='${\(sub { return $v->{gyousuu} if defined $v->{gyousuu} }->())}' name='gyousuu' value='${\(sub { return $v->{gyousuu} if defined $v->{gyousuu} }->())}'></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BG_IMG'))}</div><div><input type='text' size='40' placeholder='$v->{bg_img}' name='bg_img' value='$v->{bg_img}'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_THEME'))}</div><div><input type='text' size='20' placeholder='", $v->{theme}//'', "' name='theme' value='", $v->{theme}//'', "'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_GYOUSUU'))}</div><div><input type='text' size='20' placeholder='", $v->{gyousuu}//'', "' name='gyousuu' value='${\(sub { return $v->{gyousuu} if defined $v->{gyousuu} }->())}'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BG_IMG'))}</div><div><input type='text' size='40' placeholder='", $v->{bg_img}//'', "' name='bg_img' value='", $v->{bg_img}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_ETERNAL'))}</div><div><input id='mugen$v->{id}1' type='radio' name='eternal' value='1'${\( sub { return 'checked=checked' if defined $v->{eternal} && $v->{eternal}==1 }->() )}><label for='mugen$v->{id}1'>${\(Kahifu::Template::dict('IRI'))}</label><input id='mugen$v->{id}2' type='radio' name='eternal' value='0'${\( sub { return 'checked=checked' if defined $v->{eternal} && $v->{eternal}==0 || not defined $v->{eternal} }->() )}><label for='mugen$v->{id}2'>${\(Kahifu::Template::dict('KIRI'))}</label></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_CURRENT'))}</div><div><input id='current$v->{id}1' type='radio' name='current' value='1'${\( sub { return 'checked=checked' if defined $v->{current} && $v->{current}==1 }->() )}><label for='current$v->{id}1'>${\(Kahifu::Template::dict('AGE'))}</label><input id='current$v->{id}2' type='radio' name='current' value='0'${\( sub { return 'checked=checked' if defined $v->{current} && $v->{current}==0 || not defined $v->{current} }->() )}><label for='current$v->{id}2'>${\(Kahifu::Template::dict('KIRI'))}</label><input id='current$v->{id}3' type='radio' name='current' value='2'${\( sub { return 'checked=checked' if defined $v->{current} && $v->{current}==2 }->() )}><label for='current$v->{id}3'>${\(Kahifu::Template::dict('SAGE'))}</label><input id='current$v->{id}4' type='radio' name='current' value='3'${\( sub { return 'checked=checked' if defined $v->{current} && $v->{current}==3 }->() )}><label for='current$v->{id}4'>${\(Kahifu::Template::dict('DARAKU'))}</label></div></div>";
 					print "</div>";
