@@ -639,7 +639,7 @@ if($paginate == 1){
 			  {
 				var span = \$(this);
 				var text = ${page};
-				var new_text = prompt(\"${\(Kahifu::Template::dict('WEEK_NUMBER'))}\", text);
+				var new_text = prompt(\"${\(Kahifu::Template::dict('PAGE_NUMBER'))}\", text);
 				const params = new URLSearchParams(window.location.search);
 				if (new_text != null && Number.isInteger(parseInt(text)) && new_text != text){
 					params.set('page', new_text);
