@@ -428,7 +428,7 @@ if($paginate == 1){
 			print "<div class='sky'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</span><input type='text' name='sakka' placeholder='${\(Kahifu::Template::dict('KIROKU_SAKKA_PLACEHOLDER'))}'></div>";
 			print "<div class='mint'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</span><input type='text' name='hantyuu' placeholder='${\(Kahifu::Template::dict('KIROKU_HANTYUU_PLACEHOLDER'))}'></div>";
 			print "<div class='strawberry'><span class='block'>${\(Kahifu::Template::dict('KIROKU_COLLECTION'))}</span><input type='text' name='colle' placeholder='${\(Kahifu::Template::dict('KIROKU_COLLECTION_PLACEHOLDER'))}'></div>";
-			print "<div class='ajisai'><span class='block'>${\(Kahifu::Template::dict('KIROKU_BIKOU'))}</span><input type='text' name='bikou' placeholder='${\(Kahifu::Template::dict('KRIOKU_BIKOU_PLACEHOLDER'))}'></div>";
+			print "<div class='ajisai'><span class='block'>${\(Kahifu::Template::dict('KIROKU_BIKOU'))}</span><input type='text' name='bikou' placeholder='${\(Kahifu::Template::dict('KIROKU_BIKOU_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_WHOLE'))}</span><input type='text' name='whole' placeholder='${\(Kahifu::Template::dict('KIROKU_WHOLE_PLACEHOLDER'))}'></div>";
 			print "<div class='meadow'><span>${\(Kahifu::Template::dict('KIROKU_JOSUU'))}</span>";
 				print "<select placeholder='${\(Kahifu::Template::dict('KIROKU_JOSUU_PLACEHOLDER'))}' name='josuu'>";
@@ -831,11 +831,6 @@ if($paginate == 1){
 		}
 		print "</div>"; #div.collection_box
 	}
-	#my %hyouji_test = (ja => 'そんなこと', en => 'That thingy');
-	#my $hyouji_json = encode_json(\%hyouji_test);
-	#my $send_test = $dbh->prepare('insert into collection (`hyouji`) values (?) ');
-	#$send_test->execute($hyouji_json);
-	# end paginate 2 (collection覧)
 } elsif ($paginate == 3){
 	#　PAGINATE=3
 	#　履歴　RIREKI
