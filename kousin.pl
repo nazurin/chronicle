@@ -28,9 +28,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	#my $query = CGI->new;
 	#my @title_post = $query->param;
 	#print dump @title_post;
+	my $passthrough_id = param('reference');
 	my $info_sitami_query = "select count(*) as count, sid from rireki where sid = ? order by jiten desc limit 1";
 	my $info_sitami_syutoku = $dbh->prepare($info_sitami_query);
-	$info_sitami_syutoku->execute(param('reference'));
+	$info_sitami_syutoku->execute($passthrough_id);
 	my $info_sitami = $info_sitami_syutoku->fetchall_hashref('sid');
 
 	my ($info_query, $info_syutoku, $info);
@@ -77,7 +78,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $jyoukyou = "再";
 		$jyoukyou = "没" if param('mode') == 1 or param('mode') == 2;
 		$jyoukyou = "終" if param('part') == param('whole');
-		my $josuu = param('josuu') == '儘' ? (defined $info->{param('reference')}{josuu} ? $info->{param('reference')}{josuu} : $info->{param('reference')}{sakujosuu}) : decode_utf8(param('josuu'));
+		my $josuu = param('josuu') eq '儘' ? (defined $info->{param('reference')}{josuu} ? $info->{param('reference')}{josuu} : $info->{param('reference')}{sakujosuu}) : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
 		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
