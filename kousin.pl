@@ -171,7 +171,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	if(not defined param('sakujyo')){
 		# 削除ではない場合
 		if(($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} != $josuu) || ($info->{$passthrough_id}{part} == 0 && $info->{$passthrough_id}{count} == 0) || ($info->{$passthrough_id}{part} == param('part') && $info->{$passthrough_id}{text} ne decode_utf8(param('title')))) && param('part') <= param('whole') && not (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '終', '再', '没') && not (grep{$_ eq param('mode')} 4, 5)){
-			#print 'Yes!'; #update_futuu
+			print 'Yes!'; #update_futuu
 			update_futuu();
 		} elsif ($info->{$passthrough_id}{part} == $info->{$passthrough_id}{whole} && (($info->{$passthrough_id}{whole} != param('whole') && $info->{$passthrough_id}{josuu} != $josuu) || ($info->{$passthrough_id}{whole} < param('whole'))) && not param('mode') == 5){
 			#print 'Yes!!'; #update_futakousin
@@ -180,8 +180,8 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		} elsif ( ($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} != $josuu) && param('part') <= param('whole') && not (grep{$_ eq param('mode')} 4, 5) && (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没')) ||  ($info->{$passthrough_id}{sakujyoukyou} == '終' && param('mode') == 3)){
 			#print 'Yes!!!'; #update_saikansyou
 			update_saikansyou();
-		} elsif (param('part') != param('whole') && grep{$_ eq param('mode')} 4, 5){
-			#print 'Yes!!!!'; #update_special_jyou
+		} elsif (grep{$_ eq param('mode')} 4, 5){
+			print 'Yes!!!!'; #update_special_jyou
 			update_special_jyou();
 		} elsif ($info->{$passthrough_id}{josuu} ne $josuu && $info->{$passthrough_id}{part} == param('part') && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
 			#print 'Yes!!!!!'; #update_josuu_all
