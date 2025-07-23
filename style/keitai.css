@@ -13,6 +13,10 @@ div.commander > div.hidari > div.navi {
 	margin-bottom: 0px;
 }
 
+div.commander > div.migi {
+	flex-shrink: 1;
+}
+
 div.koumoku {
 	padding: 0.125em 1em 0.25em 0.5em;
 }
@@ -52,7 +56,7 @@ div.koumoku > div.sakuhinmei > span.sakka {
 }
 
 div.koumoku > div.jyou {
-	width: 10em;
+	width: 11em;
 	padding: 0.125em 1em 0.25em 1em;
 }
 
@@ -219,8 +223,8 @@ div.colle.koumoku.bikou_3 .sakuhinmei {
 }
 
 div.colle.koumoku.bikou_3 .sakka {
-	*display: block;
-	*font-size: 0.9em;
+	/*display: block;*/
+	/*font-size: 0.9em;*/
 }
 
 div.colle.youyaku {
