@@ -196,6 +196,20 @@
 	color: hsl(30.6, 98.6%, 20%);
 }
 
+.hantyuu_script,
+.hannyou.type_103,
+.koumoku.type_103:nth-child(2n) {
+	/*background-color: hsl(32, 32%, 90%);*/
+	/*color: hsl(30.6, 98.6%, 20%);*/
+	background-color: hsl(222, 100%, 95%);
+	color: hsl(222, 60.6%, 40%);
+}
+
+.koumoku.type_103:nth-child(2n+1) {
+	background-color: hsl(222, 100%, 99%);
+	color: hsl(222, 60.6%, 40%);
+}
+
 /* ゲーム */
 .hantyuu_game,
 .hannyou.type_12,
@@ -204,8 +218,8 @@
 .koumoku.type_12:nth-child(2n),
 .koumoku.type_15:nth-child(2n),
 .koumoku.type_102:nth-child(2n) {
-	*background-color: hsl(242, 68.6%, 90%);
-	*color: hsl(242, 48.6%, 38%);
+	/*background-color: hsl(242, 68.6%, 90%);*/
+	/*color: hsl(242, 48.6%, 38%);*/
 	background-color: hsl(270, 68.6%, 90%);
 	color: hsl(270, 48.5%, 38%);
 }
@@ -213,8 +227,8 @@
 .koumoku.type_12:nth-child(2n+1),
 .koumoku.type_15:nth-child(2n+1),
 .koumoku.type_102:nth-child(2n+1) {
-	*background-color: hsl(242, 68.6%, 95%);
-	*color: hsl(242, 48.6%, 38%);
+	/*background-color: hsl(242, 68.6%, 95%);*/
+	/*color: hsl(242, 48.6%, 38%);*/
 	background-color: hsl(270, 68.6%, 95%);
 	color: hsl(270, 48.5%, 38%);
 }
