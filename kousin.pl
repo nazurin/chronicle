@@ -63,7 +63,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		$jyoukyou = "落" if param('mode') == 2;
 		$jyoukyou = "終" if param('part') == param('whole');
 		my $text = decode_utf8(param('title'));
-		my $josuu = param('josuu') == '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : param('josuu');
+		my $josuu = decode_utf8(param('josuu')) == '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
 		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
@@ -78,7 +78,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $jyoukyou = "再";
 		$jyoukyou = "没" if param('mode') == 1 or param('mode') == 2;
 		$jyoukyou = "終" if param('part') == param('whole');
-		my $josuu = param('josuu') eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
+		my $josuu = decode_utf8(param('josuu')) eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
 		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
@@ -141,7 +141,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $jyoukyou;
 		$jyoukyou = "飛" if param('mode') == 4;
 		$jyoukyou = "葉" if param('mode') == 5;
-		my $josuu = param('josuu') eq '儘' ? $info->{$passthrough_id}{josuu} : param('josuu');
+		my $josuu = decode_utf8(param('josuu')) eq '儘' ? $info->{$passthrough_id}{josuu} : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
 		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
@@ -156,10 +156,11 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		# 助数詞≠前助数詞、part&whole=前part&whole
 		my $rireki_kousin_query = "update `rireki` set josuu = ? where sid = ?";
 		my $rireki_kousin = $dbh->prepare($rireki_kousin_query);
-		$rireki_kousin->execute(param('josuu'), param('reference'));
+		my $josuu = decode_utf8(param('josuu')) eq '儘' ? $info->{$passthrough_id}{josuu} : decode_utf8(param('josuu'));
+		$rireki_kousin->execute($josuu, param('reference'));
 		my $sakuhin_kousin_query = "update sakuhin set josuu = ?, hajimari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
-		$sakuhin_kousin->execute(param('josuu'), $hajimari, param('reference'));
+		$sakuhin_kousin->execute($josuu, $hajimari, param('reference'));
 	}
 	
 	sub update_hajimari {
