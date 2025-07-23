@@ -20,7 +20,7 @@ use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Kahifu::Key;
-use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase);
+use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan);
 
 my $uri = Kahifu::Template::fetch_uri(__FILE__);
 my $ami = Kahifu::Template::fetch_ami($uri);
@@ -134,7 +134,7 @@ if(defined param('id') && param('id')){
 			print "<form method='post' id='sakunai_tennsuu' action='tensuu.pl'><input type='hidden' name='reference' value='${passthrough_id}'><div data-kakejiku='ten'><input name='tensuu_kojin' placeholder='私式→", $sakuhin_info->{$passthrough_id}{point}//'', "' value='", $sakuhin_info->{$passthrough_id}{point}//'', "'><input name='tensuu_mal_pt' placeholder='ﾏｲｱﾆ→", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "'><input name='tensuu_al_pt' placeholder='ｱﾆﾘｽﾄ→", $sakuhin_info->{$passthrough_id}{al_pt}//'', "／100' value='", $sakuhin_info->{$passthrough_id}{al_pt}//'', "'><input name='tensuu_bl_pt' placeholder='ﾌﾞｸﾛｸﾞ→", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "'><input name='tensuu_sousin' type='submit' value='送信'></div></form>";
 		print "</div>";
 		print "<div class='migi'>";
-			print "<div class='tensuu'>", $sakuhin_info->{$passthrough_id}{point}, "点</div>" if defined $sakuhin_info->{$passthrough_id}{point};
+			print "<div class='tensuu'>", ten_henkan($sakuhin_info->{$passthrough_id}{point}), "</div>" if defined $sakuhin_info->{$passthrough_id}{point};
 			my $collection_query = "select * from collection where midasi_seisiki in ($colle_placeholders)";
 			my $collection_syutoku = $dbh->prepare($collection_query);
 			$collection_syutoku->execute(@sakuhin_colle);
@@ -185,7 +185,7 @@ my $jun_tuuka = (defined $jun_henkan[$jun]) ? $jun_henkan[$jun] : $jun_henkan[0]
 my $junni_tuuka = ($jun == 0) ? 'asc' : 'desc';
 
 # paginateの準備をする
-my @josuu_tati = $dbh->selectall_array("select `josuu` from `josuu`");
+my @josuu_tati = $dbh->selectall_array("select `josuu`, `ja` from `josuu`");
 my @sizi_tati = $dbh->selectall_array("select `sizi` from `josuu_sizi`");
 my ($current_turu, @r, @current_list, $row_count, $page_saigo, $meirei_presitami, $meirei_sitami, $count_sitami, $page_subete);
 my ($kansyou_current_rows, $kansyou_all_rows);
@@ -206,16 +206,13 @@ if($paginate == 1){
 	#　idたちを集める
 	# 旧meirei: select `id` from `sakuhin` where ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2))||(((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) order by `owari` desc limit ${row_count} offset ?
 	$meirei_sitami = ($page == 1) ? $dbh->prepare("select * from 
-		(select `id`, `owari` from `sakuhin` where ${gyaku_kensaku_sitazi} (((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}) a union select * from (select `id`, `owari` from `sakuhin` where ${gyaku_kensaku_sitazi} (!(`jyoukyou` = '中' or `jyoukyou` = '再') and ((`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by `owari` desc limit ${row_count} offset ? ) b order by `owari` desc") : $dbh->prepare("select `id` from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ?");
+		(select `id`, `owari`, `hajimari`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}) a union select * from (select `id`, `owari`, `hajimari`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (!(`jyoukyou` = '中' or `jyoukyou` = '再') and ((`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ? ) b order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka}") : $dbh->prepare("select `id`, `midasi` from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ?");
+		# 修正→`id`だけでmeireiと不一致になります。一体どうして？？？
 	$page != 1 ? $meirei_sitami->execute(@sitazi_bind, $page_offset) : 	$meirei_sitami->execute(@sitazi_bind, @sitazi_bind_2, $page_offset);
 	while(my $v = $meirei_sitami->fetchrow_hashref){
 		push @current_list, $v->{id};	
 	}
 	$current_turu = join(',', @current_list);
-	print dump @sitazi_bind, @sitazi_bind_2, $page_offset;
-	print dump "select * from 
-		(select `id`, `owari` from `sakuhin` where ${gyaku_kensaku_sitazi} (((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}) a union select * from (select `id`, `owari` from `sakuhin` where ${gyaku_kensaku_sitazi} (!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by `owari` desc limit ${row_count} offset ? ) b order by `owari` desc";
-
 	$current_turu = 0 if $current_turu eq '';
 	@r = $dbh->selectall_array("select * from `rireki` where `sid` in ($current_turu)");
 	#　クエリーに伴って全ての行数を数える
@@ -224,8 +221,11 @@ if($paginate == 1){
 	$kansyou_all_rows = $count_sitami->rows();
 	$page_subete = ceil((($kansyou_all_rows - $kansyou_current_rows - 20) / 20) + 1);
 	
-	@meirei = ("select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) ${kensaku_sitazi} and (`current` is null or `current` != 2)) ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by `owari` desc", "select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1))||((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit 20 offset ?");
+	@meirei = ("select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) ${kensaku_sitazi} and (`current` is null or `current` != 2)) ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by `owari` desc", "select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit 20 offset ?");
 	@daimei = ("${\(Kahifu::Template::dict('TITLE_KANSYOUTYUU'))}", "${\(Kahifu::Template::dict('TITLE_KANSYOUZUMI'))}");
+} elsif($paginate == 2){
+	# コレクション検索機能など
+
 } elsif ($paginate == 3){
 	# 暦を作るには…
 	@week_border_original = week_border(${\(week($imagenzai))[0]}, ${\(week($imagenzai))[1]});
@@ -437,7 +437,7 @@ if($paginate == 1){
 			print "<div class='meadow'><span>${\(Kahifu::Template::dict('KIROKU_JOSUU'))}</span>";
 				print "<select placeholder='${\(Kahifu::Template::dict('KIROKU_JOSUU_PLACEHOLDER'))}' name='josuu'>";
 				print "<option value='無'>${\(Kahifu::Template::dict('NONE'))}</option>";
-				for my $j (@josuu_tati){ print "<option value='$j->[0]'>$j->[0]</option>"; }
+				for my $j (@josuu_tati){ print "<option value='$j->[1]'>$j->[0]</option>"; }
 				print "</select>&nbsp;";
 			print "</div>";
 			print "<div class='cream'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_MIKAKUTEI'))}</span>";
@@ -515,7 +515,7 @@ if($paginate == 1){
 					print "<input type='number' size='5' placeholder='${\(Kahifu::Template::dict('KOUSIN_PART_PLACEHOLDER'))}' name='part' value='$v->{part}'>";
 					print "／<input type='number' size='5' placeholder='${\(Kahifu::Template::dict('KOUSIN_WHOLE_PLACEHOLDER'))}' name='whole' value='$v->{whole}'>";
 					print "<select placeholder='${\(Kahifu::Template::dict('KIROKU_JOSUU_PLACEHOLDER'))}' name='josuu'>";
-					for my $j (@josuu_tati){ print "<option value='$j->[0]'>$j->[0]</option>"; }
+					for my $j (@josuu_tati){ print "<option value='$j->[1]'>$j->[0]</option>"; }
 					print "</select>&nbsp;";
 					print "<select placeholder='${\(Kahifu::Template::dict('HEADING_JYOUKYOU'))}' name='mode'>";
 						print "<option value='0'>${\(Kahifu::Template::dict('KOUSIN_MAKASE'))}</option>";
@@ -738,9 +738,9 @@ if($paginate == 1){
 		#　備考を決まる
 		my $bikou = from_json($v->{bikou});
 		#　第二次命令　→作品欄から抽出す
-		my $dainiji_meirei = ("select * from sakuhin where `id` in (${turu_sitazi}) order by field (id, ${turu_sitazi})");
+		my $dainiji_meirei = ("select * from sakuhin where `id` in (${turu_sitazi}) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by field (id, ${turu_sitazi})");
 		my $sakuhinran = $dbh->prepare($dainiji_meirei);
-		$sakuhinran->execute(@turu, @turu);
+		$sakuhinran->execute(@turu, @sitazi_bind, @turu);
 		print "<div class='colle navi'>";
 		print "</div>";
 		print "<div class='colle heading'>";
@@ -760,7 +760,7 @@ if($paginate == 1){
 				print "<input type='hidden' name='junban' value='$w->{id}'>";
 				print "<div class='sakuhinmei bikou_$v->{bikouiti}'>";
 					print "<div class='omake id'><span>$w->{id}</span></div>" if defined param('hensyuu');
-					print "<div class='bikou ue'><span>$bikou->{$w->{id}}</span></div>" if $v->{bikouiti} == 3;
+					print "<div class='bikou ue'><span>$bikou->{$w->{id}}</span></div>" if $v->{bikouiti} == 2;
 					print "<div class='bikou hidari'><span>$bikou->{$w->{id}}</span></div>" if $v->{bikouiti} == 1;
 					print "<div>";
 						print "<p id='$w->{id}' class='midasi $w->{id}' data-kansou='$w->{id}'>";
@@ -790,7 +790,9 @@ if($paginate == 1){
 				print "<div class='hantyuu'>";
 					print "${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $w->{hantyuu}))}";
 				print "</div>";
-				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )}</span></div>" if (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}};
+				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )}</span></div>" if !defined param('hensyuu') && (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}};
+				print "<div class='bikou migi'><textarea rows=1 id='colle_box' name='test'>", ${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )},"</textarea></div>" if defined param('hensyuu');
+				print "<div class='bikou sita'>$bikou->{$w->{id}}</div>" if $v->{bikouiti} == 3;
 				print "<div class='kansou' data-kansou='$v->{id}'>";
 					print Kahifu::Infra::bunsyou($w->{kansou}) if defined $v->{kansou_hyouji} && $v->{kansou_hyouji} == 1;
 				print "</div>";
@@ -813,7 +815,7 @@ if($paginate == 1){
 	} else {
 		#　一覧コレクション外 （Collection listing）	
 		#my $meirei = "select id, midasi, hyouji, turu, color from collection";
-		my $meirei = ("select id, midasi, tag, hyouji, turu, color from collection order by field(`tag`, 'yotei', 'award', 'waku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
+		my $meirei = ("select id, midasi, midasi_seisiki, tag, hyouji, turu, color from collection order by field(`tag`, 'yotei', 'favorite', 'award', 'waku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
 		my $colleran = $dbh->prepare($meirei);
 		print "<div>";
 		print "</div>";
@@ -824,12 +826,33 @@ if($paginate == 1){
 				print "<div class='midasi'>";
 					print "<span>";
 					print "<a href='${\(url_get_tuke(\%url_get, 'collection', $v->{id}))}'>";
-					print defined $v->{hyouji} && $v->{hyouji} && defined from_json($v->{hyouji})->{$Kahifu::Junbi::lang} && from_json($v->{hyouji})->{$Kahifu::Junbi::lang} ? midasi_settei(from_json($v->{hyouji})->{$Kahifu::Junbi::lang}) : midasi_settei($v->{midasi});
+					print defined $v->{hyouji} && $v->{hyouji} && defined from_json($v->{hyouji})->{$Kahifu::Junbi::lang} && from_json($v->{hyouji})->{$Kahifu::Junbi::lang} ? midasi_settei(from_json($v->{hyouji})->{$Kahifu::Junbi::lang}, 0, 0, $kensaku) : midasi_settei($v->{midasi}, 0, 0, $kensaku);
 					print "</a>";
 					print "</span>";
 				print "</div>";
 				print "<div class='count'>";
-					print my $row_count = scalar(split(/,/,$v->{turu})), '件' if $v->{tag} ne 'yotei';
+					if($kensaku && ($v->{turu} ne '' || ($v->{turu} eq '' && $v->{tag} eq 'yotei'))){
+						my @sakuhin_colle;
+						if($v->{id}==1){
+							my $turu_meirei = "select saku.`id` from sakuhin saku left join rireki reki on reki.sid = saku.id where reki.sid is null order by saku.`time` desc";
+							@sakuhin_colle = $dbh->selectall_array($turu_meirei);
+							for(my $i=0; $i<scalar(@sakuhin_colle); $i++){$sakuhin_colle[$i] = $sakuhin_colle[$i][0]}
+						} elsif($v->{midasi_seisiki} eq 'watchlist') {
+							my $turu_meirei = "select saku.`id` from sakuhin saku left join rireki reki on reki.sid = saku.id where reki.sid is null and saku.`yotei` = 1 order by saku.`time` desc";
+							@sakuhin_colle = $dbh->selectall_array($turu_meirei);
+							for(my $i=0; $i<scalar(@sakuhin_colle); $i++){$sakuhin_colle[$i] = $sakuhin_colle[$i][0]}
+						} else {
+							@sakuhin_colle = split ',', $v->{turu};
+						}
+						my $colle_placeholders = join ", ", ("?") x @sakuhin_colle;
+						my $colle_meirei = "select count(*) from sakuhin where `id` in($colle_placeholders) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}";
+						my $kensuu_collebetu = $dbh->prepare($colle_meirei);
+						$kensuu_collebetu->execute(@sakuhin_colle, @sitazi_bind);
+						my $row_count = $kensuu_collebetu->fetchall_arrayref();
+						print $row_count->[0][0], '件';
+					} else {
+						print my $row_count = scalar(split(/,/,$v->{turu})), '件' if $v->{tag} ne 'yotei';
+					}
 				print "</div>";
 			print "</div>";
 		}
