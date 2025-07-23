@@ -28,10 +28,20 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $query = CGI->new;
 	my @title_post = $query->param;
 	my $turu = join ',', param('junban');
-	my $id = param('collection');
-	my $saisettei_query = "update collection set turu = ? where id = ?";
+	my @array_junban = param('junban');
+	my @bikou_naiyou = param('test');
+	my $id = param('collection');	
+	
+	my %bikou_sousin;
+	for(my $i = 0; $i < scalar(param('junban')); $i++){
+		$bikou_sousin{$array_junban[$i]} = decode_utf8($bikou_naiyou[$i]);
+	}
+	delete($bikou_sousin{""});
+	my $bikou_serialized = to_json(\%bikou_sousin);
+
+	my $saisettei_query = "update collection set turu = ?, bikou = ? where id = ?";
 	my $saisettei_kousin = $dbh->prepare($saisettei_query);
-	$saisettei_kousin->execute($turu, $id);
+	$saisettei_kousin->execute($turu, $bikou_serialized, $id);
 }
 
 my $query=new CGI;
