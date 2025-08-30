@@ -34,9 +34,30 @@ div.podium {
 	/*background-image: url('/img/bg/test.jpg');*/
 }
 
+div.aikotoba {
+	display: flex;
+	background-color: chartreuse;
+	border: 3px outset white;
+	padding: 0 0.25em;
+	text-shadow: orange 1px 1px, green 1px 2px 2px, green -1px -1px 2px, green 2px -1px 2px, green -1px 1px 2px;
+	color: yellow;
+	word-wrap: normal;
+	word-break: break-all;
+}
+
+div.aikotoba > span {
+	flex-grow: 1;
+	flex-shrink: 0;
+}
+
 div.commander {
 	display: flex;
 	padding-bottom: 0.25em;
+}
+
+div.commander > div.hidari {
+	display: flex;
+	flex-direction: column;
 }
 
 div.commander > div.hidari > div.navi {
@@ -111,6 +132,10 @@ div.commander > div.hidari > div.hanrei .theme.gokusaisiki {
 	text-shadow: 1px 1px 1px #fff;
 }
 
+div.commander > div.hidari > div.syuu_mekuri {
+	flex-grow: 1;
+}
+
 div.commander > div.migi {
 	display: flex;
 	flex-direction: column;
@@ -120,6 +145,7 @@ div.commander > div.migi {
 div.commander > div.migi > div.maegaki {
 	background-color: rgb(247, 210, 227);
 	border: 3px ridge white;
+	border-bottom: none;
 }
 
 div.commander > div.migi > div.kinkyou {
@@ -186,7 +212,7 @@ div.commander > div.migi > div.narabikae > form {
 	display: flex;
 	background-color: lavender;
 	border: ridge 3px white;
-	border-bottom: none;
+	/* border-bottom: none; */
 }
 
 div.commander > div.migi > div.narabikae > form > div.hidari {
@@ -922,6 +948,41 @@ div.sakuhinbako > div.hidari > div.bunsyou {
 	margin: 1em 2em 0px 0.5em;
 }
 
+div.sakuhinbako > div.hidari > div.bunsyou > div.sirakaba > div {
+	padding: 0 0.25em;
+}
+
+div.sakuhinbako > div.hidari > div.bunsyou > div.sirakaba > div br {
+	display: block;
+	margin-top: 0.25em;
+}
+
+div.sakuhinbako > div.hidari > div.bunsyou > div.sirakaba > div.kou {
+	border-left: 2px solid hotpink;
+	background-color: hsla(329, 100%, 90%, 0.75);
+}
+
+div.sakuhinbako > div.hidari > div.bunsyou > div.sirakaba > div.otu {
+	border-left: 2px solid green;
+	background-color: hsla(120, 100%, 90%, 0.75);
+}
+
+div.sakuhinbako > div.hidari > div.bunsyou > div.sirakaba > div.midasi {
+	background: linear-gradient(to right, seashell 0%, seashell 30%, transparent 100%);
+	border-image: linear-gradient(to right, purple 0%, transparent 60%) 1;
+	border-width: 2px;
+		border-right-width: 2px;
+		border-bottom-width: 2px;
+	border-style: solid;
+		border-right-style: solid;
+		border-bottom-style: solid;
+	border-bottom: none;
+	border-right: none;
+	font-weight: bold;
+	text-shadow: 1px 1px 2px white;
+	color: purple;
+}
+
 div.sakuhinbako > div.hidari > div.kakejiku {
 	margin-top: 1em;
 }
@@ -979,6 +1040,14 @@ div.sakuhinbako > div.migi > div.tensuu {
 	background-color: rgba(0, 0, 0, 0.85);
 }
 
+div.sakuhinbako > div.migi > div.kansyourirekisyo {
+	max-width: 16em;
+	border: black 1px solid;
+	padding: 0.125em 0.5em;
+	color: black;
+	margin-bottom: 0.25em;
+}
+
 div.sakuhinbako > div.migi > div.colle > div {
 	font-weight: normal;
 	font-size: 0.95em;
@@ -989,10 +1058,107 @@ div.sakuhinbako > div.migi > div.colle > div.waku {
 	text-align: right;
 }
 
+div.sakuhinbako > div.migi > div.colle > div.favorite {
+	font-size: 0.875em;
+}
+
 div.sakuhinbako > div.migi > div.colle > a {
 	text-decoration: none;
 	color: inherit;
 	text-shadow: white 1px 1px;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.midasi {
+	font-weight: bold;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki {
+	border: 1px solid black;
+	font-size: 0.8em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou:nth-child(4n+3),
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou:nth-child(4n) {
+	background-color: hsla(0, 0%, 100%, 0.9);
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou:nth-child(4n+1),
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou:nth-child(4n+2) {
+	background-color: hsla(0, 0%, 90%, 0.9);
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.touroku {
+	font-style: italic;
+	background-color: hsla(0, 0%, 95%, 0.9);
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div {
+	display: inline-block;
+	padding: 0em 0.25em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div.jiten {
+	width: 8em;
+	flex-basis: 8em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div.jiten.mikakutei {
+	opacity: 0.6;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div.sintyoku {
+	flex-grow: 1;
+	text-align: right;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div.memo {
+	flex-basis: 100%;
+	flex-shrink: 1;
+	margin: 0 0.25em 0.125em 0.25em;
+	background-color: snow;
+	font-size: 0.85em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu,
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki_sousin {
+	display: none;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu > div {
+	flex-basis: 100%;
+	display: flex;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu > div.text input {
+	width: 100%;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu input[type=text],
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu select {
+	font-size: 0.8em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.jiten_y input[type=text] {
+	width: 4em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.jiten_m input[type=text],
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.jiten_d input[type=text],
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.jiten_h input[type=text],
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.jiten_i input[type=text],
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.jiten_s input[type=text],
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.josuu input[type=text] {
+	width: 2em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.part input[type=text],
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.whole input[type=text] {
+	width: 4em;
 }
 
 /* おまけ　extra */
