@@ -8,6 +8,23 @@ div.commander {
 	padding-bottom: 0px;
 }
 
+div.aikotoba {
+	flex-wrap: wrap;
+}
+
+div.aikotoba > * {
+	display: inline-block;
+}
+
+div.aikotoba > span {
+	flex-shrink: 1;
+	font-style: italic;
+}
+
+div.aikotoba > input {
+	flex-grow: 1;
+}
+
 div.commander > div.hidari > div.navi {
 	border-bottom: none;
 	margin-bottom: 0px;
@@ -264,4 +281,22 @@ div.rireki_box > div.koumoku > div.bikou:not(.ari) {
 
 div.rireki_box > div.koumoku > div.bikou.ari {
 	margin-left: 1em;
+}
+
+div.sakuhinbako {
+	display: block;
+}
+
+div.sakuhinbako > div.migi {
+	margin-top: 0.5em;
+	padding: 0 0.25em;
+}
+
+div.sakuhinbako > div.migi > div.colle,
+div.sakuhinbako > div.migi > div.kansyourirekisyo {
+	max-width: initial;
+}
+
+div.sakuhinbako > div.hidari > form > div[data-kakejiku="kansou_long"]:not(.kakejiku) textarea {
+	font-size: 1em;
 }
