@@ -63,13 +63,13 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		$jyoukyou = "落" if param('mode') == 2;
 		$jyoukyou = "終" if param('part') == param('whole');
 		my $text = decode_utf8(param('title'));
-		my $josuu = decode_utf8(param('josuu')) == '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
+		my $josuu = decode_utf8(param('josuu')) eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
 		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
-		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
+		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, josuu = ?, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
-		$sakuhin_kousin->execute($jyoukyou, param('part'), param('whole'), $hajimari, $owari, param('reference'));
+		$sakuhin_kousin->execute($josuu, $jyoukyou, param('part'), param('whole'), $hajimari, $owari, param('reference'));
 	}
 	
 	sub update_saikansyou {
@@ -171,14 +171,14 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	
 	if(not defined param('sakujyo')){
 		# 削除ではない場合
-		if(($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} != $josuu) || ($info->{$passthrough_id}{part} == 0 && $info->{$passthrough_id}{count} == 0) || ($info->{$passthrough_id}{part} == param('part') && $info->{$passthrough_id}{text} ne decode_utf8(param('title'))) || $info->{$passthrough_id}{sakujyoukyou} eq '落' && $info->{$passthrough_id}{part} >= param('part')) && param('part') <= param('whole') && not (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '終', '再', '没') && not (grep{$_ eq param('mode')} 4, 5)){
+		if(($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} ne $josuu) || ($info->{$passthrough_id}{part} == 0 && $info->{$passthrough_id}{count} == 0) || ($info->{$passthrough_id}{part} == param('part') && $info->{$passthrough_id}{text} ne decode_utf8(param('title'))) || $info->{$passthrough_id}{sakujyoukyou} eq '落' && $info->{$passthrough_id}{part} >= param('part')) && param('part') <= param('whole') && not (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '終', '再', '没') && not (grep{$_ eq param('mode')} 4, 5)){
 			#print 'Yes!'; #update_futuu
 			update_futuu();
-		} elsif ($info->{$passthrough_id}{part} == $info->{$passthrough_id}{whole} && (($info->{$passthrough_id}{whole} != param('whole') && $info->{$passthrough_id}{josuu} != $josuu) || ($info->{$passthrough_id}{whole} < param('whole'))) && not param('mode') == 5){
+		} elsif ($info->{$passthrough_id}{part} == $info->{$passthrough_id}{whole} && (($info->{$passthrough_id}{whole} != param('whole') && $info->{$passthrough_id}{josuu} ne $josuu) || ($info->{$passthrough_id}{whole} < param('whole'))) && not param('mode') == 5){
 			#print 'Yes!!'; #update_futakousin
 			update_futakousin();
 			param('mode') == 4 ? update_special_jyou_futakousin() : update_futuu();
-		} elsif ( ($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} != $josuu) && param('part') <= param('whole') && not (grep{$_ eq param('mode')} 4, 5) && (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没')) ||  ($info->{$passthrough_id}{sakujyoukyou} == '終' && param('mode') == 3)){
+		} elsif ( ($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} ne $josuu) && param('part') <= param('whole') && not (grep{$_ eq param('mode')} 4, 5) && (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没')) ||  ($info->{$passthrough_id}{sakujyoukyou} == '終' && param('mode') == 3)){
 			#print 'Yes!!!'; #update_saikansyou
 			update_saikansyou();
 		} elsif (grep{$_ eq param('mode')} 4, 5){
