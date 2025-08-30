@@ -130,8 +130,8 @@ if(defined param('id') && param('id')){
 			print "</div>";
 			print "<div data-kakejiku='kansou_long' class='kakejiku'><span>${\(Kahifu::Template::dict('KANSOU_HENSYUU_DESC'))}<span class='sinsyuku'>＋</span></span></div>" if Kahifu::Template::tenmei;
 			print "<form method='post' id='sakunai_kansou' action='sakunai.pl'><input type='hidden' name='reference' value='${passthrough_id}'><div data-kakejiku='kansou_long'><textarea name='text' form='sakunai_kansou'>", $kansou_info->{$passthrough_id}{kansou}//'', "</textarea><input name='kansou_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div></form>";
-			print "<div data-kakejiku='ten' class='kakejiku'><span>点数<span class='sinsyuku'>${\(Kahifu::Template::dict('SINSYUKU_PLUS'))}</span></span></div>" if Kahifu::Template::tenmei;
-			print "<form method='post' id='sakunai_tennsuu' action='tensuu.pl'><input type='hidden' name='reference' value='${passthrough_id}'><div data-kakejiku='ten'><input name='tensuu_kojin' placeholder='私式→", $sakuhin_info->{$passthrough_id}{point}//'', "' value='", $sakuhin_info->{$passthrough_id}{point}//'', "'><input name='tensuu_mal_pt' placeholder='ﾏｲｱﾆ→", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "'><input name='tensuu_al_pt' placeholder='ｱﾆﾘｽﾄ→", $sakuhin_info->{$passthrough_id}{al_pt}//'', "／100' value='", $sakuhin_info->{$passthrough_id}{al_pt}//'', "'><input name='tensuu_bl_pt' placeholder='ﾌﾞｸﾛｸﾞ→", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "'><input name='tensuu_sousin' type='submit' value='送信'></div></form>";
+			print "<div data-kakejiku='ten' class='kakejiku'><span>${\(Kahifu::Template::dict('TENSUU'))}<span class='sinsyuku'>${\(Kahifu::Template::dict('SINSYUKU_PLUS'))}</span></span></div>" if Kahifu::Template::tenmei;
+			print "<form method='post' id='sakunai_tennsuu' action='tensuu.pl'><input type='hidden' name='reference' value='${passthrough_id}'><div data-kakejiku='ten'><input name='tensuu_kojin' placeholder='私式→", $sakuhin_info->{$passthrough_id}{point}//'', "' value='", $sakuhin_info->{$passthrough_id}{point}//'', "'><input name='tensuu_mal_pt' placeholder='ﾏｲｱﾆ→", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "'><input name='tensuu_al_pt' placeholder='ｱﾆﾘｽﾄ→", $sakuhin_info->{$passthrough_id}{al_pt}//'', "／100' value='", $sakuhin_info->{$passthrough_id}{al_pt}//'', "'><input name='tensuu_bl_pt' placeholder='ﾌﾞｸﾛｸﾞ→", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "'><input name='tensuu_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div></form>";
 		print "</div>";
 		print "<div class='migi'>";
 			print "<div class='tensuu'>", ten_henkan($sakuhin_info->{$passthrough_id}{point}), "</div>" if defined $sakuhin_info->{$passthrough_id}{point};
@@ -147,9 +147,73 @@ if(defined param('id') && param('id')){
 					print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' && defined from_json($v->{bikou})->{param('id')} }->() )} if defined $v->{bikou} && $v->{bikou} ne '';
 				print "</div>";
 			}
+			print "<div class='kansyourirekisyo'>";
+			print "<form action='sakunai.pl' method='post'>";
+			# 鑑賞履歴（作品ページ内）
+				my $rireki_query = "select * from rireki where sid = ?";
+				my $rireki_syutoku = $dbh->prepare($rireki_query);
+				$rireki_syutoku->execute($passthrough_id);
+				print "<div class='midasi'><span>${\(Kahifu::Template::dict('KANSYOURIREKISYO'))}</span></div>";
+				print "<div class='rireki'>";
+				print "<div class='gyou touroku'>";
+					print "<div class='jiten${\( sub { return ' mikakutei' if $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{time}, $sakuhin_info->{$passthrough_id}{mikakutei}), "</div>";
+					print "<div class='jyou'>${\(Kahifu::Template::dict('TOUROKU_JYOU'))}</div>";
+				print "</div>";
+				print "<div class='gyou'>";
+					print "<div class='jiten${\( sub { return ' mikakutei' if $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{hajimari}, $sakuhin_info->{$passthrough_id}{mikakutei}), "</div>";
+					print "<div class='jyou'>${\(Kahifu::Template::dict('HAJIMARI_JYOU'))}</div>";
+				print "</div>";
+				while(my $v = $rireki_syutoku->fetchrow_hashref){
+					print "<div class='gyou' data-rireki='", $v->{id}, "'>";
+						print "<div class='jiten${\( sub { return ' mikakutei' if $v->{mkt}==1 }->() )}'>", date($v->{jiten}, $v->{mkt}), "</div>";
+						print "<div class='jyou'>", jyoukyou_settei($v->{jyoukyou}, $sakuhin_info->{$passthrough_id}{hajimari}, $v->{owari}, 609, $sakuhin_info->{$passthrough_id}{eternal}), "</div>";
+						print "<div class='sintyoku'>", $v->{part}, '／', $v->{whole}, $v->{josuu}, "</div>";
+						print "<div class='memo'>", $v->{text}, "</div>" if defined $v->{text};
+					print "</div>";
+					print "<div class='gyou hensyuu' data-rireki='", $v->{id}, "'>";
+						print "<input type='hidden' name='reference' value='", $v->{id}, "'>";
+						print "<div class='jiten_hi'>";
+							print "<div class='jiten_y'><input type='text' name='jiten_y'  placeholder='", date_split($v->{jiten}, 0), "' value='", date_split($v->{jiten}, 0), "'>${\(Kahifu::Template::dict('TOSI'))}</div>";
+							print "<div class='jiten_m'><input type='text' name='jiten_m'  placeholder='", date_split($v->{jiten}, 1), "' value='", date_split($v->{jiten}, 1), "'>${\(Kahifu::Template::dict('TUKI'))}</div>";
+							print "<div class='jiten_d'><input type='text' name='jiten_d'  placeholder='", date_split($v->{jiten}, 2), "' value='", date_split($v->{jiten}, 2), "'>${\(Kahifu::Template::dict('HI'))}</div>";
+						print "</div>";
+						print "<div class='jiten_jikan'>";
+							print "<div class='jiten_h'><input type='text' name='jiten_h' placeholder='", date_split($v->{jiten}, 3), "' value='", date_split($v->{jiten}, 3), "'>${\(Kahifu::Template::dict('JI'))}</div>";
+							print "<div class='jiten_i'><input type='text' name='jiten_i'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}'>${\(Kahifu::Template::dict('FUN'))}</div>";
+							print "<div class='jiten_s'><input type='text' name='jiten_s'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}'>${\(Kahifu::Template::dict('BYOU'))}</div>";
+							print "<div class='jiten_unix'><input type='text'  name='jiten_unix' placeholder='", $v->{jiten}, "'></div>";
+						print "</div>";
+						print "<div class='sintyoku'>";
+							my $jyoukyou_list = $dbh->prepare("select jyoukyou from `jyoukyou` where id not in (1, 8, 9, 10, 11, 12)");
+							$jyoukyou_list->execute();
+							print "<select name='jyoukyou'>";
+							while(my $w = $jyoukyou_list->fetchrow_hashref){
+								print "<option value='$w->{jyoukyou}' ${\( sub { return ' selected=selected' if $w->{jyoukyou} eq $v->{jyoukyou} }->() )}>$w->{jyoukyou}</option>";
+							}
+							print "</select>";
+							print "<div class='part'><input type='text'  name='part' placeholder='", $v->{part}, "' value='", $v->{part}, "'></div>／";
+							print "<div class='whole'><input type='text' name='whole'  placeholder='", $v->{whole}, "' value='", $v->{whole}, "'></div>";
+							print "<div class='josuu'><input type='text' name='josuu'  placeholder='", $v->{josuu}, "' value='", $v->{josuu}, "'></div>";
+							print "<div class='mikakutei'><select name='mikakutei' ><option value='1'${\( sub { return ' selected=selected' if $v->{mkt}==1 }->() )}>${\(Kahifu::Template::dict('MIKAKUTEI_JYOU'))}</option><option value='0'${\( sub { return ' selected=selected' if $v->{mkt}==0 }->() )}>${\(Kahifu::Template::dict('KAKUTEI_JYOU'))}</option></select></div>";
+						print "</div>";
+						print "<div class='text'>";
+							print "<input type='text'  name='text' placeholder='", $v->{text}, "' value='", $v->{text}, "'>";
+						print "</div>";
+					print "</div>";
+				}
+				print "</div>";
+				print "<div class='rireki_sousin'><input name='rireki_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div>";
+			print "</form>";
+			print "</div>";
 		print "</div>";
 	print "</div>";
 	
+	print '<script>
+	$(\'div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div.jiten\').on(\'click\', function() {
+		$(\'div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu[data-rireki=\' + $(this).parent().attr(\'data-rireki\') + \']\').slideToggle();
+		$(\'div.rireki_sousin\').show();
+	});
+  	</script>';
 	print Kahifu::Template::html_noti();
 	exit;
 }
@@ -206,7 +270,7 @@ if($paginate == 1){
 	#　idたちを集める
 	# 旧meirei: select `id` from `sakuhin` where ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2))||(((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) order by `owari` desc limit ${row_count} offset ?
 	$meirei_sitami = ($page == 1) ? $dbh->prepare("select * from 
-		(select `id`, `owari`, `hajimari`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}) a union select * from (select `id`, `owari`, `hajimari`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (!(`jyoukyou` = '中' or `jyoukyou` = '再') and ((`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ? ) b order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka}") : $dbh->prepare("select `id`, `midasi` from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ?");
+		(select `id`, `owari`, `hajimari`, `time`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}) a union select * from (select `id`, `owari`, `hajimari`, `time`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (!(`jyoukyou` = '中' or `jyoukyou` = '再') and ((`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ? ) b order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka}") : $dbh->prepare("select `id`, `midasi` from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ?");
 		# 修正→`id`だけでmeireiと不一致になります。一体どうして？？？
 	$page != 1 ? $meirei_sitami->execute(@sitazi_bind, $page_offset) : 	$meirei_sitami->execute(@sitazi_bind, @sitazi_bind_2, $page_offset);
 	while(my $v = $meirei_sitami->fetchrow_hashref){
@@ -245,6 +309,16 @@ if($paginate == 1){
 	@meirei = ("select reki.*, saku.midasi, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
 }
 
+if(!(Kahifu::Template::tenmei() || $ninsyou)){
+	print "<form action='aikotoba.pl'>";
+	print "<div class='aikotoba'>";
+		print "<span>未知の世界は貴方を待っています。さあ、合言葉をおっしゃい。</span>";
+		print "<input type='text' name='pass'>";
+		print "<input type='submit' value='submit'>";
+	print "</div>";
+	print "</form>";
+}
+
 print "<div class='commander'>";
 	print "<div class='hidari'>";
 		print "<div class='navi'>";
@@ -253,7 +327,7 @@ print "<div class='commander'>";
 				print "<span>";
 				print "page ";
 				print my $page = (defined param('page')) ? param('page') : 1;
-				print "／";
+				print "${\(Kahifu::Template::dict('SLASH'))}";
 				print $page_subete;
 				print "</span>";
 				print "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
@@ -289,7 +363,7 @@ print "<div class='commander'>";
 				my $jyoukyou_list = $dbh->prepare("select * from `jyoukyou`");
 				$jyoukyou_list->execute();
 				while(my $v = $jyoukyou_list->fetchrow_hashref){
-					print "<div class='jyoukyou${\( sub { return ' all' if $v->{id}==1})->()}' data-name='$v->{jyoukyou}'><span class='jyoukyou_type_$v->{id} $v->{class}'>${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . $v->{id}))}</span></div>" if $v->{jyoukyou} ne "葉";
+					print "<div title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $v->{id}))}' class='jyoukyou${\( sub { return ' all' if $v->{id}==1})->()}' data-name='$v->{jyoukyou}'><span class='jyoukyou_type_$v->{id} $v->{class}'>${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . $v->{id}))}</span></div>" if $v->{jyoukyou} ne "葉" && $v->{jyoukyou} ne "飛";
 					print "<style>.jyoukyou_type_$v->{id} { color: hsla($v->{hsl}, 1); }</style>";
 					$jyoukyou_type{$v->{jyoukyou}} = $v->{id};
 					$jyoukyou_class{$v->{jyoukyou}} = $v->{class};
@@ -490,8 +564,8 @@ if($paginate == 1){
 					print "<span class='sakka'>" . sakka_settei($v->{sakka}, $kensaku) . "</span>" if defined $v->{sakka};				
 				print "</div>";
 				print "<div class='jyou'>";
-					print "<div class='jyoukyou' data-jyoutype='$v->{jyoukyou}' data-jyoukyou='$v->{id}'>";
-						my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, $v->{hajimari}, $v->{owari}, $v->{current}, $v->{eternal});
+					my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, $v->{hajimari}, $v->{owari}, $v->{current}, $v->{eternal});
+					print "<div title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $jyoukyou_type{$jyoukyou_syori}))}' class='jyoukyou' data-jyoutype='$v->{jyoukyou}' data-jyoukyou='$v->{id}'>";
 						print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 						print $jyoukyou_syori;
 						print "</span>";
@@ -569,13 +643,13 @@ if($paginate == 1){
 				print "</div>";
 				# 履歴を初期化する Initialize "rireki"
 				print "<div id='a_$v->{id}' class='activity'>";
-				print "<div class='rireki_kakera'><div class='rirekinai_jyoukyou'><div class='jyoukyou'><span class='jyoukyou_type_1'>始</span></div></div><div class='rirekinai_hiduke'>", date($v->{hajimari}, $v->{mikakutei}),"</div></div>";
+				print "<div class='rireki_kakera'><div class='rirekinai_jyoukyou'><div class='jyoukyou'><span class='jyoukyou_type_1'>${\(Kahifu::Template::dict('HAJIMARI_JYOU'))}</span></div></div><div class='rirekinai_hiduke'>", date($v->{hajimari}, $v->{mikakutei}),"</div></div>";
 				my $kansyou_kaisuu = 0;
 				foreach(@r){
 					if ($_->[1] == $v->{id}){
 						print "<div class='rireki_kakera'>";
 							print "<div class='rirekinai_jyoukyou'>";
-								print "<div class='jyoukyou'>";
+								print "<div title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $jyoukyou_type{$jyoukyou_syori}))}' class='jyoukyou'>";
 								my $jyoukyou_syori = jyoukyou_settei($_->[5], $_->[2], $_->[2], 609, 609);
 								print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 								print $jyoukyou_syori;
