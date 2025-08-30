@@ -21,6 +21,12 @@ use Kahifu::Setuzoku;
 use Kahifu::Infra;
 use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key timestamp_syutoku);
 
+# https://fastapi.metacpan.org/source/ZMIJ/Array-Utils-0.5/Utils.pm
+sub array_minus(\@\@) {
+	my %e = map{ $_ => undef } @{$_[1]};
+	return grep( ! exists( $e{$_} ), @{$_[0]} ); 
+}
+
 #print "Content-type: text/html; charset=utf-8\n\n";
 
 if(request_method eq 'POST' && Kahifu::Template::tenmei()){
@@ -77,6 +83,28 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $query = "update collection set midasi = ?, midasi_seisiki = ?, hyouji = ?, turu = ?, tag = ?, gaiyouran = ?, bikou = ?, kakusu = ?, bikouiti = ?, kansou_hyouji = ?, color = ? where midasi_seisiki = ?";
 		my $hensyuu = $dbh->prepare($query);
 		$hensyuu->execute($midasi, $midasi_seisiki, $hyouji, $turu, $tag, $gaiyouran, $bikou_serialized, $hide, $bikouiti, $kansou_hyouji, $color, $midasi_seisiki);
+	}
+
+	for my $i (split ',', $turu){
+		my $info_query = "select `id`, `colle` from sakuhin where id = ?";
+		my $info_syutoku = $dbh->prepare($info_query);
+		$info_syutoku->execute($i);
+		my $info = $info_syutoku->fetchall_hashref('id');
+		my @colle_prev = split(',', $info->{$i}{'colle'});
+		my @colle_current = split(',', $info->{$i}{'colle'});
+		push(@colle_current, $midasi_seisiki);
+
+		my @colle_list_get = $dbh->selectall_array("select midasi_seisiki from collection");
+		for(my $i=0; $i<scalar(@colle_list_get); $i++){$colle_list_get[$i] = $colle_list_get[$i][0]}
+		my %to_delete = map { $_ => 1 } @colle_list_get;
+		@colle_current = grep { $to_delete{$_} } @colle_current;
+
+		my @colle_tuke = array_minus(@colle_current, @colle_prev);
+		my @colle_hazusi = array_minus(@colle_prev, @colle_current);
+		my $colle_turu = join(',', @colle_current);
+		my $sakuhin_query = "update sakuhin set colle = ? where id = ?";
+		my $sakuhin_hensyuu = $dbh->prepare($sakuhin_query);
+		$sakuhin_hensyuu->execute($colle_turu, $i);
 	}
 }
 
