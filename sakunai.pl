@@ -52,6 +52,39 @@ if(request_method eq 'POST' && defined param('kansou_sousin') && Kahifu::Templat
 	}
 }
 
+if(request_method eq 'POST' && defined param('rireki_sousin') && Kahifu::Template::tenmei()){
+	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
+
+	my @rireki_sid = param('reference');	
+	my $rireki_sid_placeholders = join ", ", ("?") x @rireki_sid;
+
+	my $info_rireki_query = "select * from rireki where id in (${rireki_sid_placeholders})";
+	my $info_rireki_syutoku = $dbh->prepare($info_rireki_query);
+	$info_rireki_syutoku->execute(@rireki_sid);
+	my $info_rireki = $info_rireki_syutoku->fetchall_hashref('id');
+
+	my %params;
+	foreach (param) {
+		$params{$_} = [ param($_) ];
+		$params{$_} = $params{$_}[0] if @{$params{$_}} == 1;
+	}
+	#die dump $params{'jiten_s'}[3];
+
+	for(my $i = 0; $i < scalar(param('reference')); $i++){
+		my $jiten = ref($params{'reference'}) eq 'ARRAY' ? ($params{'jiten_unix'}[$i] ne '' ? $params{'jiten_unix'}[$i] : ($params{'jiten_y'}[$i].$params{'jiten_m'}[$i].$params{'jiten_d'}[$i].$params{'jiten_h'}[$i].$params{'jiten_i'}[$i].$params{'jiten_s'}[$i] ne "" ? timestamp_syutoku($params{'jiten_y'}[$i], $params{'jiten_m'}[$i], $params{'jiten_d'}[$i], $params{'jiten_h'}[$i], $params{'jiten_i'}[$i], $params{'jiten_s'}[$i]) : $info_rireki->{$rireki_sid[$i]}{jiten})) : ($params{'jiten_unix'} ne '' ? $params{'jiten_unix'} : ($params{'jiten_y'}.$params{'jiten_m'}.$params{'jiten_d'}.$params{'jiten_h'}.$params{'jiten_i'}.$params{'jiten_s'} ne "" ? timestamp_syutoku($params{'jiten_y'}, $params{'jiten_m'}, $params{'jiten_d'}, $params{'jiten_h'}, $params{'jiten_i'}, $params{'jiten_s'}) : $info_rireki->{$rireki_sid[$i]}{jiten}));
+
+		my $part_kousin = defined param('part') && param('part') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'part'}[$i]) : decode_utf8($params{'part'})) : $info_rireki->{$rireki_sid[$i]}{part};
+		my $whole_kousin = defined param('whole') && param('whole') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'whole'}[$i]) : decode_utf8($params{'whole'})) : $info_rireki->{$rireki_sid[$i]}{whole};
+		my $jyoukyou_kousin = defined param('jyoukyou') && param('jyoukyou') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'jyoukyou'}[$i]) : decode_utf8($params{'jyoukyou'})) : $info_rireki->{$rireki_sid[$i]}{jyoukyou};
+		my $josuu_kousin = defined param('josuu') && param('josuu') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'josuu'}[$i]) : decode_utf8($params{'josuu'})) : $info_rireki->{$rireki_sid[$i]}{josuu};
+		my $mikakutei_kousin = defined param('mikakutei') && param('mikakutei') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'mikakutei'}[$i]) : decode_utf8($params{'mikakutei'})) : $info_rireki->{$rireki_sid[$i]}{mkt};
+		my $text_kousin = defined param('text') && param('text') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'text'}[$i]) : decode_utf8($params{'text'})) : $info_rireki->{$rireki_sid[$i]}{text};
+		my $rireki_kousin_query = "update rireki set jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ? where id = ?";
+		my $rireki_kousin_jikkou = $dbh->prepare($rireki_kousin_query);
+		$rireki_kousin_jikkou->execute($jiten, $part_kousin, $whole_kousin, $jyoukyou_kousin, $josuu_kousin, $mikakutei_kousin, $text_kousin, $rireki_sid[$i]);	
+	}
+}
+
 my $query=new CGI;
 print $query->redirect($ENV{HTTP_REFERER});
 print "Content-type: text/html; charset=utf-8\n\n";
