@@ -9,6 +9,7 @@ use Data::Dump qw(dump);
 use DateTime;
 use DBI;
 use URI;
+use List::Util 'sum';
 use JSON;
 use open qw( :std :encoding(utf8) );
 use utf8;
@@ -260,6 +261,8 @@ my (@week_border_original, $week_limit_lower, $week_limit_upper, $koyomi_week_co
 my (@rireki_sakuhin, @rireki_count);
 my ($hantyuu_syutoku, %koyomi_hantyuu_winner);
 my ($rirekiran);
+my $listen_index = 0;
+my (@listen_time, @listen_info_artist, @listen_info_album, @listen_info_track, %listen_session_hash_artist, %listen_session_hash_album, %listen_session_hash_track);
 if($paginate == 1){
 	#　最初のページの行数を数える（鑑賞中＋鑑賞ずみ）
 	$meirei_presitami = $dbh->prepare("select `id` from `sakuhin` where ${gyaku_kensaku_sitazi} (`jyoukyou` = '中' or `jyoukyou` = '再' or `current` = 1) and (`current` is null or `current` != 2) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}");
@@ -298,15 +301,39 @@ if($paginate == 1){
 	$dst_musi_week_limit_lower = ($week_border_original[0] - (($week - 0) * 604800)) + 3600;
 	$koyomi_week_count = week_count(${\(week($dst_musi_week_limit_lower))[0]}) == 1 ? 52 : 53; # yr from yr,wk of weeklimlower to count
 	#　part != 前のpart & jyou!=終（再開の場合を除く）	→週別（yearweek）で範疇の頻度を
-	$hantyuu_syutoku = "select YEARWEEK(FROM_UNIXTIME(reki.`jiten`), 1) as `week`, `hantyuu`, count(*) as `count` from (SELECT (\@partpre = part AND \@sidpre=sid AND `jyoukyou` not in ('終','葉','中')) AS unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) AS x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where substring(YEARWEEK(FROM_UNIXTIME(reki.`jiten`), 1), 1, 4) = ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and not unchanged_status group by `hantyuu`, `week` order by jiten desc";
+	$hantyuu_syutoku = "select YEARWEEK(FROM_UNIXTIME(reki.`jiten`), 1) as `week`, `jiten`, `hantyuu`, count(*) as `count` from (SELECT (\@partpre = part AND \@sidpre=sid AND `jyoukyou` not in ('終','葉','中')) AS unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) AS x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where substring(YEARWEEK(FROM_UNIXTIME(reki.`jiten`), 1), 1, 4) = ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and not unchanged_status group by `hantyuu`, `week` union all select YEARWEEK(FROM_UNIXTIME(`date`), 1) as `week`, `date` as `jiten`, 900 as `hantyuu`, floor((count(*) * 4.427)/60)/1.5 as `count` from (select `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, '終' as `jyoukyou`, listen.* from `listen`) as listen where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} group by `week` order by jiten desc";
+	#music_syutoku = "select YEARWEEK(FROM_UNIXTIME(`date`), 1) as `week`, 900 as `hantyuu`, floor((count(*) * 4.427)/60) as `count` from `listen` group by `week`"
 	my $koyomi_hantyuu = $dbh->prepare($hantyuu_syutoku);
-	$koyomi_hantyuu->execute(${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind);
+	$koyomi_hantyuu->execute(${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind, @sitazi_bind);
 	while(my $v = $koyomi_hantyuu->fetchrow_hashref){
 		my @hantyuu_inner_array = ($v->{week}, $v->{hantyuu}, $v->{count});		
 		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $koyomi_hantyuu_winner{$v->{week}}[2] < $v->{count} || not defined $koyomi_hantyuu_winner{$v->{week}});
 	}
-	
-	@meirei = ("select reki.*, saku.midasi, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
+
+	#audioscrobbler/listen組み込み
+	my $listen_row_iter;
+	my $listen_query = "select * from (select *,  `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, '終' as `jyoukyou`, lead(`date`) over (order by `date`) - `date` as `lag` from `listen`) as `listen` where `date` < ? && `date` >= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}";
+	my $listen_syutoku = $dbh->prepare($listen_query);
+	$listen_syutoku->execute($week_limit_upper, $week_limit_lower, @sitazi_bind);
+	my $listen_row_count = $listen_syutoku->rows;
+	while(my $v = $listen_syutoku->fetchrow_hashref){
+		$listen_row_iter++;
+		$listen_session_hash_artist{$v->{artist}}++;
+		$listen_session_hash_album{$v->{album}}++;
+		$listen_session_hash_track{$v->{name}}++;
+		if((defined $v->{lag} && $v->{lag} > 1800) || $listen_row_iter == $listen_row_count){
+			push @listen_time, $v->{date};
+			push @listen_info_artist, to_json(\%listen_session_hash_artist);
+			push @listen_info_album, to_json(\%listen_session_hash_album);
+			push @listen_info_track, to_json(\%listen_session_hash_track);
+			undef %listen_session_hash_artist;
+			undef %listen_session_hash_album;
+			undef %listen_session_hash_track;
+			$listen_index++;
+		}
+	}
+
+	@meirei = ("select reki.*, saku.midasi, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
 }
 
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
@@ -937,9 +964,70 @@ if($paginate == 1){
 	#　履歴　RIREKI
 	$rirekiran = $dbh->prepare($meirei[0]);
 	$rirekiran->execute($week_limit_lower, $week_limit_upper, @sitazi_bind);
+	sub ongaku_sounyuu {
+		my $saigentei = shift; 
+		my $teigentei = shift;
+		#はい、お借りしまーす！
+		my @listen_time = reverse @{$_[0]};
+		my @listen_info_artist = reverse @{$_[1]};
+		my @listen_info_album = reverse @{$_[2]};
+		my @listen_info_track = reverse @{$_[3]};
+		for my $p (0 .. scalar @listen_time){
+			if($listen_time[$p] < $saigentei && $listen_time[$p] >= $teigentei){
+				#　音楽セッションを挿入す
+				my $artist_json = from_json($listen_info_artist[$p]);
+				my $album_json = from_json($listen_info_album[$p]);
+				my $track_json = from_json($listen_info_track[$p]);
+				my $max_artist = (sort {$artist_json->{$a} <=> $artist_json->{$b}} keys %$artist_json)[-1];
+				my $max_artist_nii = (sort {$artist_json->{$a} <=> $artist_json->{$b}} keys %$artist_json)[-2] if scalar %$artist_json > 1;
+				my $max_artist_sanni = (sort {$artist_json->{$a} <=> $artist_json->{$b}} keys %$artist_json)[-3] if scalar %$artist_json > 2;
+				my $max_album = (sort {$album_json->{$a} <=> $album_json->{$b}} keys %$album_json)[-1];
+				my $max_track = (sort {$track_json->{$a} <=> $track_json->{$b}} keys %$track_json)[-1];
+				my $track_total = sum values %$track_json; # 再生数("scrobble") VS 曲数
+				print "<div class='koumoku ongaku'>";
+					print "<div class='hiduke'>";
+						print "<span>${\(date_split($listen_time[$p], 7))}</span>";
+					print "</div>";
+					print "<div class='sakuhinmei'>";
+						print "<p class='midasi'>";
+							if($track_json->{$max_track} != $track_total && $album_json->{$max_album} * 1.25 > $track_total){
+								print $max_artist if $artist_json->{$max_artist} * 1.25 > $track_total;
+								print "${\(Kahifu::Template::dict('KAGIKAKKO_HIDARI'))}", $max_album, "${\(Kahifu::Template::dict('KAGIKAKKO_MIGI'))}";
+								print "${\(Kahifu::Template::dict('NADO'))}" if scalar %$album_json > 1;
+							} else {
+								print $max_artist;
+								if($track_json->{$max_track} * 2 > $track_total){
+									print "${\(Kahifu::Template::dict('KAGIKAKKO_HIDARI'))}", $max_track, "${\(Kahifu::Template::dict('KAGIKAKKO_MIGI'))}";
+									print "${\(Kahifu::Template::dict('NADO'))}" if scalar %$track_json > 1;
+								} else {
+									print defined $max_artist_nii && ($artist_json->{$max_artist_nii} * 2 >= $artist_json->{$max_artist}) ? "、${max_artist_nii}" : (%$artist_json == 2 ? "${\(Kahifu::Template::dict('NADO'))}" : "");
+									print defined $max_artist_sanni && ($artist_json->{$max_artist_sanni} * 2 >= $artist_json->{$max_artist}) ? "、${max_artist_sanni}" : (%$artist_json == 3 ? "${\(Kahifu::Template::dict('NADO'))}" : "");
+									print "${\(Kahifu::Template::dict('NADO'))}" if scalar %$artist_json > 3;
+								}
+							}
+						print "</p>";
+					print "</div>";
+					print "<div class='jyou'>";
+						print "<div class='jyoukyou'>";
+							print "<span class='onpu'>";
+							print '聴';
+							print "</span>";
+						print "</div>";
+						print "<span class='jyouhou'>";
+						print scalar %$track_json, "曲／", scalar %$artist_json, "名／", scalar %$album_json, "枚";
+						print "</span>";
+					print "</div>";
+				print "</div>";
+			}
+		}
+	}
+
 	print "<div class='rireki_box'>";
-		my $last_sakuhin;
+		my ($last_sakuhin, $rireki_row_count);
+		my $last_timestamp = $week_limit_upper;
 		while(my $v = $rirekiran->fetchrow_hashref){
+			$rireki_row_count++;
+			ongaku_sounyuu($last_timestamp, $v->{jiten}, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
 			print "<div class='koumoku type_$v->{hantyuu}${\( sub { return ' hankakusi' if defined $v->{kakusu} && $v->{kakusu}==1 }->() )}'>";
 				print "<div class='hiduke'>";
 					print "<span>${\(date_split($v->{jiten}, 7))}</span>";
@@ -967,7 +1055,9 @@ if($paginate == 1){
 				print "</div>";
 			print "</div>";
 			$last_sakuhin = $v->{sid};
+			$last_timestamp = $v->{jiten};
 		}
+		print !$rireki_row_count ? ongaku_sounyuu($week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ongaku_sounyuu($last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
 		print "<div class='week'>";
 		print "</div>";
 	print "</div>";
