@@ -10,6 +10,7 @@ use DateTime;
 use DBI;
 use URI;
 use JSON;
+use LWP::UserAgent;
 use open qw( :std :encoding(utf8) );
 use utf8;
 use Encode qw( decode_utf8 );
@@ -18,6 +19,7 @@ use POSIX;
 use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
+use Kahifu::Key;
 use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key timestamp_syutoku);
 
 #print "Content-type: text/html; charset=utf-8\n\n";
@@ -214,6 +216,53 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
 		$sakuhin_kousin->execute($original_yotei, $original_jyoukyou, $original_part, $original_whole, $original_owari, param('reference'));
 	}
+
+	#audioscrobblerを組み込む
+	my $info_audioscrobbler_query = "select date from listen order by id desc limit 1";
+	my $info_audioscrobbler_syutoku = $dbh->prepare($info_audioscrobbler_query);
+	$info_audioscrobbler_syutoku->execute();
+	my $from_timestamp;
+	while(my $v = $info_audioscrobbler_syutoku->fetchrow_arrayref){
+		$from_timestamp = $v->[0];
+	}
+	$from_timestamp = $from_timestamp + 1;
+
+	my $initial_url = "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=@{[Kahifu::Key::api_user]}&api_key=@{[Kahifu::Key::api_key]}&format=json&limit=1000&from=${from_timestamp}";
+
+    my $request = LWP::UserAgent->new;
+    my $response = $request->get($initial_url);
+
+    if ($response->is_success) {
+        my $content = $response->decoded_content;
+        my $json = from_json(decode_utf8($content));
+        my $page_count = $json->{recenttracks}{'@attr'}{totalPages};
+        my $total = $json->{recenttracks}{'@attr'}{total};
+		sleep(1) if $page_count > 1;
+		if($total > 0){
+			for my $j (reverse 1 .. $page_count){
+				my $page_item_count = $j == $page_count ? $total - (($page_count - 1) * 1000) : $json->{recenttracks}{'@attr'}{perPage};
+				my $update_url = "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=@{[Kahifu::Key::api_user]}&api_key=@{[Kahifu::Key::api_key]}&format=json&limit=1000&from=${from_timestamp}&page=${j}";
+				my $inside_request = LWP::UserAgent->new;
+				my $inside_response = $inside_request->get($update_url);
+				if ($inside_response->is_success) {
+					my $new_content = $inside_response->decoded_content;
+					my $new_json = from_json(decode_utf8($new_content));
+					for my $c (reverse 0 .. $page_item_count - 1){
+						my $this_track = $new_json->{recenttracks}{track}[$c];
+						my $this_artist = $this_track->{artist}{'#text'};
+						my $this_name = $this_track->{name};
+						my $this_album = $this_track->{album}{'#text'};
+						my $this_date = $this_track->{date}{uts};
+						if(defined $this_date){
+							my $track_query = "insert into `listen` set name = ?, artist = ?, album = ?, date = ?";
+							my $track = $dbh->prepare($track_query);
+							$track->execute($this_name, $this_artist, $this_album, $this_date);
+						}
+					}
+				}
+			}
+		}
+    } 
 }
 
 my $query=new CGI;
