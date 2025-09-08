@@ -13,3 +13,27 @@ div.hantyuu_souhoukei {
 	text-shadow: 1px 1px 1px #622139;
 	font-weight: bold;
 }
+
+div.info {
+	background-color: hsl(332, 90%, 61%);
+	color: #fff;
+}
+
+.koumoku:nth-child(2n),
+.hannyou[class*=type_1],
+.hannyou[class*=type_2],
+.hannyou[class*=type_3],
+.hannyou[class*=type_4],
+.hannyou[class*=type_5],
+.hannyou[class*=type_6],
+.hannyou[class*=type_7],
+.hannyou[class*=type_8],
+.hannyou[class*=type_9] {
+	background-color: hsl(332, 70%, 90%);
+	color: hsl(338, 88%, 52%);
+}
+
+.koumoku:nth-child(2n+1) {
+	background-color: hsl(332, 100%, 97%);
+	color: hsl(338, 88%, 52%);
+}
