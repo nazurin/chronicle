@@ -274,6 +274,10 @@ div.jyoukyou span.imada {
 	text-shadow: 0px 0px 7px #e0fdd6;
 }
 
+div.jyoukyou span.onpu {
+	color: #fffc9e;
+}
+
 div.info {
 	border: 1px solid black;
 	line-height: 1;
@@ -311,6 +315,10 @@ div.koumoku > div.sakuhinmei {
 div.info > div.jyou,
 div.koumoku > div.jyou {
 	width: 20%;
+}
+
+div.koumoku.ongaku > div.jyou {
+	width: 30%;
 }
 
 div.info > div.hantyuu,
@@ -850,6 +858,11 @@ div.syuu_mekuri > div.youbi > div.youbi {
 
 div.syuu_mekuri > div.youbi > div.youbi.day_5 {
 	color: red;
+}
+
+div.syuu_mekuri > div.youbi > div.youbi.day_6,
+div.syuu_mekuri > div.youbi > div.youbi.day_7 {
+	/* color: blue; */
 }
 
 div.syuu_mekuri > div.youbi > div.hiduke {
