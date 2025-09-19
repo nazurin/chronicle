@@ -132,6 +132,12 @@ div.commander > div.hidari > div.hanrei .theme.gokusaisiki {
 	text-shadow: 1px 1px 1px #fff;
 }
 
+div.commander > div.hidari > div.hanrei .theme.flora {
+	background: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif'), cornflowerblue;
+	color: #fff;
+	text-shadow: 1px 1px #b81414;
+}
+
 div.commander > div.hidari > div.syuu_mekuri {
 	flex-grow: 1;
 }
@@ -437,6 +443,14 @@ div.koumoku > div.activity > div.rireki_kakera > div.rirekinai_hiduke {
 	width: 10em;
 }
 
+div.koumoku > div.activity > div.rireki_kakera > div.rirekinai_hiduke.mikakutei {
+	opacity: 0.7;
+}
+
+div.koumoku > div.activity > div.rireki_kakera > div.rirekinai_hiduke > span.mikakutei_kome {
+	margin-right: 0.25em;
+}
+
 div.koumoku > div.activity > div.rireki_kakera > div.rireki_title {
 	margin-left: 3em;
 }
@@ -467,21 +481,32 @@ div.koumoku > div.kansou_kousin {
 
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div,
+div.koumoku > div.kansou_kousin > form > div.super_extra > div,
 div.koumoku > div.kansou_kousin > form > div.colle > div {
 	display: inline-block;
 	margin-right: 1em;
 }
 
+div.koumoku > div.kansou_kousin > form > div.super_extra > div.yotei {
+	display: block;
+}
+
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div,
+div.koumoku > div.kansou_kousin > form > div.super_extra > div > div,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div {
 	display: inline-block;
 }
 
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div:first-child,
+div.koumoku > div.kansou_kousin > form > div.super_extra > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div:first-child {
 	width: 5em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.super_extra > div.yotei > div:first-child {
+	width: 7em;
 }
 
 div.koumoku > div.kansou_kousin > form > div.bunsyou {
@@ -890,9 +915,24 @@ div.rireki_box > div.koumoku > div.sakuhinmei {
 	width: 35%;
 }
 
+div.rireki_box > div.koumoku.lang_ja > div.hiduke {
+	width: 12.5%;
+}
+
+div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei {
+	width: 32.5%;
+}
+
+div.rireki_box > div.koumoku > div.hiduke > span.jikantai {
+	opacity: 0.5;
+	text-shadow: lightgray 1px 1px;
+	float: right;
+	margin-right: 0.375em;
+}
+
 div.rireki_box > div.koumoku > div.bikou {
 	font-size: 0.9em;
-	margin-left: 5em;
+	margin-left: 6.25em;
 }
 
 div.form.kiroku,
