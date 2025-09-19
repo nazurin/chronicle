@@ -256,12 +256,20 @@ div.rireki_box > div.koumoku:first-child {
 	border-top: none;
 }
 
-div.rireki_box > div.koumoku > div.hiduke {
+div.rireki_box > div.koumoku > div.hiduke,
+div.rireki_box > div.koumoku.lang_ja > div.hiduke {
 	width: 35%;
 	padding-left: 0.5em;
 }
 
-div.rireki_box > div.koumoku > div.sakuhinmei {
+div.rireki_box > div.koumoku > div.hiduke > span.jikantai {
+	margin-left: 0.5em;
+	float: initial;
+	margin-right: initial;
+}
+
+div.rireki_box > div.koumoku > div.sakuhinmei,
+div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei {
 	width: 65%;
 }
 
