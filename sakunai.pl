@@ -78,7 +78,8 @@ if(request_method eq 'POST' && defined param('rireki_sousin') && Kahifu::Templat
 		my $jyoukyou_kousin = defined param('jyoukyou') && param('jyoukyou') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'jyoukyou'}[$i]) : decode_utf8($params{'jyoukyou'})) : $info_rireki->{$rireki_sid[$i]}{jyoukyou};
 		my $josuu_kousin = defined param('josuu') && param('josuu') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'josuu'}[$i]) : decode_utf8($params{'josuu'})) : $info_rireki->{$rireki_sid[$i]}{josuu};
 		my $mikakutei_kousin = defined param('mikakutei') && param('mikakutei') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'mikakutei'}[$i]) : decode_utf8($params{'mikakutei'})) : $info_rireki->{$rireki_sid[$i]}{mkt};
-		my $text_kousin = defined param('text') && param('text') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'text'}[$i]) : decode_utf8($params{'text'})) : $info_rireki->{$rireki_sid[$i]}{text};
+		my $text_kousin = defined $params{'text'} && $params{'text'} ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'text'}[$i]) : decode_utf8($params{'text'})) : $info_rireki->{$rireki_sid[$i]}{text};
+
 		my $rireki_kousin_query = "update rireki set jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ? where id = ?";
 		my $rireki_kousin_jikkou = $dbh->prepare($rireki_kousin_query);
 		$rireki_kousin_jikkou->execute($jiten, $part_kousin, $whole_kousin, $jyoukyou_kousin, $josuu_kousin, $mikakutei_kousin, $text_kousin, $rireki_sid[$i]);	
