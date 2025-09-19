@@ -261,6 +261,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 					}
 				}
 			}
+			my $lag_kousin_query = "update listen join (select listen.*, lead(`date`) over (order by `date`) - `date` as `lagged` from listen) listened on listen.id = listened.id set listen.`lag` = `lagged` where listen.id > 58535 and listen.`lag` is null";
+			my $lag_kousin = $dbh->prepare($lag_kousin_query);
+			$lag_kousin->execute();
 		}
     } 
 }
