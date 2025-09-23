@@ -189,7 +189,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		} elsif ($info->{$passthrough_id}{josuu} ne $josuu && $info->{$passthrough_id}{part} == param('part') && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
 			#print 'Yes!!!!!'; #update_josuu_all
 			update_josuu_all();
-		} elsif ($info->{$passthrough_id}{part} != $info->{$passthrough_id}{whole} && $info->{$passthrough_id}{josuu} eq $josuu && ($info->{$passthrough_id}{part} > param('part') || (grep{$_ eq param('mode')} 1, 2 && $info->{$passthrough_id}{part} >= param('part'))) && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
+		} elsif ($info->{$passthrough_id}{part} != $info->{$passthrough_id}{whole} && $info->{$passthrough_id}{josuu} eq $josuu && ($info->{$passthrough_id}{part} > param('part') || ((grep{$_ eq param('mode')} 1, 2) && $info->{$passthrough_id}{part} >= param('part'))) && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
 			#print 'Yes!!!!!!'; #update_backtrace_part_error
 			update_backtrace_part_error();
 		} elsif ($info->{$passthrough_id}{sakuhajimari} != $hajimari) {
