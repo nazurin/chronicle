@@ -110,6 +110,8 @@ print Kahifu::Template::html_saki("${\(Kahifu::Template::dict('HYOUKA_TITLE'))}<
 #　タグ、履歴、関連人物、なが感想などなど
 #
 #
+
+print Kahifu::Junbi::lang;
 if(defined param('id') && param('id')){
 	my $sakuhin_query = "select * from sakuhin where id = ?";
 	my $sakuhin_syutoku = $dbh->prepare($sakuhin_query);
@@ -132,8 +134,27 @@ if(defined param('id') && param('id')){
 			my $kansou_info = $kansou_syutoku->fetchall_hashref('sid');
 			print Kahifu::Infra::bunsyou($kansou_info->{$passthrough_id}{kansou}) if defined $kansou_info->{$passthrough_id}{kansou};
 			print "</div>";
+			my $kutikomi_query = "select * from kutikomi where sid = ? order by jiten desc";
+			my $kutikomi_syutoku = $dbh->prepare($kutikomi_query);
+			$kutikomi_syutoku->execute($passthrough_id);
+			while(my $kutikomi_info = $kutikomi_syutoku->fetchrow_hashref){
+				print "<div class='kutikomi type_$kutikomi_info->{syurui} lang_${Kahifu::Junbi::lang}${\( sub { return ' hankakusi' if defined $kutikomi_info->{kakusu} && $kutikomi_info->{kakusu}==1 }->() )}'>";
+				print "<div class='header'><span class='syurui'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$kutikomi_info->{syurui}), "</span>";
+				print "<span class='title'>";
+				if(Kahifu::Template::tenmei){
+					print "<form action='sakunai.pl' method='post'><input type='hidden' name='reference' value='$passthrough_id'><input type='hidden' name='kutikomi_id' value='$kutikomi_info->{id}'><button type='button' class='kakejiku_hannyou text' data-kakejiku='kutikomi_hensyuu'>", Kahifu::Template::dict('KUTIKOMI_HENSYUU'), "</button>";
+					print $kutikomi_info->{kakusu} != 1 ? "<input class='text' type='submit' name='kutikomi_ingen' value='${\(Kahifu::Template::dict('KUTIKOMI_HIHYOUJI'))}'>" : "<input class='text' type='submit' name='kutikomi_ingen' value='${\(Kahifu::Template::dict('KUTIKOMI_HYOUJI'))}'>";
+					print "<button type='button' class='kakejiku_hannyou text' data-kakejiku='kutikomi_sakujyo'>", Kahifu::Template::dict('KUTIKOMI_SAKUJYO'), "</button></form>";
+				}
+				print date($kutikomi_info->{jiten}, 8), "</span></div>";
+				print "<div class='naiyou'>", Kahifu::Infra::bunsyou($kutikomi_info->{text}), "</div>";
+				print "<form method='post' id='sakunai_kansou_$kutikomi_info->{id}' action='sakunai.pl'><input type='hidden' name='kutikomi_id' value='$kutikomi_info->{id}'><input type='hidden' name='jiten' value='$kutikomi_info->{jiten}'><div data-kakejiku='kutikomi_hensyuu'><div class='syurui'><input type='radio' id='kutikomi_syurui1' name='syurui' value='1' ${\( sub { return 'checked=checked' if defined $kutikomi_info->{syurui} && $kutikomi_info->{syurui}==1 }->() )}><label for='kutikomi_syurui1'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_1'))}</span></label><input type='radio' id='kutikomi_syurui2' name='syurui' value='2' ${\( sub { return 'checked=checked' if defined $kutikomi_info->{syurui} && $kutikomi_info->{syurui}==2 }->() )}><label for='kutikomi_syurui2'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_2'))}</span></label><input type='radio' id='kutikomi_syurui3' name='syurui' value='3' ${\( sub { return 'checked=checked' if defined $kutikomi_info->{syurui} && $kutikomi_info->{syurui}==3 }->() )}><label for='kutikomi_syurui3'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_3'))}</span></label><input type='radio' id='kutikomi_syurui4' name='syurui' value='4' ${\( sub { return 'checked=checked' if defined $kutikomi_info->{syurui} && $kutikomi_info->{syurui}==4 }->() )}><label for='kutikomi_syurui4'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_4'))}</span></label><input type='radio' id='kutikomi_syurui5' name='syurui' value='5' ${\( sub { return 'checked=checked' if defined $kutikomi_info->{syurui} && $kutikomi_info->{syurui}==5 }->() )}><label for='kutikomi_syurui5'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_5'))}</span></label><input type='radio' id='kutikomi_syurui4' name='syurui' value='6' ${\( sub { return 'checked=checked' if defined $kutikomi_info->{syurui} && $kutikomi_info->{syurui}==6 }->() )}><label for='kutikomi_syurui6'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_6'))}</span></label></div><textarea name='kutikomi' form='sakunai_kansou_$kutikomi_info->{id}'>", $kutikomi_info->{text}, "</textarea><input name='kutikomi_hensyuu' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div><div data-kakejiku='kutikomi_sakujyo'>${\(Kahifu::Template::dict('SAKUJYO_TYUUI'))}</div></form>";
+				print "</div>";
+			}
 			print "<div data-kakejiku='kansou_long' class='kakejiku'><span>${\(Kahifu::Template::dict('KANSOU_HENSYUU_DESC'))}<span class='sinsyuku'>＋</span></span></div>" if Kahifu::Template::tenmei;
 			print "<form method='post' id='sakunai_kansou' action='sakunai.pl'><input type='hidden' name='reference' value='${passthrough_id}'><div data-kakejiku='kansou_long'><textarea name='text' form='sakunai_kansou'>", $kansou_info->{$passthrough_id}{kansou}//'', "</textarea><input name='kansou_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div></form>";
+			print "<div data-kakejiku='kutikomi' class='kakejiku'><span>${\(Kahifu::Template::dict('KUTIKOMI_KAKEJIKU'))}<span class='sinsyuku'>＋</span></span></div>" if Kahifu::Template::tenmei;
+			print "<form method='post' id='sakunai_kutikomi' action='sakunai.pl'><input type='hidden' name='reference' value='${passthrough_id}'><div data-kakejiku='kutikomi'><div class='syurui'><input type='radio' id='kutikomi_syurui1' name='syurui' value='1' checked='checked'><label for='kutikomi_syurui1'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_1'))}</span></label><input type='radio' id='kutikomi_syurui2' name='syurui' value='2'><label for='kutikomi_syurui2'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_2'))}</span></label><input type='radio' id='kutikomi_syurui3' name='syurui' value='3'><label for='kutikomi_syurui3'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_3'))}</span></label><input type='radio' id='kutikomi_syurui4' name='syurui' value='4'><label for='kutikomi_syurui4'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_4'))}</span></label><input type='radio' id='kutikomi_syurui5' name='syurui' value='5'><label for='kutikomi_syurui5'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_5'))}</span></label><input type='radio' id='kutikomi_syurui6' name='syurui' value='6'><label for='kutikomi_syurui6'><span>${\(Kahifu::Template::dict('KUTIKOMI_TYPE_6'))}</span></label></div><textarea name='kutikomi' form='sakunai_kutikomi'></textarea><input name='kutikomi_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div></form>";
 			print "<div data-kakejiku='ten' class='kakejiku'><span>${\(Kahifu::Template::dict('TENSUU'))}<span class='sinsyuku'>${\(Kahifu::Template::dict('SINSYUKU_PLUS'))}</span></span></div>" if Kahifu::Template::tenmei;
 			print "<form method='post' id='sakunai_tennsuu' action='tensuu.pl'><input type='hidden' name='reference' value='${passthrough_id}'><div data-kakejiku='ten'><input name='tensuu_kojin' placeholder='私式→", $sakuhin_info->{$passthrough_id}{point}//'', "' value='", $sakuhin_info->{$passthrough_id}{point}//'', "'><input name='tensuu_mal_pt' placeholder='ﾏｲｱﾆ→", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{mal_pt}//'', "'><input name='tensuu_al_pt' placeholder='ｱﾆﾘｽﾄ→", $sakuhin_info->{$passthrough_id}{al_pt}//'', "／100' value='", $sakuhin_info->{$passthrough_id}{al_pt}//'', "'><input name='tensuu_bl_pt' placeholder='ﾌﾞｸﾛｸﾞ→", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "／10' value='", $sakuhin_info->{$passthrough_id}{bl_pt}//'', "'><input name='tensuu_sousin' type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div></form>";
 		print "</div>";
@@ -308,9 +329,23 @@ if($paginate == 1){
 	#music_syutoku = "select YEARWEEK(FROM_UNIXTIME(`date`), 1) as `week`, 900 as `hantyuu`, floor((count(*) * 4.427)/60) as `count` from `listen` group by `week`"
 	my $koyomi_hantyuu = $dbh->prepare($hantyuu_syutoku);
 	$koyomi_hantyuu->execute(${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind, @sitazi_bind);
+	sub collapse_hantyuu {
+		my $hantyuu = shift//6;
+		return 7 if $hantyuu == 16 || $hantyuu == 24;
+		return 68 if $hantyuu == 67;
+		return 6 if $hantyuu == 25 || $hantyuu == 26 || $hantyuu == 18;
+		return 14 if $hantyuu == 17;
+		return 12 if $hantyuu == 15 || $hantyuu == 102;
+		return $hantyuu;
+	}
+	my ($hantyuu_atumari, $last_week_hantyuu, $hantyuu_syori);
 	while(my $v = $koyomi_hantyuu->fetchrow_hashref){
-		my @hantyuu_inner_array = ($v->{week}, $v->{hantyuu}, $v->{count});		
-		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $koyomi_hantyuu_winner{$v->{week}}[2] < $v->{count} || not defined $koyomi_hantyuu_winner{$v->{week}});
+		undef %{$hantyuu_atumari} if $v->{week} != $last_week_hantyuu;
+		$last_week_hantyuu = $v->{week};
+		$hantyuu_syori = collapse_hantyuu($v->{hantyuu});
+		$hantyuu_atumari->{"$hantyuu_syori"} += $v->{count};
+		my @hantyuu_inner_array = ($v->{week}, $hantyuu_syori, $hantyuu_atumari->{$hantyuu_syori});		
+		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori} || not defined $koyomi_hantyuu_winner{$v->{week}});
 	}
 
 	#audioscrobbler/listen組み込み
@@ -337,15 +372,15 @@ if($paginate == 1){
 		}
 	}
 
-	@meirei = ("select reki.*, saku.midasi, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
+	@meirei = ("select reki.*, saku.midasi, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, 0 as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
 }
 
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
-	print "<form action='aikotoba.pl'>";
+	print "<form action='aikotoba.pl' method='post'>";
 	print "<div class='aikotoba'>";
 		print "<span>${\(Kahifu::Template::dict('AIKOTOBA_SETUMEI'))}</span>";
 		print "<input type='text' name='pass'>";
-		print "<input type='submit' value='submit'>";
+		print "<input type='submit' name='aikotoba_submit' value='submit'>";
 	print "</div>";
 	print "</form>";
 }
@@ -490,7 +525,7 @@ print "<div class='commander'>";
 				print "<div class='siborikomibako'>";
 					print "<select name='page_siborikomi_hantyuu' class='hantyuu_all'>";
 					for my $i (0 .. scalar @hantyuu_type - 1) {
-						print "<option class='hantyuu_$hantyuu_class[$i]' value='$hantyuu_type[$i]' ${\( sub { return 'selected=selected' if ${siborikomi_hantyuu}==$hantyuu_type[$i] }->() )}>${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $hantyuu_type[$i]))}</option>";
+						print "<option class='hantyuu_$hantyuu_class[$i]' value='$hantyuu_data[$i]' ${\( sub { return 'selected=selected' if ${siborikomi_hantyuu} eq $hantyuu_data[$i] }->() )}>${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $hantyuu_type[$i]))}</option>";
 					}
 					print "</select>";
 					print "<select class='jyoukyou_type_1' name='page_siborikomi_jyoukyou'>";
@@ -970,8 +1005,9 @@ if($paginate == 1){
 	#　PAGINATE=3
 	#　履歴　RIREKI
 	$rirekiran = $dbh->prepare($meirei[0]);
-	$rirekiran->execute($week_limit_lower, $week_limit_upper, @sitazi_bind);
+	$rirekiran->execute($week_limit_lower, $week_limit_upper, @sitazi_bind, $week_limit_lower, $week_limit_upper, @sitazi_bind);
 	sub ongaku_sounyuu {
+		my $last_sakuhin = shift;
 		my $saigentei = shift; 
 		my $teigentei = shift;
 		#はい、お借りしまーす！
@@ -994,7 +1030,7 @@ if($paginate == 1){
 				print "<div class='koumoku ongaku lang_${Kahifu::Junbi::lang}'>";
 					print "<div title='${\(date_split($listen_time[$p], 8, $sanjyuujikan_seido))}' class='hiduke'>";
 						print "<span>${\(date_split($listen_time[$p], 7))}</span>";
-						print "<span class='jikantai'>${\(jikantai($listen_time[$p], $sanjyuujikan_seido))}</span>" if $Kahifu::Junbi::lang eq 'ja' && Kahifu::Template::tenmei;
+						print "<span class='jikantai'>${\(jikantai($listen_time[$p], $sanjyuujikan_seido))}</span>" if $Kahifu::Junbi::lang eq 'ja' && $ninsyou;
 					print "</div>";
 					print "<div class='sakuhinmei'>";
 						print "<p class='midasi'>";
@@ -1026,8 +1062,10 @@ if($paginate == 1){
 						print "</span>";
 					print "</div>";
 				print "</div>";
+				$last_sakuhin = 0;
 			}
 		}
+		return $last_sakuhin;
 	}
 
 	print "<div class='rireki_box'>";
@@ -1035,17 +1073,19 @@ if($paginate == 1){
 		my $last_timestamp = $week_limit_upper;
 		while(my $v = $rirekiran->fetchrow_hashref){
 			$rireki_row_count++;
-			ongaku_sounyuu($last_timestamp, $v->{jiten}, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
+			$last_sakuhin = ongaku_sounyuu($last_sakuhin, $last_timestamp, $v->{jiten}, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
 			print "<div class='koumoku type_$v->{hantyuu}${\( sub { return ' hankakusi' if defined $v->{kakusu} && $v->{kakusu}==1 }->() )} lang_${Kahifu::Junbi::lang}'>";
 				print "<div title='${\(date_split($v->{jiten}, 8, $sanjyuujikan_seido))}' class='hiduke'>";
 					print "<span>${\(date_split($v->{jiten}, 7, $sanjyuujikan_seido))}</span>";
-					print "<span class='jikantai'>${\(jikantai($v->{jiten}, $sanjyuujikan_seido))}</span>" if $Kahifu::Junbi::lang eq 'ja' && Kahifu::Template::tenmei;
+					print "<span class='jikantai'>${\(jikantai($v->{jiten}, $sanjyuujikan_seido))}</span>" if $Kahifu::Junbi::lang eq 'ja' && $ninsyou;
 				print "</div>";
 				print "<div class='sakuhinmei'>";
+					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && !Kahifu::Infra::mobile();
 					print "<p id='$v->{id}' class='midasi $v->{id}' data-kansou='$v->{id}'>";
 					print midasi_settei($v->{midasi}, $v->{mikakutei}, $v->{current}, $kensaku) if (defined $last_sakuhin && $last_sakuhin ne "" && $last_sakuhin ne $v->{sid}) || not defined $last_sakuhin;
 					print "</p>";	
 				print "</div>";
+				if($v->{hantyuu} != 700){
 				print "<div class='jyou'>";
 					print "<div class='jyoukyou' data-jyoutype='$v->{jyoukyou}' data-jyoukyou='$v->{id}'>";
 						my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, 0, $v->{jiten}, 609, 609);
@@ -1059,14 +1099,17 @@ if($paginate == 1){
 					print $v->{josuu};
 					print "</span>";
 				print "</div>";
+				}
 				print "<div class='bikou${\( sub { return ' ari' if defined $v->{text} && $v->{text} }->() )}'>";
+					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && Kahifu::Infra::mobile();
 					print $v->{text} if defined $v->{text} && $v->{text};
 				print "</div>";
 			print "</div>";
 			$last_sakuhin = $v->{sid};
 			$last_timestamp = $v->{jiten};
 		}
-		print !$rireki_row_count ? ongaku_sounyuu($week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ongaku_sounyuu($last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
+		$last_sakuhin = '';
+		print !$rireki_row_count ? ongaku_sounyuu($last_sakuhin, $week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ongaku_sounyuu($last_sakuhin, $last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
 		print "<div class='week'>";
 		print "</div>";
 	print "</div>";

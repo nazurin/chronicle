@@ -253,6 +253,45 @@
   	color: hsl(340.4, 76.2%, 36.3%);
 }
 
+.koumoku.type_700 {
+	background-color: darkblue;
+	color: white;
+}
+
+.koumoku.type_700:nth-child(2n+1) {
+	background-color: hsl(343, 100%, 27%);
+	color: white;
+}
+
 .hanrei.jyoukyou_itirann div {
 	border: rgba(228, 224, 224, 0.76) 1px dotted;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi {
+
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_1 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_1 {
+	background-color: hsl(206, 100%, 50%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_2 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_2 {
+	background-color: hsl(35, 100%, 50%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_3 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_3 {
+	background-color: hsl(113, 62%, 41%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_4 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_4 {
+	background-color: hsl(271, 100%, 50%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_5 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_5 {
+	background-color: hsl(325, 100%, 50%);
 }

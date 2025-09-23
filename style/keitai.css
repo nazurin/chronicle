@@ -300,6 +300,7 @@ div.sakuhinbako > div.migi {
 	padding: 0 0.25em;
 }
 
+div.sakuhinbako > div.migi > div.tensuu,
 div.sakuhinbako > div.migi > div.colle,
 div.sakuhinbako > div.migi > div.kansyourirekisyo {
 	max-width: initial;
@@ -307,4 +308,8 @@ div.sakuhinbako > div.migi > div.kansyourirekisyo {
 
 div.sakuhinbako > div.hidari > form > div[data-kakejiku="kansou_long"]:not(.kakejiku) textarea {
 	font-size: 1em;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi {
+	margin: 0em 0.25em;
 }

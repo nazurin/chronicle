@@ -86,6 +86,43 @@ if(request_method eq 'POST' && defined param('rireki_sousin') && Kahifu::Templat
 	}
 }
 
+if(request_method eq 'POST' && defined param('kutikomi_sousin') && Kahifu::Template::tenmei()){
+	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
+	my $text = decode_utf8(param('kutikomi'));	
+	my $syurui = decode_utf8(param('syurui'));	
+	my $jiten = time();
+	my $sounyuu_query = "insert into kutikomi (`sid`, `jiten`, `syurui`, `text`) values (?, ?, ?, ?)";
+	my $sounyuu_jikkou = $dbh->prepare($sounyuu_query);
+	$sounyuu_jikkou->execute(param('reference'), $jiten, $syurui, $text);
+}
+
+if(request_method eq 'POST' && defined param('kutikomi_hensyuu') && Kahifu::Template::tenmei()){
+	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
+	my $text = decode_utf8(param('kutikomi'));	
+	my $kutikomi_id = decode_utf8(param('kutikomi_id'));	
+	my $syurui = decode_utf8(param('syurui'));	
+	my $jiten = decode_utf8(param('jiten'));
+	my $sounyuu_query = "update kutikomi set `jiten` = ?, `syurui` = ?, `text` = ? where id = ?";
+	my $sounyuu_jikkou = $dbh->prepare($sounyuu_query);
+	$sounyuu_jikkou->execute($jiten, $syurui, $text, $kutikomi_id);
+}
+
+if(request_method eq 'POST' && defined param('kutikomi_ingen') && Kahifu::Template::tenmei()){
+	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
+	my $kutikomi_id = decode_utf8(param('kutikomi_id'));	
+	my $ingen_query = "update kutikomi set `kakusu` = !`kakusu` where id = ?";
+	my $ingen_jikkou = $dbh->prepare($ingen_query);
+	$ingen_jikkou->execute($kutikomi_id);
+}
+
+if(request_method eq 'POST' && defined param('kutikomi_sakujyo') && Kahifu::Template::tenmei()){
+	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
+	my $kutikomi_id = decode_utf8(param('kutikomi_id'));	
+	my $sakujyo_query = "delete from kutikomi where id = ?";
+	my $sakujyo_jikkou = $dbh->prepare($sakujyo_query);
+	$sakujyo_jikkou->execute($kutikomi_id);
+}
+
 my $query=new CGI;
 print $query->redirect($ENV{HTTP_REFERER});
 print "Content-type: text/html; charset=utf-8\n\n";

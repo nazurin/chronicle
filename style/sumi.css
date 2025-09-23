@@ -1036,8 +1036,65 @@ div.sakuhinbako > div.hidari > div.bunsyou > div.sirakaba > div.midasi {
 	color: purple;
 }
 
+div.sakuhinbako > div.hidari > div.kutikomi {
+	border: 1px solid lightgray;
+	margin-right: 0.5em;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi ~ div.kutikomi {
+	margin-top: 0.25em;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.header {
+	background: linear-gradient(0deg, #ddd, #efefef);
+	display: flex;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.header > span.syurui,
+div.koumoku.type_700 span.syurui {
+	color: white;
+	background-color: black;
+	display: inline-block;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.header > span.title {
+	text-align: right;
+	flex-grow: 1;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.header > span.title > form {
+	display: inline;
+	float: left;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.header > span.title > form > * {
+	margin-left: 0.125em;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.lang_ja > div.header > span.syurui,
+div.koumoku.lang_ja.type_700 span.syurui {
+	letter-spacing: 1em;
+	/* text-indent: -1em;
+	direction:rtl; */
+	padding: 0em 0em 0em 1em;
+}
+
+div.koumoku.type_700 span.syurui {
+	margin-right: 0.25em;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_5.lang_ja > div.header > span.syurui {
+	letter-spacing: initial;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou {
+	background-color: hsla(0, 0%, 100%, 0.7);
+	display: block;
+	padding: 0.125em 0.25em;
+}
+
 div.sakuhinbako > div.hidari > div.kakejiku {
-	margin-top: 1em;
+	margin-top: 0.5em;
 }
 
 div.sakuhinbako > div.hidari > form > div[data-kakejiku='kansou_long']:not(.kakejiku) {
@@ -1069,6 +1126,28 @@ div.sakuhinbako > div.hidari > form > div[data-kakejiku='ten']:not(.kakejiku) {
 	display: none;
 	width: 100%;
 	background: floralwhite;
+}
+
+div.sakuhinbako > div.hidari > form > div[data-kakejiku='kutikomi']:not(.kakejiku) {
+	display: none;
+	width: 100%;
+	background: floralwhite;
+}
+
+div.sakuhinbako > div.hidari > form > div[data-kakejiku='kutikomi']:not(.kakejiku) textarea,
+div.sakuhinbako > div.hidari > div.kutikomi > form > div > textarea {
+	width: 100%;
+	height: 10em;
+}
+
+div.sakuhinbako > div.hidari > form > div[data-kakejiku='kutikomi']:not(.kakejiku) input[type=submit],
+div.sakuhinbako > div.hidari > div.kutikomi > form > div > input[type=submit] {
+	width: 100%;
+	border-radius: 0;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > form > div {
+	display: none;
 }
 
 div.sakuhinbako > div.migi {
@@ -1133,6 +1212,7 @@ div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki {
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou {
 	display: flex;
 	flex-wrap: wrap;
+	line-height: 1.1;
 }
 
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou:nth-child(4n+3),
