@@ -1075,7 +1075,7 @@ if($paginate == 1){
 			$rireki_row_count++;
 			$last_sakuhin = ongaku_sounyuu($last_sakuhin, $last_timestamp, $v->{jiten}, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
 			print "<div class='koumoku type_$v->{hantyuu}${\( sub { return ' hankakusi' if defined $v->{kakusu} && $v->{kakusu}==1 }->() )} lang_${Kahifu::Junbi::lang}'>";
-				print "<div title='${\(date_split($v->{jiten}, 8, $sanjyuujikan_seido))}' class='hiduke'>";
+				print "<div title='${\(date_split($v->{jiten}, 8, $sanjyuujikan_seido))}' class='hiduke${\( sub { return ' hankakusi' if defined $v->{mkt} && $v->{mkt}==1 }->() )} '>";
 					print "<span>${\(date_split($v->{jiten}, 7, $sanjyuujikan_seido))}</span>";
 					print "<span class='jikantai'>${\(jikantai($v->{jiten}, $sanjyuujikan_seido))}</span>" if $Kahifu::Junbi::lang eq 'ja' && $ninsyou;
 				print "</div>";
