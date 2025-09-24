@@ -138,6 +138,24 @@ div.commander > div.hidari > div.hanrei .theme.flora {
 	text-shadow: 1px 1px #b81414;
 }
 
+div.commander > div.hidari > div.hanrei .lang.original {
+	color: white;
+	background-color: navy;
+	text-shadow: blue 1px 1px;
+}
+
+div.commander > div.hidari > div.hanrei .lang.learned {
+	color: white;
+	background-color: crimson;
+	text-shadow: rebeccapurple 1px 1px;
+}
+
+div.commander > div.hidari > div.hanrei .lang.browser {
+	color: white;
+	background-color: orange;
+	text-shadow: brown 1px 1px;
+}
+
 div.commander > div.hidari > div.syuu_mekuri {
 	flex-grow: 1;
 }
@@ -492,6 +510,7 @@ div.koumoku > div.kansou_kousin > form > div.super_extra > div.yotei {
 }
 
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div,
+div.koumoku > div.kansou_kousin > form > div.betumei > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div > div,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div {
@@ -499,6 +518,7 @@ div.koumoku > div.kansou_kousin > form > div.colle > div > div {
 }
 
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div:first-child,
+div.koumoku > div.kansou_kousin > form > div.betumei > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div:first-child {
@@ -507,6 +527,31 @@ div.koumoku > div.kansou_kousin > form > div.colle > div > div:first-child {
 
 div.koumoku > div.kansou_kousin > form > div.super_extra > div.yotei > div:first-child {
 	width: 7em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div:first-child {
+	vertical-align: top;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block {
+	width: 34em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block > input[name^=betumei_key] {
+	width: 5em;
+	margin-right: 0.5em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block > input[name^=betumei_val] {
+	width: 20em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block:first-child > button.betumei_sakujyo {
+	display: none;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > button.betumei_tuika {
+	float: right;
 }
 
 div.koumoku > div.kansou_kousin > form > div.bunsyou {
@@ -1055,6 +1100,7 @@ div.koumoku.type_700 span.syurui {
 	color: white;
 	background-color: black;
 	display: inline-block;
+	padding: 0em 0.5em;
 }
 
 div.sakuhinbako > div.hidari > div.kutikomi > div.header > span.title {

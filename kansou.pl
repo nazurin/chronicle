@@ -34,8 +34,14 @@ sub array_minus(\@\@) {
 
 #print "Content-type: text/html; charset=utf-8\n\n";
 
-if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kousin') &&  (! defined param('betumei') || (defined param('betumei') && param('betumei') ne 'del'))){
+if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kousin') &&  (! defined param('kanri') || (defined param('kanri') && param('kanri') ne 'del'))){
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
+
+	my %params;
+	foreach (param) {
+		$params{$_} = [ param($_) ];
+		$params{$_} = $params{$_}[0] if @{$params{$_}} == 1;
+	}
 	
 	my $id = defined param('reference') && param('reference') ? decode_utf8(param('reference')) : "";
 	my $midasi = defined param('midasi') && param('midasi') ? decode_utf8(param('midasi')) : "";
@@ -43,7 +49,12 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	my $hantyuu_raw = defined param('hantyuu') && param('hantyuu') ? decode_utf8(param('hantyuu')) : "";
 	my $sakka = defined param('sakka') && param('sakka') ? decode_utf8(param('sakka')) : "";
 	my $colle = defined param('collection') && param('collection') ? decode_utf8(param('collection')) : "";	
-	my $betumei = defined param('betumei') && param('betumei') ? decode_utf8(param('betumei')) : "";	
+	my @betumei_key = defined param('betumei_key') && param('betumei_key') ? decode_utf8(param('betumei_key')) : "";	
+	my @betumei_val = defined param('betumei_val') && param('betumei_val') ? decode_utf8(param('betumei_val')) : "";	
+	my @betumei_key_fuku = defined param('betumei_key_fuku') && param('betumei_key_fuku') ? decode_utf8(param('betumei_key_fuku')) : "";	
+	my @betumei_val_fuku = defined param('betumei_val_fuku') && param('betumei_val_fuku') ? decode_utf8(param('betumei_val_fuku')) : "";	
+	my @betumei_key_sakka = defined param('betumei_key_sakka') && param('betumei_key_sakka') ? decode_utf8(param('betumei_key_sakka')) : "";	
+	my @betumei_val_sakka = defined param('betumei_val_sakka') && param('betumei_val_sakka') ? decode_utf8(param('betumei_val_sakka')) : "";	
 	my $theme = defined param('theme') && param('theme') ? decode_utf8(param('theme')) : "";		
 	my $gyousuu = defined param('gyousuu') && param('gyousuu') ? decode_utf8(param('gyousuu')) : 1;		
 	my $current = defined param('current') && param('current') ? decode_utf8(param('current')) : 0;		
@@ -59,6 +70,23 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	my $info_syutoku = $dbh->prepare($info_query);
 	$info_syutoku->execute(param('reference'));
 	my $info = $info_syutoku->fetchall_hashref('id');
+
+	my ($betumei, $fukubetumei, $sakkabetumei);
+	foreach my $i (0 .. scalar @betumei_val){
+		$betumei->{decode_utf8($params{'betumei_key'}->[$i])} = decode_utf8($params{'betumei_val'}->[$i]) if ref $params{'betumei_key'} eq 'ARRAY';
+		$betumei->{decode_utf8($params{'betumei_key'})} = decode_utf8($params{'betumei_val'}) if ref $params{'betumei_key'} ne 'ARRAY';
+	}
+	my $betumei_json = to_json($betumei);
+	foreach my $i (0 .. scalar @betumei_val_fuku){
+		$fukubetumei->{decode_utf8($params{'betumei_key_fuku'}->[$i])} = decode_utf8($params{'betumei_val_fuku'}->[$i]) if ref $params{'betumei_key_fuku'} eq 'ARRAY';
+		$fukubetumei->{decode_utf8($params{'betumei_key_fuku'})} = decode_utf8($params{'betumei_val_fuku'}) if ref $params{'betumei_key_fuku'} ne 'ARRAY';
+	}
+	my $fukubetumei_json = to_json($fukubetumei);
+	foreach my $i (0 .. scalar @betumei_val_sakka){
+		$sakkabetumei->{decode_utf8($params{'betumei_key_sakka'}->[$i])} = decode_utf8($params{'betumei_val_sakka'}->[$i]) if ref $params{'betumei_key_sakka'} eq 'ARRAY';
+		$sakkabetumei->{decode_utf8($params{'betumei_key_sakka'})} = decode_utf8($params{'betumei_val_sakka'}) if ref $params{'betumei_key_sakka'} ne 'ARRAY';
+	}
+	my $sakkabetumei_json = to_json($sakkabetumei);
 	
 	my @colle_prev = split(',', $info->{$id}{colle});
 	my @colle_current = split(',', $colle);
@@ -125,11 +153,11 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 		$sounyuu_jikkou->execute($id, $genzai, $char, $kansou);
 	}
 		
-	my $meirei = "update sakuhin set yotei = ?, midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
+	my $meirei = "update sakuhin set yotei = ?, midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
 	
 	my $sakuhin_kousin = $dbh->prepare($meirei);
-	$sakuhin_kousin->execute($yotei, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
-} elsif(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('betumei') && param('betumei') eq 'del') {
+	$sakuhin_kousin->execute($yotei, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
+} elsif(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kanri') && param('kanri') eq 'del') {
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
 	
 	my $id = defined param('reference') && param('reference') ? decode_utf8(param('reference')) : "";

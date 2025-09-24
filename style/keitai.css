@@ -98,6 +98,29 @@ div.koumoku > div.activity_kousin > form > div.hiduke_collection {
 	display: block;
 }
 
+div.koumoku > div.kansou_kousin > form > div.betumei {
+	display: flex;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block {
+	display: flex;
+	width: 100%;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block {
+	display: flex;
+	width: 100%;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block > input[name=betumei_key] {
+	width: 4em;
+	margin-right: 0.5em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.betumei > div > div.betumei_block > input[name=betumei_val] {
+	width: initial;
+}
+
 div.collection_box > div.koumoku {
 	padding: 0.0625em 0.5em;
 }
