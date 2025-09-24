@@ -79,6 +79,7 @@ our $ninsyou = (defined $cookie{kangeiroku_ninsyou} && unpack('H*', sha256($cook
 our $style = (defined $cookie{hyouka_style}) ? $cookie{hyouka_style}->value : 'gokusaisiki';
 our $narabi = (defined $cookie{hyouka_narabi}) ? $cookie{hyouka_narabi}->value : 1;
 our $jun = (defined $cookie{hyouka_jun}) ? $cookie{hyouka_jun}->value : 0;
+our $sitei_gengo = (defined $cookie{hyouka_gengo}) ? $cookie{hyouka_gengo}->value : 3;
 our $siborikomi_hantyuu = (defined $cookie{hyouka_siborikomi_hantyuu}) ? $cookie{hyouka_siborikomi_hantyuu}->value : 50;
 our $siborikomi_jyoukyou = (defined $cookie{hyouka_siborikomi_jyoukyou}) ? $cookie{hyouka_siborikomi_jyoukyou}->value : 1;
 our $paginate = (defined $cookie{hyouka_paginate}) ? $cookie{hyouka_paginate}->value : 1;
@@ -88,6 +89,7 @@ our $week = (defined param('week') && param('week') != 0 && $ninsyou) ? param('w
 
 my $imagenzai = time();
 my $sanjyuujikan_seido = 1; # 0 = 24h, 1 = 30h
+my @kisyuutoku_gengo = ('en', 'ja', 'fa', 'ur'); #grep{$_ eq @kisyuutoku_gengo} 4, 5
 
 my $sanjyuujikansei_offset = $sanjyuujikan_seido * 21600;
 
@@ -372,7 +374,7 @@ if($paginate == 1){
 		}
 	}
 
-	@meirei = ("select reki.*, saku.midasi, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, 0 as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
+	@meirei = ("select reki.*, saku.midasi, saku.betumei, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, 0 as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, saku.betumei as betumei, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
 }
 
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
@@ -412,6 +414,13 @@ print "<div class='commander'>";
 				print "<div id='settei_sakura' data-style='stylesheet/sakura.css' class='theme sakura'>${\(Kahifu::Template::dict('HYOUKA_STYLE_1'))}</div>";
 				print "<div id='settei_gokusaisiki' data-style='stylesheet/gokusaisiki.css' class='theme gokusaisiki'>${\(Kahifu::Template::dict('HYOUKA_STYLE_2'))}</div>";
 				print "<div id='settei_flora' data-style='stylesheet/flora.css' class='theme flora'>${\(Kahifu::Template::dict('HYOUKA_STYLE_3'))}</div>";
+			print "</div>";
+
+			print "<div class='hanrei'>";
+				print "<span>${\(Kahifu::Template::dict('HYOUKA_GENGO_SETTEI'))}</span>";
+				print "<div id='settei_original' data-lang='1' class='lang original'>${\(Kahifu::Template::dict('HYOUKA_GENGO_SETTEI_1'))}</div>";
+				print "<div id='settei_learned' data-lang='2' class='lang learned'>${\(Kahifu::Template::dict('HYOUKA_GENGO_SETTEI_2'))}</div>";
+				print "<div id='settei_browser' data-lang='3' class='lang browser'>${\(Kahifu::Template::dict('HYOUKA_GENGO_SETTEI_3'))}</div>";
 			print "</div>";
 			
 			print "<div class='hanrei button'>";
@@ -625,7 +634,25 @@ if($paginate == 1){
 			print "<div class='koumoku type_$v->{hantyuu}${\( sub { return ' hankakusi' if defined $v->{kakusu} && $v->{kakusu}==1 }->() )}'>";
 				print "<div class='sakuhinmei'>";
 					print "<p id='$v->{id}' class='midasi $v->{id}' data-kansou='$v->{id}'>";
-					print midasi_settei($v->{midasi}, $v->{mikakutei}, $v->{current}, $kensaku);
+					my $tekisetu_midasi = defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY' ? from_json($v->{betumei}) : $v->{midasi};
+					if($sitei_gengo == 1){
+						delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
+					} elsif($sitei_gengo == 2 && $v->{colle} =~ /gengo_([^,]*)(,|$)/) {
+						my $sakuhin_gengo = $1;
+						if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY'){
+							delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
+						}
+					}
+					my $tekisetu_reference = ref $tekisetu_midasi eq 'HASH' && defined $tekisetu_midasi->{$Kahifu::Junbi::lang} ? $tekisetu_midasi->{$Kahifu::Junbi::lang} : (ref $tekisetu_midasi eq 'HASH' ? $v->{midasi} : $tekisetu_midasi);
+					if($sitei_gengo == 1){
+						delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
+					} elsif($sitei_gengo == 2 && $v->{colle} =~ /gengo_([^,]*)(,|$)/) {
+						my $sakuhin_gengo = $1;
+						if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY'){
+							delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
+						}
+					}
+					print midasi_settei($tekisetu_reference, $v->{mikakutei}, $v->{current}, $kensaku);
 					print "</p>";
 					print "<p class='fuku_midasi $v->{id}'>$v->{fukumidasi}</p>" if $v->{fukumidasi} ne '';
 					print "<span class='sakka'>" . sakka_settei($v->{sakka}, $kensaku) . "</span>" if defined $v->{sakka};				
@@ -756,7 +783,24 @@ if($paginate == 1){
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='", ${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SUBTITLE'))}</div><div><input type='text' size='30' placeholder='", $v->{fukumidasi}//'', "' name='fukumidasi' value='", $v->{fukumidasi}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</div><div><input type='text' size='20' placeholder='", $v->{sakka}//'', "' name='sakka' value='", $v->{sakka}//'', "'></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div><div><input type='text' size='20' placeholder='", $v->{betumei}//'', "' name='betumei' value='", $v->{betumei}//'', "'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div><div><input type='text' size='20' name='kanri' value=''></div></div>";
+					print "</div>";
+					print "<div class='betumei'>";
+						print "<div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div>";
+						print "<div class='betumei_set'>";
+							my $betumei = defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'HASH' ? from_json($v->{betumei}) : "";
+							if(defined $v->{betumei} && $v->{betumei} ne '' && ref($v->{betumei}) ne 'ARRAY'){
+								foreach my $key ( keys %$betumei ) { 
+									print "<div class='betumei_block'>";
+									print "<input name='betumei_key' placeholder='${key}' value='${key}'>";
+			   						print "<input name='betumei_val' placeholder=\"", $betumei->{$key}, "\" value=\"", $betumei->{$key}, "\"><button class='betumei_sakujyo' type='button'>–</button>";
+									print "</div>";
+								}
+							} else {
+								print "<div class='betumei_block'><input name='betumei_key' value=''><input name='betumei_val' value=''><button class='betumei_sakujyo' type='button'>–</button></div>";
+							}
+							print "<button class='betumei_tuika' type='button'>＋</button>";
+						print "</div>";
 					print "</div>";
 					print "<div class='extra'>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_THEME'))}</div><div><input type='text' size='20' placeholder='", $v->{theme}//'', "' name='theme' value='", $v->{theme}//'', "'></div></div>";
@@ -908,7 +952,17 @@ if($paginate == 1){
 					print "<div>";
 						print "<p id='$w->{id}' class='midasi $w->{id}' data-kansou='$w->{id}'>";
 						print "<a href='${\(url_get_tuke(\%url_get, 'id', $w->{id}))}'>";
-						print midasi_settei($w->{midasi}, $w->{mikakutei}, $w->{current}, $kensaku);
+						my $tekisetu_midasi = defined $w->{betumei} && $w->{betumei} ne '' && ref $w->{betumei} ne 'ARRAY' ? from_json($w->{betumei}) : $w->{midasi};
+						if($sitei_gengo == 1){
+							delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
+						} elsif($sitei_gengo == 2 && $w->{colle} =~ /gengo_([^,]*)(,|$)/) {
+							my $sakuhin_gengo = $1;
+							if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $w->{betumei} && $w->{betumei} ne '' && ref $w->{betumei} ne 'ARRAY'){
+								delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
+							}
+						}
+						my $tekisetu_reference = ref $tekisetu_midasi eq 'HASH' ? $tekisetu_midasi->{$Kahifu::Junbi::lang} : (ref $tekisetu_midasi eq 'HASH' ? $w->{midasi} : $tekisetu_midasi);
+						print midasi_settei($tekisetu_reference, $w->{mikakutei}, $w->{current}, $kensaku);
 						print "</a>";
 						print "</p>";
 						print "<p class='fuku_midasi $w->{id}'>$w->{fukumidasi}</p>" if $w->{fukumidasi} ne '';
@@ -1082,7 +1136,17 @@ if($paginate == 1){
 				print "<div class='sakuhinmei'>";
 					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && !Kahifu::Infra::mobile();
 					print "<p id='$v->{id}' class='midasi $v->{id}' data-kansou='$v->{id}'>";
-					print midasi_settei($v->{midasi}, $v->{mikakutei}, $v->{current}, $kensaku) if (defined $last_sakuhin && $last_sakuhin ne "" && $last_sakuhin ne $v->{sid}) || not defined $last_sakuhin;
+					my $tekisetu_midasi = defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY' ? from_json($v->{betumei}) : $v->{midasi};
+					if($sitei_gengo == 1){
+						delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
+					} elsif($sitei_gengo == 2 && $v->{colle} =~ /gengo_([^,]*)(,|$)/) {
+						my $sakuhin_gengo = $1;
+						if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY'){
+							delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
+						}
+					}
+					my $tekisetu_reference = ref $tekisetu_midasi eq 'HASH' && defined $tekisetu_midasi->{$Kahifu::Junbi::lang} ? $tekisetu_midasi->{$Kahifu::Junbi::lang} : (ref $tekisetu_midasi eq 'HASH' ? $v->{midasi} : $tekisetu_midasi);
+					print midasi_settei($tekisetu_reference, $v->{mikakutei}, $v->{current}, $kensaku) if (defined $last_sakuhin && $last_sakuhin ne "" && $last_sakuhin ne $v->{sid}) || not defined $last_sakuhin;
 					print "</p>";	
 				print "</div>";
 				if($v->{hantyuu} != 700){
@@ -1182,6 +1246,7 @@ print <<HTML
 	
 	var category_selected = 0;
 	var state_selected = 0;
+	var lang_selected = 0;
 	
 	if(document.cookie.split(";").some((item) => item.trim().startsWith("hyouka_category="))){
 		category_selected = document.cookie.split("; ").find((row) => row.startsWith("hyouka_category="))?.split("=")[1];
@@ -1189,6 +1254,10 @@ print <<HTML
 	
 	if(document.cookie.split(";").some((item) => item.trim().startsWith("hyouka_state="))){
 		state_selected = document.cookie.split("; ").find((row) => row.startsWith("hyouka_state="))?.split("=")[1];
+	}
+
+	if(document.cookie.split(";").some((item) => item.trim().startsWith("hyouka_gengo="))){
+		lang_selected = document.cookie.split("; ").find((row) => row.startsWith("hyouka_gengo="))?.split("=")[1];
 	}
 	
 	if(category_selected != 0){
@@ -1296,6 +1365,17 @@ print <<HTML
 		document.cookie = 'hyouka_state='+state_selected+';expires='+now.toUTCString()+';path=/;SameSite=Strict';	
 	});
 
+	\$('.hanrei .lang').click(function(){
+		var gengo = \$(this).attr('data-lang');
+		lang_selected = gengo;
+		
+		var now = new Date();
+		var time = now.getTime();
+		var expireTime = time + 10000000*36000;
+		now.setTime(expireTime);
+		document.cookie = 'hyouka_gengo='+lang_selected+';expires='+now.toUTCString()+';path=/;SameSite=Strict';	
+	});
+
 \$(function() {
   \$('.jyoukyou').on('click', function() {
 	\$(".activity.active").add('#a_' + \$(this).attr('data-jyoukyou')).toggleClass('active');
@@ -1308,6 +1388,13 @@ print <<HTML
   });
   \$('.midasi').on('click', function() {
 	\$(".kansou_kousin.active").add('#kk_' + \$(this).attr('data-kansou')).toggleClass('active');
+  });
+  \$(document.body).on('click', '.betumei_tuika', function(e){
+	var singyou = \$(this).parents('.betumei').find(".betumei_block:first-child").clone();
+	\$(singyou).insertBefore(\$(this).siblings('.betumei_block:first-child'));
+  });
+  \$(document.body).on('click', '.betumei_sakujyo', function(e){
+	\$(this).closest('.betumei_block').remove();
   });
 });
 </script>
