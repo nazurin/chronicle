@@ -21,7 +21,7 @@ use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Kahifu::Key;
-use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan);
+use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan);
 
 my $uri = Kahifu::Template::fetch_uri(__FILE__);
 my $ami = Kahifu::Template::fetch_ami($uri);
@@ -89,7 +89,6 @@ our $week = (defined param('week') && param('week') != 0 && $ninsyou) ? param('w
 
 my $imagenzai = time();
 my $sanjyuujikan_seido = 1; # 0 = 24h, 1 = 30h
-my @kisyuutoku_gengo = ('en', 'ja', 'fa', 'ur'); #grep{$_ eq @kisyuutoku_gengo} 4, 5
 
 my $sanjyuujikansei_offset = $sanjyuujikan_seido * 21600;
 
@@ -374,7 +373,7 @@ if($paginate == 1){
 		}
 	}
 
-	@meirei = ("select reki.*, saku.midasi, saku.betumei, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, 0 as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, saku.betumei as betumei, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
+	@meirei = ("select reki.*, saku.midasi, saku.betumei, saku.colle, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, 0 as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, saku.betumei as betumei, saku.colle as colle, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
 }
 
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
@@ -634,28 +633,11 @@ if($paginate == 1){
 			print "<div class='koumoku type_$v->{hantyuu}${\( sub { return ' hankakusi' if defined $v->{kakusu} && $v->{kakusu}==1 }->() )}'>";
 				print "<div class='sakuhinmei'>";
 					print "<p id='$v->{id}' class='midasi $v->{id}' data-kansou='$v->{id}'>";
-					my $tekisetu_midasi = defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY' ? from_json($v->{betumei}) : $v->{midasi};
-					if($sitei_gengo == 1){
-						delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
-					} elsif($sitei_gengo == 2 && $v->{colle} =~ /gengo_([^,]*)(,|$)/) {
-						my $sakuhin_gengo = $1;
-						if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY'){
-							delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
-						}
-					}
-					my $tekisetu_reference = ref $tekisetu_midasi eq 'HASH' && defined $tekisetu_midasi->{$Kahifu::Junbi::lang} ? $tekisetu_midasi->{$Kahifu::Junbi::lang} : (ref $tekisetu_midasi eq 'HASH' ? $v->{midasi} : $tekisetu_midasi);
-					if($sitei_gengo == 1){
-						delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
-					} elsif($sitei_gengo == 2 && $v->{colle} =~ /gengo_([^,]*)(,|$)/) {
-						my $sakuhin_gengo = $1;
-						if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY'){
-							delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
-						}
-					}
+					my $tekisetu_reference = midasi_tekisetuka($v->{midasi}, $v->{betumei}, $v->{colle}, $sitei_gengo);
 					print midasi_settei($tekisetu_reference, $v->{mikakutei}, $v->{current}, $kensaku);
 					print "</p>";
-					print "<p class='fuku_midasi $v->{id}'>$v->{fukumidasi}</p>" if $v->{fukumidasi} ne '';
-					print "<span class='sakka'>" . sakka_settei($v->{sakka}, $kensaku) . "</span>" if defined $v->{sakka};				
+					print "<p class='fuku_midasi $v->{id}'>" . midasi_tekisetuka($v->{fukumidasi}, $v->{fukubetumei}, $v->{colle}, $sitei_gengo) . "</p>" if $v->{fukumidasi} ne '';
+					print "<span class='sakka'>" . sakka_settei(midasi_tekisetuka($v->{sakka}, $v->{sakkabetumei}, $v->{colle}, $sitei_gengo), $kensaku) . "</span>" if defined $v->{sakka};				
 				print "</div>";
 				print "<div class='jyou'>";
 					my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, $v->{hajimari}, $v->{owari}, $v->{current}, $v->{eternal});
@@ -785,23 +767,9 @@ if($paginate == 1){
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</div><div><input type='text' size='20' placeholder='", $v->{sakka}//'', "' name='sakka' value='", $v->{sakka}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div><div><input type='text' size='20' name='kanri' value=''></div></div>";
 					print "</div>";
-					print "<div class='betumei'>";
-						print "<div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div>";
-						print "<div class='betumei_set'>";
-							my $betumei = defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'HASH' ? from_json($v->{betumei}) : "";
-							if(defined $v->{betumei} && $v->{betumei} ne '' && ref($v->{betumei}) ne 'ARRAY'){
-								foreach my $key ( keys %$betumei ) { 
-									print "<div class='betumei_block'>";
-									print "<input name='betumei_key' placeholder='${key}' value='${key}'>";
-			   						print "<input name='betumei_val' placeholder=\"", $betumei->{$key}, "\" value=\"", $betumei->{$key}, "\"><button class='betumei_sakujyo' type='button'>–</button>";
-									print "</div>";
-								}
-							} else {
-								print "<div class='betumei_block'><input name='betumei_key' value=''><input name='betumei_val' value=''><button class='betumei_sakujyo' type='button'>–</button></div>";
-							}
-							print "<button class='betumei_tuika' type='button'>＋</button>";
-						print "</div>";
-					print "</div>";
+					betumei_template($v->{betumei}, Kahifu::Template::dict('KIROKU_BETUMEI'));
+					betumei_template($v->{fukubetumei}, Kahifu::Template::dict('KIROKU_FUKUBETUMEI'), 'fuku');
+					betumei_template($v->{sakkabetumei}, Kahifu::Template::dict('KIROKU_SAKKABETUMEI'), 'sakka');
 					print "<div class='extra'>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_THEME'))}</div><div><input type='text' size='20' placeholder='", $v->{theme}//'', "' name='theme' value='", $v->{theme}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_GYOUSUU'))}</div><div><input type='text' size='20' placeholder='", $v->{gyousuu}//'', "' name='gyousuu' value='${\(sub { return $v->{gyousuu} if defined $v->{gyousuu} }->())}'></div></div>";
@@ -952,22 +920,13 @@ if($paginate == 1){
 					print "<div>";
 						print "<p id='$w->{id}' class='midasi $w->{id}' data-kansou='$w->{id}'>";
 						print "<a href='${\(url_get_tuke(\%url_get, 'id', $w->{id}))}'>";
-						my $tekisetu_midasi = defined $w->{betumei} && $w->{betumei} ne '' && ref $w->{betumei} ne 'ARRAY' ? from_json($w->{betumei}) : $w->{midasi};
-						if($sitei_gengo == 1){
-							delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
-						} elsif($sitei_gengo == 2 && $w->{colle} =~ /gengo_([^,]*)(,|$)/) {
-							my $sakuhin_gengo = $1;
-							if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $w->{betumei} && $w->{betumei} ne '' && ref $w->{betumei} ne 'ARRAY'){
-								delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
-							}
-						}
-						my $tekisetu_reference = ref $tekisetu_midasi eq 'HASH' ? $tekisetu_midasi->{$Kahifu::Junbi::lang} : (ref $tekisetu_midasi eq 'HASH' ? $w->{midasi} : $tekisetu_midasi);
+						my $tekisetu_reference = midasi_tekisetuka($w->{midasi}, $w->{betumei}, $w->{colle}, $sitei_gengo);
 						print midasi_settei($tekisetu_reference, $w->{mikakutei}, $w->{current}, $kensaku);
 						print "</a>";
 						print "</p>";
-						print "<p class='fuku_midasi $w->{id}'>$w->{fukumidasi}</p>" if $w->{fukumidasi} ne '';
+						print "<p class='fuku_midasi $w->{id}'>" . midasi_tekisetuka($w->{fukumidasi}, $w->{fukubetumei}, $w->{colle}) . "</p>" if $w->{fukumidasi} ne '';
 						my $sakka_hyouji = Kahifu::Infra::mobile() ? 0 : 1;
-						print "<p class='sakka'>" . sakka_settei($w->{sakka}, $kensaku, $sakka_hyouji) . "</p>" if defined $w->{sakka};	
+						print "<p class='sakka'>" . sakka_settei(midasi_tekisetuka($w->{sakka}, $w->{sakkabetumei}, $w->{colle}, $sitei_gengo), $kensaku, $sakka_hyouji) . "</p>" if defined $w->{sakka};	
 					print "</div>";			
 				print "</div>";
 				print "<div class='jyou'>";
@@ -1136,16 +1095,7 @@ if($paginate == 1){
 				print "<div class='sakuhinmei'>";
 					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && !Kahifu::Infra::mobile();
 					print "<p id='$v->{id}' class='midasi $v->{id}' data-kansou='$v->{id}'>";
-					my $tekisetu_midasi = defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY' ? from_json($v->{betumei}) : $v->{midasi};
-					if($sitei_gengo == 1){
-						delete $tekisetu_midasi->{$Kahifu::Junbi::lang} if ref $tekisetu_midasi eq 'HASH';
-					} elsif($sitei_gengo == 2 && $v->{colle} =~ /gengo_([^,]*)(,|$)/) {
-						my $sakuhin_gengo = $1;
-						if((grep{$_ eq $sakuhin_gengo} @kisyuutoku_gengo) ne '' && defined $v->{betumei} && $v->{betumei} ne '' && ref $v->{betumei} ne 'ARRAY'){
-							delete $tekisetu_midasi->{$Kahifu::Junbi::lang};
-						}
-					}
-					my $tekisetu_reference = ref $tekisetu_midasi eq 'HASH' && defined $tekisetu_midasi->{$Kahifu::Junbi::lang} ? $tekisetu_midasi->{$Kahifu::Junbi::lang} : (ref $tekisetu_midasi eq 'HASH' ? $v->{midasi} : $tekisetu_midasi);
+					my $tekisetu_reference = midasi_tekisetuka($v->{midasi}, $v->{betumei}, $v->{colle}, $sitei_gengo);
 					print midasi_settei($tekisetu_reference, $v->{mikakutei}, $v->{current}, $kensaku) if (defined $last_sakuhin && $last_sakuhin ne "" && $last_sakuhin ne $v->{sid}) || not defined $last_sakuhin;
 					print "</p>";	
 				print "</div>";
