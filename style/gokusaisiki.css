@@ -76,6 +76,18 @@
 	color: hsl(33.9, 97.4%, 29%);
 }
 
+.koumoku.subtype_7,
+.koumoku.subtype_16,
+.koumoku.subtype_24 {
+	background-color: hsl(33.9, 67.4%, 29%);
+}
+
+.koumoku.subtype_7:nth-child(2n+1),
+.koumoku.subtype_16:nth-child(2n+1),
+.koumoku.subtype_24:nth-child(2n+1) {
+	background-color: hsl(33.9, 67.4%, 39%);
+}
+
 .hantyuu_femihonn,
 .hannyou.type_18,
 .koumoku.type_18:nth-child(2n) {
@@ -86,6 +98,14 @@
 .koumoku.type_18:nth-child(2n+1) {
 	 background-color: hsl(332, 100%, 97%);
 	 color: hsl(338, 88%, 52%);
+}
+
+.koumoku.subtype_18 {
+	background-color: hsl(338, 58%, 52%);
+}
+
+.koumoku.subtype_18:nth-child(2n+1) {
+	background-color: hsl(338, 58%, 62%);
 }
 
 .hantyuu_si,
@@ -104,6 +124,16 @@
 	 color: hsl(161.1, 88%, 25.7%);
 }
 
+.koumoku.subtype_67,
+.koumoku.subtype_68 {
+	background-color: hsl(161.1, 58%, 25.7%);
+}
+
+.koumoku.subtype_67:nth-child(2n+1),
+.koumoku.subtype_68:nth-child(2n+1) {
+	background-color: hsl(161.1, 58%, 35%);
+}
+
 .hantyuu_anime,
 .hannyou.type_14,
 .hannyou.type_17,
@@ -119,6 +149,16 @@
 	color: hsl(0, 98.6%, 39.3%);
 }
 
+.koumoku.subtype_14,
+.koumoku.subtype_17 {
+	background-color: hsl(0, 58.6%, 39.3%);
+}
+
+.koumoku.subtype_14:nth-child(2n+1),
+.koumoku.subtype_17:nth-child(2n+1) {
+	background-color: hsl(0, 58.6%, 48%);
+}
+
 /* テレビ */
 .hantyuu_tele,
 .hannyou.type_10,
@@ -132,6 +172,14 @@
 	color: hsl(109.7, 68.6%, 29.1%);
 }
 
+.koumoku.subtype_10 {
+	background-color: hsl(109.7, 48.6%, 29.1%);
+}
+
+.koumoku.subtype_10:nth-child(2n+1) {
+	background-color: hsl(109.7, 48.6%, 40%);
+}
+
 /* 映画 */
 .hantyuu_eiga,
 .hannyou.type_9,
@@ -143,6 +191,14 @@
 .koumoku.type_9:nth-child(2n+1) {
 	background-color: hsl(183.4, 68.6%, 98%);
 	color: hsl(183.4, 68.6%, 30%);
+}
+
+.koumoku.subtype_9 {
+	background-color: hsl(183.4, 48.6%, 30%);
+}
+
+.koumoku.subtype_9:nth-child(2n+1) {
+	background-color: hsl(183.4, 48.6%, 40%);
 }
 
 /* 本 */
@@ -164,6 +220,18 @@
 	color: hsl(42.3, 98.6%, 33%);
 }
 
+.koumoku.subtype_6,
+.koumoku.subtype_25,
+.koumoku.subtype_26 {
+	background-color: hsl(42.3, 58.6%, 33%);
+}
+
+.koumoku.subtype_6:nth-child(2n+1),
+.koumoku.subtype_25:nth-child(2n+1),
+.koumoku.subtype_26:nth-child(2n+1) {
+	background-color: hsl(42.3, 58.6%, 42%);
+}
+
 /* 雑誌 */
 .hantyuu_zassi,
 .hannyou.type_11,
@@ -175,6 +243,14 @@
 .koumoku.type_11:nth-child(2n+1) {
 	background-color: hsl(53.1, 68.6%, 88%);
 	color: hsl(53.1, 68.6%, 30%);
+}
+
+.koumoku.subtype_11 {
+	background-color: hsl(53.1, 48.6%, 30%);
+}
+
+.koumoku.subtype_11:nth-child(2n+1) {
+	background-color: hsl(53.1, 48.6%, 40%);
 }
 
 /* 漫画 */
@@ -190,6 +266,14 @@
 	color: hsl(0, 0%, 40%);
 }
 
+.koumoku.subtype_13 {
+	background-color: hsl(0, 0%, 40%);
+}
+
+.koumoku.subtype_13:nth-child(2n+1) {
+	background-color: hsl(0, 0%, 50%);
+}
+
 /* 演劇 */
 .hantyuu_play,
 .hannyou.type_8,
@@ -201,6 +285,14 @@
 .koumoku.type_8:nth-child(2n+1) {
 	background-color: hsl(30.6, 68.6%, 95%);
 	color: hsl(30.6, 98.6%, 20%);
+}
+
+.koumoku.subtype_8 {
+	background-color: hsl(30.6, 58.6%, 20%);
+}
+
+.koumoku.subtype_8:nth-child(2n+1) {
+	background-color: hsl(30.6, 58.6%, 30%);
 }
 
 .hantyuu_script,
@@ -215,6 +307,14 @@
 .koumoku.type_103:nth-child(2n+1) {
 	background-color: hsl(222, 100%, 99%);
 	color: hsl(222, 60.6%, 40%);
+}
+
+.koumoku.subtype_103 {
+	background-color: hsl(222, 40.6%, 40%);
+}
+
+.koumoku.subtype_103:nth-child(2n+1) {
+	background-color: hsl(222, 40.6%, 50%);
 }
 
 /* ゲーム */
@@ -237,7 +337,19 @@
 	/*background-color: hsl(242, 68.6%, 95%);*/
 	/*color: hsl(242, 48.6%, 38%);*/
 	background-color: hsl(270, 68.6%, 95%);
-	color: hsl(270, 48.5%, 38%);
+	color: hsl(270, 48.5%, 48%);
+}
+
+.koumoku.subtype_12,
+.koumoku.subtype_15,
+.koumoku.subtype_102 {
+	background-color: hsl(270, 38.5%, 38%);
+}
+
+.koumoku.subtype_12:nth-child(2n+1),
+.koumoku.subtype_15:nth-child(2n+1),
+.koumoku.subtype_102:nth-child(2n+1) {
+	background-color: hsl(270, 38.5%, 49%);
 }
 
 .koumoku.ongaku,
@@ -254,6 +366,10 @@
 }
 
 .koumoku.type_700 {
+	color: white;
+}
+/*
+.koumoku.type_700 {
 	background-color: darkblue;
 	color: white;
 }
@@ -262,6 +378,7 @@
 	background-color: hsl(343, 100%, 27%);
 	color: white;
 }
+*/
 
 .hanrei.jyoukyou_itirann div {
 	border: rgba(228, 224, 224, 0.76) 1px dotted;
