@@ -27,7 +27,13 @@ sub array_minus(\@\@) {
 	return grep( ! exists( $e{$_} ), @{$_[0]} ); 
 }
 
-#print "Content-type: text/html; charset=utf-8\n\n";
+# https://stackoverflow.com/questions/7651/how-do-i-remove-duplicate-items-from-an-array-in-perl
+sub uniq {
+    my %seen;
+    grep !$seen{$_}++, @_;
+}
+
+# print "Content-type: text/html; charset=utf-8\n\n";
 
 if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
@@ -101,6 +107,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 
 		my @colle_tuke = array_minus(@colle_current, @colle_prev);
 		my @colle_hazusi = array_minus(@colle_prev, @colle_current);
+		@colle_current = uniq(@colle_current);
 		my $colle_turu = join(',', @colle_current);
 		my $sakuhin_query = "update sakuhin set colle = ? where id = ?";
 		my $sakuhin_hensyuu = $dbh->prepare($sakuhin_query);
