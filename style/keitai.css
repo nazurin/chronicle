@@ -98,6 +98,29 @@ div.koumoku > div.activity_kousin > form > div.hiduke_collection {
 	display: block;
 }
 
+div.koumoku > div.activity_kousin > form > div > input[name=title] {
+	width: inherit;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=tosi] {
+	width: 6em;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=tuki],
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=hi],
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=ji_],
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=fun] {
+	width: 4em;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=hi] {
+	margin-right: 0.5em;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=unix] {
+	width: 24.5em;
+}
+
 div.koumoku > div.kansou_kousin > form > div.betumei {
 	display: flex;
 }
@@ -149,50 +172,59 @@ div.colle.koumoku > div.bikou.migi {
 }
 
 div.colle.koumoku.bikou_ > div.sakuhinmei.bikou_,
-div.colle.koumoku.bikou_0 > div.sakuhinmei.bikou_0 {
+div.colle.koumoku.bikou_0 > div.sakuhinmei.bikou_0,
+div.colle.koumoku.bikou_4 > div.sakuhinmei.bikou_4 {
 	width: 60%;
 }
 
 div.colle.koumoku.bikou_ > div.sakuhinmei.bikou_ *,
-div.colle.koumoku.bikou_0 > div.sakuhinmei.bikou_0 * {
+div.colle.koumoku.bikou_0 > div.sakuhinmei.bikou_0 *,
+div.colle.koumoku.bikou_4 > div.sakuhinmei.bikou_4 * {
 	line-height: 1.2;
 }
 
 div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.midasi,
-div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.midasi {
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.midasi,
+div.colle.koumoku.bikou_4 > div.sakuhinmei > div > p.midasi {
 	margin-right: 0.5em;
 }
 
 div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.fuku_midasi,
-div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.fuku_midasi {
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.fuku_midasi,
+div.colle.koumoku.bikou_4 > div.sakuhinmei > div > p.fuku_midasi {
 	display: inline-block;
 	margin-left: 0;
 }
 
 div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.sakka,
-div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.sakka {
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.sakka,
+div.colle.koumoku.bikou_4 > div.sakuhinmei > div > p.sakka {
 	display: block;
 	font-size: 0.9em;
 }
 
 div.colle.koumoku.bikou_ > div.kansou,
-div.colle.koumoku.bikou_0 > div.kansou {
+div.colle.koumoku.bikou_0 > div.kansou,
+div.colle.koumoku.bikou_4 > div.kansou {
 	margin-right: 1em;
 }
 
 div.colle.koumoku.bikou_ > div.sakuhinmei > div > p.midasi,
-div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.midasi {
+div.colle.koumoku.bikou_0 > div.sakuhinmei > div > p.midasi,
+div.colle.koumoku.bikou_4 > div.sakuhinmei > div > p.midasi {
 	margin-right: 0.5em;
 }
 
 div.colle.koumoku.bikou_ > div.jyou,
-div.colle.koumoku.bikou_0 > div.jyou {
+div.colle.koumoku.bikou_0 > div.jyou,
+div.colle.koumoku.bikou_4 > div.jyou {
 	width: 40%;
 	padding: 0.125em 0em 0em 0.5em;
 }
 
 div.colle.koumoku.bikou_ > div.hantyuu,
-div.colle.koumoku.bikou_0 > div.hantyuu {
+div.colle.koumoku.bikou_0 > div.hantyuu,
+div.colle.koumoku.bikou_4 > div.hantyuu {
 	display: none;
 }
 
@@ -204,6 +236,12 @@ div.colle.koumoku.bikou_1 > div.sakuhinmei > div > p.sakka {
 
 div.colle.koumoku.bikou_1 > div.sakuhinmei > div > p.fuku_midasi {
 	margin-left: 0px;
+}
+
+div.colle.koumoku.bikou_1 > div.sakuhinmei > div:nth-child(2) {
+	/* 取敢えず修正　
+	flex-basis: 10em;
+	flex-grow: 1; */
 }
 
 div.colle.koumoku .bikou.hidari {
@@ -262,9 +300,10 @@ div.colle.koumoku.bikou_3 .sakuhinmei {
 	padding-left: 0.25em;
 }
 
-div.colle.koumoku.bikou_3 .sakka {
+div.colle.koumoku.bikou_3 > div.sakuhinmei > div > p.sakka {
 	/*display: block;*/
 	/*font-size: 0.9em;*/
+	margin-left: 0.25em;
 }
 
 div.colle.youyaku {
@@ -292,7 +331,9 @@ div.rireki_box > div.koumoku > div.hiduke > span.jikantai {
 }
 
 div.rireki_box > div.koumoku > div.sakuhinmei,
-div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei {
+div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei,
+div.rireki_box > div.koumoku.type_700 > div.sakuhinmei,
+div.rireki_box > div.koumoku.type_700.lang_ja > div.sakuhinmei {
 	width: 65%;
 }
 
