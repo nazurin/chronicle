@@ -72,17 +72,20 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	my $info = $info_syutoku->fetchall_hashref('id');
 
 	my ($betumei, $fukubetumei, $sakkabetumei);
-	foreach my $i (0 .. scalar @betumei_val){
+	my $end_betumei = ref $params{'betumei_val'} ne 'ARRAY' ? scalar(@betumei_val) : scalar(@{$params{'betumei_val'}}) - 1;
+	foreach my $i (0 .. $end_betumei){
 		$betumei->{decode_utf8($params{'betumei_key'}->[$i])} = decode_utf8($params{'betumei_val'}->[$i]) if ref $params{'betumei_key'} eq 'ARRAY';
 		$betumei->{decode_utf8($params{'betumei_key'})} = decode_utf8($params{'betumei_val'}) if ref $params{'betumei_key'} ne 'ARRAY';
 	}
 	my $betumei_json = to_json($betumei);
-	foreach my $i (0 .. scalar @betumei_val_fuku){
+	my $end_fukubetumei = ref $params{'betumei_val_fuku'} ne 'ARRAY' ? scalar(@betumei_val_fuku) : scalar(@{$params{'betumei_val_fuku'}}) - 1;
+	foreach my $i (0 .. $end_fukubetumei){
 		$fukubetumei->{decode_utf8($params{'betumei_key_fuku'}->[$i])} = decode_utf8($params{'betumei_val_fuku'}->[$i]) if ref $params{'betumei_key_fuku'} eq 'ARRAY';
 		$fukubetumei->{decode_utf8($params{'betumei_key_fuku'})} = decode_utf8($params{'betumei_val_fuku'}) if ref $params{'betumei_key_fuku'} ne 'ARRAY';
 	}
 	my $fukubetumei_json = to_json($fukubetumei);
-	foreach my $i (0 .. scalar @betumei_val_sakka){
+	my $end_sakkabetumei = ref $params{'betumei_val_sakka'} ne 'ARRAY' ? scalar(@betumei_val_sakka) : scalar(@{$params{'betumei_val_sakka'}}) - 1;
+	foreach my $i (0 .. $end_sakkabetumei){
 		$sakkabetumei->{decode_utf8($params{'betumei_key_sakka'}->[$i])} = decode_utf8($params{'betumei_val_sakka'}->[$i]) if ref $params{'betumei_key_sakka'} eq 'ARRAY';
 		$sakkabetumei->{decode_utf8($params{'betumei_key_sakka'})} = decode_utf8($params{'betumei_val_sakka'}) if ref $params{'betumei_key_sakka'} ne 'ARRAY';
 	}
