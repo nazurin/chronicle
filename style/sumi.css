@@ -492,6 +492,29 @@ div.koumoku > div.activity_kousin > form > div.hiduke_collection > div.hajimari_
 	opacity: 0.7;
 }
 
+div.koumoku > div.activity_kousin > form > input[type=number] {
+	width: 5em;
+}
+
+div.koumoku > div.activity_kousin > form > div > input[name=title] {
+	width: 20em;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=tosi] {
+	width: 5em;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=tuki],
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=hi],
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=ji_],
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=fun] {
+	width: 3.25em;
+}
+
+div.koumoku > div.activity_kousin > form > div.hiduke_collection input[name^=unix] {
+	width: 18em;
+}
+
 div.koumoku > div.kansou_kousin {
 	display: none;
 	margin: 0px 4em 0px 1em;
@@ -968,6 +991,15 @@ div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei {
 	width: 32.5%;
 }
 
+div.rireki_box > div.koumoku.type_700 > div.sakuhinmei,
+div.rireki_box > div.koumoku.type_700.lang_ja > div.sakuhinmei {
+	width: 75%;
+}
+
+div.rireki_box > div.koumoku > div.sakuhinmei.ditto {
+	width: 35%;
+}
+
 div.rireki_box > div.koumoku > div.hiduke > span.jikantai {
 	opacity: 0.5;
 	text-shadow: lightgray 1px 1px;
@@ -977,6 +1009,10 @@ div.rireki_box > div.koumoku > div.hiduke > span.jikantai {
 
 div.rireki_box > div.koumoku > div.bikou {
 	font-size: 0.9em;
+	margin-left: 5em;
+}
+
+div.rireki_box > div.koumoku.lang_ja > div.bikou {
 	margin-left: 6.25em;
 }
 
@@ -1129,8 +1165,10 @@ div.koumoku.type_700 span.syurui {
 	margin-right: 0.25em;
 }
 
-div.sakuhinbako > div.hidari > div.kutikomi.type_5.lang_ja > div.header > span.syurui {
+div.sakuhinbako > div.hidari > div.kutikomi.type_6.lang_ja > div.header > span.syurui,
+div.koumoku.lang_ja.type_700 span.syurui.type_6 {
 	letter-spacing: initial;
+	padding: 0em 1em;
 }
 
 div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou {
