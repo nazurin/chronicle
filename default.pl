@@ -250,13 +250,13 @@ if(defined param('id') && param('id')){
 #
 #
 my ($kensaku, $kensaku_sitazi, $gyaku_kensaku_sitazi, $hantyuu_sibori_sitazi, $jyoukyou_sibori_sitazi, $narabikae_sitazi, $jun_sitazi, @sitazi_bind, @sitazi_bind_2);
-$gyaku_kensaku_sitazi = "(`yotei` <> 1 or `yotei` is null) and ";
+$gyaku_kensaku_sitazi = defined param('yoteiran') && param('yoteiran') == 1 ? "" : "(`yotei` <> 1 or `yotei` is null) and ";
 if (defined param('kensaku') && param('kensaku')){
 	$kensaku = "${\(decode_utf8(param('kensaku')))}";
-	$kensaku_sitazi = "and (`midasi` like ? or `fukumidasi` like ? or `sakka` like ?)";
+	$kensaku_sitazi = "and (`midasi` like ? or `fukumidasi` like ? or `sakka` like ? or `betumei` like ? or `fukubetumei` like ? or `sakkabetumei` like ?)";
 	$gyaku_kensaku_sitazi = "";
-	push @sitazi_bind, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%");
-	push @sitazi_bind_2, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%") if $page == 1;	
+	push @sitazi_bind, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%");
+	push @sitazi_bind_2, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%") if $page == 1;	
 } else { $kensaku_sitazi = ""; }
 if (defined $siborikomi_hantyuu && $siborikomi_hantyuu && $siborikomi_hantyuu ne '50'){ 
 	$hantyuu_sibori_sitazi = "and (`hantyuu` in (?))";
@@ -326,7 +326,7 @@ if($paginate == 1){
 	$dst_musi_week_limit_lower = ($week_border_original[0] - (($week - 0) * 604800)) + 3600;
 	$koyomi_week_count = week_count(${\(week($dst_musi_week_limit_lower))[0]}) == 1 ? 52 : 53; # yr from yr,wk of weeklimlower to count
 	#　part != 前のpart & jyou!=終（再開の場合を除く）	→週別（yearweek）で範疇の頻度を
-	$hantyuu_syutoku = "select YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1) as `week`, `jiten`, `hantyuu`, count(*) as `count` from (SELECT (\@partpre = part AND \@sidpre=sid AND `jyoukyou` not in ('終','葉','中')) AS unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) AS x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where substring(YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1), 1, 4) = ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and not unchanged_status group by `hantyuu`, `week` union all select YEARWEEK(FROM_UNIXTIME(`date` - ${sanjyuujikansei_offset}), 1) as `week`, `date` as `jiten`, 900 as `hantyuu`, floor((count(*) * 4.427)/60)/1.5 as `count` from (select `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, '終' as `jyoukyou`, listen.* from `listen`) as listen where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} group by `week` order by jiten desc";
+	$hantyuu_syutoku = "select YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1) as `week`, `jiten`, `hantyuu`, count(*) as `count` from (SELECT (\@partpre = part AND \@sidpre=sid AND `jyoukyou` not in ('終','葉','中')) AS unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) AS x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id ${kensaku_sitazi} where substring(YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1), 1, 4) = ? ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and not unchanged_status group by `hantyuu`, `week` union all select YEARWEEK(FROM_UNIXTIME(`date` - ${sanjyuujikansei_offset}), 1) as `week`, `date` as `jiten`, 900 as `hantyuu`, floor((count(*) * 4.427)/60)/1.5 as `count` from (select `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 0 as `betumei`, 0 as `fukubetumei`, 0 as `sakkabetumei`, 900 as `hantyuu`, '終' as `jyoukyou`, listen.* from `listen`) as listen where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} group by `week` order by jiten desc";
 	#music_syutoku = "select YEARWEEK(FROM_UNIXTIME(`date`), 1) as `week`, 900 as `hantyuu`, floor((count(*) * 4.427)/60) as `count` from `listen` group by `week`"
 	my $koyomi_hantyuu = $dbh->prepare($hantyuu_syutoku);
 	$koyomi_hantyuu->execute(${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind, @sitazi_bind);
@@ -352,7 +352,7 @@ if($paginate == 1){
 	#audioscrobbler/listen組み込み
 	my $listen_row_iter;
 	# 	my $listen_query = "select * from (select *,  `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, '終' as `jyoukyou`, lead(`date`) over (order by `date`) - `date` as `lag` from `listen`) as `listen` where `date` < ? && `date` >= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}"; # 処理時間が長すぎたため、`lag`を保存するようにしました。400ms->20msになりましたが、更新時（現在kousin.plの264-266行を参照）に800msくらいのupdateクエリーを行う必要があります。一得一失うんぬん。
-	my $listen_query = "select * from (select *,  `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, '終' as `jyoukyou` from `listen`) as `listen` where `date` < ? && `date` >= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}";
+	my $listen_query = "select * from (select *,  `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, 0 as `betumei`, 0 as `fukubetumei`, 0 as `sakkabetumei`, '終' as `jyoukyou` from `listen`) as `listen` where `date` < ? && `date` >= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}";
 	my $listen_syutoku = $dbh->prepare($listen_query);
 	$listen_syutoku->execute($week_limit_upper, $week_limit_lower, @sitazi_bind);
 	my $listen_row_count = $listen_syutoku->rows;
@@ -373,7 +373,7 @@ if($paginate == 1){
 		}
 	}
 
-	@meirei = ("select reki.*, saku.midasi, saku.betumei, saku.colle, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, 0 as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, saku.betumei as betumei, saku.colle as colle, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
+	@meirei = ("select reki.*, saku.midasi, saku.betumei, saku.colle, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, saku.hantyuu as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, saku.betumei as betumei, saku.colle as colle, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
 }
 
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
@@ -761,7 +761,7 @@ if($paginate == 1){
 					print "<form id='kansou_$v->{id}' method='post' action='kansou.pl' >";
 					print "<input type='hidden' name='reference' value='$v->{id}'>";
 					print "<div class='midasi_kousin'>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_TITLE'))}</div><div><input type='text' size='30' placeholder='$v->{midasi}' name='midasi' value='$v->{midasi}'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_TITLE'))}</div><div><input type='text' size='30' placeholder='$v->{midasi}' name='midasi' value=\"", $v->{midasi}//'',"\"></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='", ${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SUBTITLE'))}</div><div><input type='text' size='30' placeholder='", $v->{fukumidasi}//'', "' name='fukumidasi' value='", $v->{fukumidasi}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</div><div><input type='text' size='20' placeholder='", $v->{sakka}//'', "' name='sakka' value='", $v->{sakka}//'', "'></div></div>";
@@ -856,7 +856,7 @@ if($paginate == 1){
 				print "<div class='radio_box'><input type='radio' id='collekakusu0' name='hide' value='0'${\( sub { return ' checked=checked' if defined $hide_recall && $hide_recall == 0 || not defined $hide_recall }->() )}><label for='collekakusu0'>${\(Kahifu::Template::dict('COLLE_KAKUSU_OPTION_1'))}<span></span></label><input type='radio' id='collekakusu1' name='hide' value='1' ${\( sub { return ' checked=checked' if defined $hide_recall && $hide_recall == 1 }->() )}><label for='collekakusu1'>${\(Kahifu::Template::dict('COLLE_KAKUSU_OPTION_2'))}<span></span></label></div>";
 			print "</div>";
 			print "<div class='cream'><span>${\(Kahifu::Template::dict('COLLE_BIKOUITI'))}</span>";
-				print "<div class='radio_box'><input type='radio' id='bikoustyle1' name='bikouiti' value='1'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==1 }->() )}><label for='bikoustyle1'><span>${\(Kahifu::Template::dict('HIDARI'))}</span></label><input type='radio' id='bikoustyle0' name='bikouiti' value='0'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==0 || not defined $bikouiti_recall }->() )}><label for='bikoustyle0'>${\(Kahifu::Template::dict('MIGI'))}<span></span></label><input type='radio' id='bikoustyle2' name='bikouiti' value='2'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==2 }->() )}><label for='bikoustyle2'><span>${\(Kahifu::Template::dict('UE'))}</span></label><input type='radio' id='bikoustyle3' name='bikouiti' value='3'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==3 }->() )}><label for='bikoustyle3'>${\(Kahifu::Template::dict('SITA'))}<span></span></label></div>";
+				print "<div class='radio_box'><input type='radio' id='bikoustyle1' name='bikouiti' value='1'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==1 }->() )}><label for='bikoustyle1'><span>${\(Kahifu::Template::dict('HIDARI'))}</span></label><input type='radio' id='bikoustyle0' name='bikouiti' value='0'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==0 || not defined $bikouiti_recall }->() )}><label for='bikoustyle0'>${\(Kahifu::Template::dict('MIGI'))}<span></span></label><input type='radio' id='bikoustyle2' name='bikouiti' value='2'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==2 }->() )}><label for='bikoustyle2'><span>${\(Kahifu::Template::dict('UE'))}</span></label><input type='radio' id='bikoustyle3' name='bikouiti' value='3'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==3 }->() )}><label for='bikoustyle3'>${\(Kahifu::Template::dict('SITA'))}<span></span></label><input type='radio' id='bikoustyle4' name='bikouiti' value='4'${\( sub { return ' checked=checked' if defined $bikouiti_recall && $bikouiti_recall==4 }->() )}><label for='bikoustyle4'>${\(Kahifu::Template::dict('SITA'))}${\(Kahifu::Template::dict('SLASH'))}${\(Kahifu::Template::dict('MIGI'))}<span></span></label></div>";
 			print "</div>";
 			print "<div class='cream'><span>${\(Kahifu::Template::dict('COLLE_KANSOU_HYOUJI'))}</span>";
 				print "<div class='radio_box'><input type='radio' id='kansouhyouji0' name='kansou_hyouji' value='0'${\( sub { return ' checked=checked' if defined $kansou_hyouji_recall && $kansou_hyouji_recall==0 || not defined $kansou_hyouji_recall }->() )}><label for='kansouhyouji0'><span>${\(Kahifu::Template::dict('HIHYOUJI'))}</span></label><input type='radio' id='kansouhyouji1' name='kansou_hyouji' value='1'${\( sub { return ' checked=checked' if defined $kansou_hyouji_recall && $kansou_hyouji_recall==1 }->() )}><label for='kansouhyouji1'>${\(Kahifu::Template::dict('HYOUJI'))}<span></span></label></div>";
@@ -948,7 +948,7 @@ if($paginate == 1){
 				print "</div>";
 				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )}</span></div>" if !defined param('hensyuu') && (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}};
 				print "<div class='bikou migi'><textarea rows=1 id='colle_box' name='test'>", ${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )},"</textarea></div>" if defined param('hensyuu');
-				print "<div class='bikou sita'>$bikou->{$w->{id}}</div>" if $v->{bikouiti} == 3;
+				print "<div class='bikou sita'>$bikou->{$w->{id}}</div>" if $v->{bikouiti} == 3 || $v->{bikouiti} == 4;
 				print "<div class='kansou' data-kansou='$v->{id}'>";
 					print Kahifu::Infra::bunsyou($w->{kansou}) if defined $v->{kansou_hyouji} && $v->{kansou_hyouji} == 1;
 				print "</div>";
@@ -1087,12 +1087,12 @@ if($paginate == 1){
 		while(my $v = $rirekiran->fetchrow_hashref){
 			$rireki_row_count++;
 			$last_sakuhin = ongaku_sounyuu($last_sakuhin, $last_timestamp, $v->{jiten}, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
-			print "<div class='koumoku type_$v->{hantyuu}${\( sub { return ' hankakusi' if defined $v->{kakusu} && $v->{kakusu}==1 }->() )} lang_${Kahifu::Junbi::lang}'>";
+			print "<div class='koumoku type_$v->{hantyuu}${\( sub { return ' hankakusi' if defined $v->{kakusu} && $v->{kakusu}==1 }->() )} lang_${Kahifu::Junbi::lang} ${\( sub { return ' subtype_' . $v->{part} if defined $v->{hantyuu} && $v->{hantyuu}==700 }->() )}'>";
 				print "<div title='${\(date_split($v->{jiten}, 8, $sanjyuujikan_seido))}' class='hiduke${\( sub { return ' hankakusi' if defined $v->{mkt} && $v->{mkt}==1 }->() )} '>";
 					print "<span>${\(date_split($v->{jiten}, 7, $sanjyuujikan_seido))}</span>";
 					print "<span class='jikantai'>${\(jikantai($v->{jiten}, $sanjyuujikan_seido))}</span>" if $Kahifu::Junbi::lang eq 'ja' && $ninsyou;
 				print "</div>";
-				print "<div class='sakuhinmei'>";
+				print "<div class='sakuhinmei${\( sub { return ' ditto' if !((defined ${last_sakuhin} && ${last_sakuhin} ne '' && ${last_sakuhin} ne $v->{sid}) || not defined ${last_sakuhin}) }->() )}'>";
 					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && !Kahifu::Infra::mobile();
 					print "<p id='$v->{id}' class='midasi $v->{id}' data-kansou='$v->{id}'>";
 					my $tekisetu_reference = midasi_tekisetuka($v->{midasi}, $v->{betumei}, $v->{colle}, $sitei_gengo);
