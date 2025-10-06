@@ -19,6 +19,7 @@ use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key timestamp_syutoku);
+use Hyouka::External;
 
 #print "Content-type: text/html; charset=utf-8\n\n";
 
@@ -59,8 +60,24 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	#print dump @colle_try;
 	
 	my @bikou_split = split('\+\+', $bikou) if $bikou;
+
+	my ($al_id, $mal_id);
+	if((grep{$_ eq $hantyuu} 13, 14, 17) && index($colle_turu, "gengo_ja") != -1){
+		my $api_json_data = Hyouka::External::api_json_syutoku();
+
+		$al_id = $hantyuu == 13 ? Hyouka::External::al_manga_kensaku($midasi, $api_json_data) : Hyouka::External::al_anime_kensaku($midasi, $api_json_data);
+		$mal_id = $hantyuu == 13 ? Hyouka::External::mal_manga_kensaku($midasi, $api_json_data) : Hyouka::External::mal_anime_kensaku($midasi, $api_json_data);
+		sleep(2);
+		if($kansyouzumi == 1){
+			Hyouka::External::mal_kousin($mal_id, $whole, $josuu, '終', 0, 700000, $hantyuu, $api_json_data) if defined $mal_id && $mal_id ne '';
+			Hyouka::External::al_kousin($al_id, $whole, $josuu, '終', 0, undef, 700000, $api_json_data) if defined $al_id && $al_id ne '';
+		} else {
+			Hyouka::External::mal_kousin($mal_id, 0, $josuu, '未', 0, 700000, $hantyuu, $api_json_data) if defined $mal_id && $mal_id ne '';
+			Hyouka::External::al_kousin($al_id, 0, $josuu, '未', 0, undef, 700000, $api_json_data) if defined $al_id && $al_id ne '';
+		}
+	}
 	
-	my $meirei = "insert into sakuhin set yotei = ?, midasi = ?, fukumidasi = ?, time = ?, hantyuu = ?, sakka = ?, hajimari = ?, owari = ?, josuu = ?, part = ?, whole = ?, jyoukyou = ?, mikakutei = ? ${colle_turu_sitazi}";
+	my $meirei = "insert into sakuhin set yotei = ?, mal_id = ?, al_id = ?, midasi = ?, fukumidasi = ?, time = ?, hantyuu = ?, sakka = ?, hajimari = ?, owari = ?, josuu = ?, part = ?, whole = ?, jyoukyou = ?, mikakutei = ? ${colle_turu_sitazi}";
 	
 	my $hajimari = param('tosi_hajimari').param('tuki_hajimari').param('hi_hajimari').param('ji_hajimari').param('fun_hajimari') ne "" ? timestamp_syutoku(param('tosi_hajimari'), param('tuki_hajimari'), param('hi_hajimari'), param('ji_hajimari'), param('fun_hajimari')) : (param('unix_hajimari') ne '' ? param('unix_hajimari') : time());
 	my $owari = $hajimari;
@@ -68,7 +85,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $jyoukyou = ($kansyouzumi == 1) ? '終' : '';
 	
 	my $sakuhin_insert = $dbh->prepare($meirei);
-	$sakuhin_insert->execute($yotei, $midasi, $fukumidasi, $genzai, $hantyuu, $sakka, $hajimari, $owari, $josuu, $part, $whole, $jyoukyou, $mikakutei, $colle_turu);
+	$sakuhin_insert->execute($yotei, $mal_id, $al_id, $midasi, $fukumidasi, $genzai, $hantyuu, $sakka, $hajimari, $owari, $josuu, $part, $whole, $jyoukyou, $mikakutei, $colle_turu);
 	my $id = $dbh->{mysql_insertid};
 	
 	if($kansyouzumi == 1){

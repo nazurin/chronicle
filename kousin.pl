@@ -11,6 +11,7 @@ use DBI;
 use URI;
 use JSON;
 use LWP::UserAgent;
+use LWP::Authen::OAuth2;
 use open qw( :std :encoding(utf8) );
 use utf8;
 use Encode qw( decode_utf8 );
@@ -21,6 +22,7 @@ use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Kahifu::Key;
 use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key timestamp_syutoku);
+use Hyouka::External qw(access_token_mukou mal_authorize al_authorize);
 
 #print "Content-type: text/html; charset=utf-8\n\n";
 
@@ -39,22 +41,50 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my ($info_query, $info_syutoku, $info);
 	if($info_sitami->{$passthrough_id}{count} == 0){
 		#右から試して
-		$info_query = "select saku.id as ssid, reki.*, saku.whole as `sakuwhole`, saku.hajimari as `sakuhajimari`, saku.josuu as `sakujosuu`, saku.yotei as `yotei`, saku.jyoukyou as `sakujyoukyou`, saku.eternal as `eternal` from rireki reki right join sakuhin saku on reki.sid = saku.id where saku.`id` = ? order by jiten desc limit 1";
+		$info_query = "select saku.id as ssid, reki.*, saku.whole as `sakuwhole`, saku.hajimari as `sakuhajimari`, saku.josuu as `sakujosuu`, saku.yotei as `yotei`, saku.jyoukyou as `sakujyoukyou`, saku.eternal as `eternal`, saku.mal_id as `mal_id`, saku.al_id as `al_id`, saku.hantyuu as `hantyuu` from rireki reki right join sakuhin saku on reki.sid = saku.id where saku.`id` = ? order by jiten desc limit 1";
 		$info_syutoku = $dbh->prepare($info_query);
 		$info_syutoku->execute(param('reference'));
 		$info = $info_syutoku->fetchall_hashref('ssid');
 	} else {
-		$info_query = "select reki.*, saku.whole as `sakuwhole`, saku.hajimari as `sakuhajimari`, saku.josuu as `sakujosuu`, saku.yotei as `yotei`, saku.jyoukyou as `sakujyoukyou`, saku.eternal as `eternal` from rireki reki left join sakuhin saku on reki.sid = saku.id where saku.`id` = ? order by jiten desc limit 1";
+		$info_query = "select reki.*, saku.whole as `sakuwhole`, saku.hajimari as `sakuhajimari`, saku.josuu as `sakujosuu`, saku.yotei as `yotei`, saku.jyoukyou as `sakujyoukyou`, saku.eternal as `eternal`, saku.mal_id as `mal_id`, saku.al_id as `al_id`, saku.hantyuu as `hantyuu` from rireki reki left join sakuhin saku on reki.sid = saku.id where saku.`id` = ? order by jiten desc limit 1";
 		$info_syutoku = $dbh->prepare($info_query);
 		$info_syutoku->execute(param('reference'));
 		$info = $info_syutoku->fetchall_hashref('sid');
 	}
 	#die dump $info;
-	
+
+### apiの準備 ###################
+	my $api_file = '/var/www/html/chronicle/ext/api.json';
+	my $api_text = do {
+		open(my $api_fh, "<:encoding(UTF-8)", $api_file)
+			or die("Cannot open \"$api_file\": $!\n");
+		local $/;
+		<$api_fh>
+	};
+	my $json_api = JSON->new;
+	my $api_json_data = $json_api->decode($api_text);
+
+	if(!defined $api_json_data->{mal}{access_token} || $api_json_data->{mal}{access_token} eq ''){
+		Hyouka::External::mal_access_token_mukou($api_json_data);
+	}
+### api準備終了 ###################
+	#Hyouka::External::al_authorize($api_json_data);
+	#Hyouka::External::al_access_token_mukou($api_json_data);
+	#Hyouka::External::al_manga_kensaku('あすなろ白書', $api_json_data);
+	#Hyouka::External::al_anime_zenkousin($dbh, $api_json_data);
+	#die();
+	#Hyouka::External::al_manga_zenkousin($dbh, $api_json_data);
+	#die;
+
+### 初期関数 ######################
 	my $hajimari = param('tosi_hajimari').param('tuki_hajimari').param('hi_hajimari').param('ji_hajimari').param('fun_hajimari') ne "" ? timestamp_syutoku(param('tosi_hajimari'), param('tuki_hajimari'), param('hi_hajimari'), param('ji_hajimari'), param('fun_hajimari')) : (param('unix_hajimari') ne '' ? param('unix_hajimari') : ($info->{$passthrough_id}{yotei} != 0 ? time() : $info->{$passthrough_id}{sakuhajimari}));
 	my $owari = param('tosi_owari').param('tuki_owari').param('hi_owari').param('ji_owari').param('fun_owari') ne "" ? timestamp_syutoku(param('tosi_owari'), param('tuki_owari'), param('hi_owari'), param('ji_owari'), param('fun_owari')) : (param('unix_owari') ne '' ? param('unix_owari') : time());
 	my $josuu = decode_utf8(param('josuu')) eq '儘' ? $info->{$passthrough_id}{sakujosuu} : decode_utf8(param('josuu'));
 	my $text = decode_utf8(param('title'));
+	my @part_turu = split /0000/, param('part');
+	my $part = $part_turu[0];
+	push @part_turu, 700000 if !defined $part_turu[1];
+### 初期関数設定ずみ ###############
 	
 	sub update_futuu {
 		# 履歴に追加（part→変、whole→どちらも、状況→変、助数→儘）
@@ -63,15 +93,17 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $jyoukyou = "中";
 		$jyoukyou = "積" if param('mode') == 1;
 		$jyoukyou = "落" if param('mode') == 2;
-		$jyoukyou = "終" if param('part') == param('whole');
+		$jyoukyou = "終" if $part == param('whole');
 		my $text = decode_utf8(param('title'));
 		my $josuu = decode_utf8(param('josuu')) eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, josuu = ?, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
-		$sakuhin_kousin->execute($josuu, $jyoukyou, param('part'), param('whole'), $hajimari, $owari, param('reference'));
+		$sakuhin_kousin->execute($josuu, $jyoukyou, $part, param('whole'), $hajimari, $owari, param('reference'));
+		Hyouka::External::mal_kousin($info->{$passthrough_id}{mal_id}, $part, $josuu, $jyoukyou, 0, $part_turu[1], $info->{$passthrough_id}{hantyuu}, $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17) && defined $info->{$passthrough_id}{mal_id} && $info->{$passthrough_id}{mal_id} ne '';
+		Hyouka::External::al_kousin($info->{$passthrough_id}{al_id}, $part, $josuu, $jyoukyou, 0, $owari, $part_turu[1], $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17)  && defined $info->{$passthrough_id}{al_id} && $info->{$passthrough_id}{al_id} ne '';
 	}
 	
 	sub update_saikansyou {
@@ -79,14 +111,16 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		# 落・積→没、中→再
 		my $jyoukyou = "再";
 		$jyoukyou = "没" if param('mode') == 1 or param('mode') == 2;
-		$jyoukyou = "終" if param('part') == param('whole');
+		$jyoukyou = "終" if $part == param('whole');
 		my $josuu = decode_utf8(param('josuu')) eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
-		$sakuhin_kousin->execute($jyoukyou, param('part'), param('whole'), $hajimari, $owari, param('reference'));
+		$sakuhin_kousin->execute($jyoukyou, $part, param('whole'), $hajimari, $owari, param('reference'));
+		Hyouka::External::mal_kousin($info->{$passthrough_id}{mal_id}, $part, $josuu, $jyoukyou, 1, $part_turu[1], $info->{$passthrough_id}{hantyuu}, $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17) && defined $info->{$passthrough_id}{mal_id} && $info->{$passthrough_id}{mal_id} ne '';
+		Hyouka::External::al_kousin($info->{$passthrough_id}{al_id}, $part, $josuu, $jyoukyou, 1, $owari, $part_turu[1], $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17) && defined $info->{$passthrough_id}{al_id} && $info->{$passthrough_id}{al_id} ne '';
 	}
 	
 	sub update_futakousin {
@@ -105,8 +139,8 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		$jyoukyou = "積" if param('mode') == 1;
 		$jyoukyou = "落" if param('mode') == 2;
 		$jyoukyou = "再" if grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没';
-		$jyoukyou = "没" if grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没' && (param('mode') == 1 || param('mode') == 2);
-		$jyoukyou = "終" if param('part') == param('whole');
+		$jyoukyou = "没" if (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没') && (param('mode') == 1 || param('mode') == 2);
+		$jyoukyou = "終" if $part == param('whole');
 		
 		my (@sitazi_bind, $text_sitazi);
 		if($text ne ""){
@@ -116,7 +150,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		
 		my $rireki_backtrace_query = "update rireki set ${text_sitazi} part = ?, mkt = ?, jyoukyou = ? where `id` = ? order by jiten desc limit 1";
 		my $rireki_backtrace = $dbh->prepare($rireki_backtrace_query);
-		$rireki_backtrace->execute(@sitazi_bind, param('part'), param('jikoku_mikakutei'), $jyoukyou, $info->{$passthrough_id}{id});
+		$rireki_backtrace->execute(@sitazi_bind, $part, param('jikoku_mikakutei'), $jyoukyou, $info->{$passthrough_id}{id});
 		if(param('mode') == 1 || param('mode') == 2){
 			my $sakuhin_kousin_query = "update sakuhin set yotei = 0, jyoukyou = ? where id = ?";
 			my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
@@ -131,10 +165,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		$jyoukyou = "葉" if param('mode') == 5;
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
-		$sakuhin_kousin->execute(param('part'), param('whole'), $hajimari, $owari, param('reference'));
+		$sakuhin_kousin->execute($part, param('whole'), $hajimari, $owari, param('reference'));
 	}
 	
 	sub update_special_jyou_futakousin {
@@ -146,12 +180,12 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $josuu = decode_utf8(param('josuu')) eq '儘' ? $info->{$passthrough_id}{josuu} : decode_utf8(param('josuu'));
 		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, param('part'), param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
 		$jyoukyou = "中";
-		$jyoukyou = "終" if param('part') == param('whole');
+		$jyoukyou = "終" if $part == param('whole');
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
-		$sakuhin_kousin->execute($jyoukyou, param('part'), param('whole'), $hajimari, $owari, param('reference'));
+		$sakuhin_kousin->execute($jyoukyou, $part, param('whole'), $hajimari, $owari, param('reference'));
 	}
 	
 	sub update_josuu_all {
@@ -170,36 +204,48 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
 		$sakuhin_kousin->execute($hajimari, param('reference'));
 	}
-	
+
+	sub update_ext {
+		my $jyoukyou = "中";
+		$jyoukyou = "積" if param('mode') == 1;
+		$jyoukyou = "落" if param('mode') == 2;
+		$jyoukyou = "終" if $part == param('whole');
+		my $josuu = decode_utf8(param('josuu')) eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
+		Hyouka::External::mal_kousin($info->{$passthrough_id}{mal_id}, $part, $josuu, $jyoukyou, 0, $part_turu[1], $info->{$passthrough_id}{hantyuu}, $api_json_data) if defined $info->{$passthrough_id}{mal_id} && $info->{$passthrough_id}{mal_id} ne '';
+		Hyouka::External::al_kousin($info->{$passthrough_id}{al_id}, $part, $josuu, $jyoukyou, 0, $owari, $part_turu[1], $api_json_data) if defined $info->{$passthrough_id}{al_id} && $info->{$passthrough_id}{al_id} ne '';
+	}
+
 	if(not defined param('sakujyo')){
 		# 削除ではない場合
-		if(($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} ne $josuu) || ($info->{$passthrough_id}{part} == 0 && $info->{$passthrough_id}{count} == 0) || ($info->{$passthrough_id}{part} == param('part') && $info->{$passthrough_id}{text} ne decode_utf8(param('title'))) || $info->{$passthrough_id}{sakujyoukyou} eq '落' && $info->{$passthrough_id}{part} >= param('part')) && param('part') <= param('whole') && not (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '終', '再', '没') && not (grep{$_ eq param('mode')} 4, 5)){
+		if(($info->{$passthrough_id}{part} < $part || ($info->{$passthrough_id}{part} != $part && $info->{$passthrough_id}{josuu} ne $josuu) || ($info->{$passthrough_id}{part} == 0 && $info->{$passthrough_id}{count} == 0) || ($info->{$passthrough_id}{part} == $part && $info->{$passthrough_id}{text} ne decode_utf8(param('title'))) || $info->{$passthrough_id}{sakujyoukyou} eq '落' && $info->{$passthrough_id}{part} >= $part) && $part <= param('whole') && not (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '終', '再', '没') && not (grep{$_ eq param('mode')} 4, 5)){
 			#print 'Yes!'; #update_futuu
 			update_futuu();
 		} elsif ($info->{$passthrough_id}{part} == $info->{$passthrough_id}{whole} && (($info->{$passthrough_id}{whole} != param('whole') && $info->{$passthrough_id}{josuu} ne $josuu) || ($info->{$passthrough_id}{whole} < param('whole'))) && not param('mode') == 5){
 			#print 'Yes!!'; #update_futakousin
 			update_futakousin();
 			param('mode') == 4 ? update_special_jyou_futakousin() : update_futuu();
-		} elsif ( ($info->{$passthrough_id}{part} < param('part') || ($info->{$passthrough_id}{part} != param('part') && $info->{$passthrough_id}{josuu} ne $josuu) && param('part') <= param('whole') && not (grep{$_ eq param('mode')} 4, 5) && (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没')) ||  ($info->{$passthrough_id}{sakujyoukyou} == '終' && param('mode') == 3)){
+		} elsif ( ($info->{$passthrough_id}{part} < $part || ($info->{$passthrough_id}{part} != $part && $info->{$passthrough_id}{josuu} ne $josuu) && $part <= param('whole') && not (grep{$_ eq param('mode')} 4, 5) && (grep{$_ eq $info->{$passthrough_id}{sakujyoukyou}} '再', '没')) ||  ($info->{$passthrough_id}{sakujyoukyou} == '終' && param('mode') == 3)){
 			#print 'Yes!!!'; #update_saikansyou
 			update_saikansyou();
 		} elsif (grep{$_ eq param('mode')} 4, 5){
 			#print 'Yes!!!!'; #update_special_jyou
 			update_special_jyou();
-		} elsif ($info->{$passthrough_id}{josuu} ne $josuu && $info->{$passthrough_id}{part} == param('part') && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
+		} elsif ($info->{$passthrough_id}{josuu} ne $josuu && $info->{$passthrough_id}{part} == $part && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
 			#print 'Yes!!!!!'; #update_josuu_all
 			update_josuu_all();
-		} elsif ($info->{$passthrough_id}{part} != $info->{$passthrough_id}{whole} && $info->{$passthrough_id}{josuu} eq $josuu && ($info->{$passthrough_id}{part} > param('part') || ((grep{$_ eq param('mode')} 1, 2) && $info->{$passthrough_id}{part} >= param('part'))) && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
+		} elsif ($info->{$passthrough_id}{part} != $info->{$passthrough_id}{whole} && $info->{$passthrough_id}{josuu} eq $josuu && ($info->{$passthrough_id}{part} > $part || ((grep{$_ eq param('mode')} 1, 2) && $info->{$passthrough_id}{part} >= $part)) && $info->{$passthrough_id}{whole} == $info->{$passthrough_id}{whole}){
 			#print 'Yes!!!!!!'; #update_backtrace_part_error
 			update_backtrace_part_error();
 		} elsif ($info->{$passthrough_id}{sakuhajimari} != $hajimari) {
 			update_hajimari();
+		} elsif (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17){
+			update_ext();
 		}
 		#print 'Yes?';
 	} else {
 		#die 'No!';
 		# Backtrace necessary for comparison to update sakuhin
-		my $info_backtrace_query = "select reki.*, saku.hajimari, saku.josuu as `sakujosuu`, saku.yotei as `yotei`, saku.jyoukyou as `sakujyoukyou`, saku.whole as `sakuwhole`, saku.eternal as `eternal` from rireki reki left join sakuhin saku on reki.sid = saku.id where saku.`id` = ? order by jiten desc limit 1, 1";
+		my $info_backtrace_query = "select reki.*, saku.hajimari, saku.josuu as `sakujosuu`, saku.yotei as `yotei`, saku.jyoukyou as `sakujyoukyou`, saku.whole as `sakuwhole`, saku.eternal as `eternal`, saku.mal_id as `mal_id`, saku.al_id as `al_id` from rireki reki left join sakuhin saku on reki.sid = saku.id where saku.`id` = ? order by jiten desc limit 1, 1";
 		my $info_backtrace_syutoku = $dbh->prepare($info_backtrace_query);
 		$info_backtrace_syutoku->execute(param('reference'));
 		my $info_backtrace = $info_backtrace_syutoku->fetchall_hashref('sid');
@@ -215,6 +261,8 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $sakuhin_kousin_query = "update sakuhin set yotei = ?, jyoukyou = ?, part = ?, whole = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
 		$sakuhin_kousin->execute($original_yotei, $original_jyoukyou, $original_part, $original_whole, $original_owari, param('reference'));
+		Hyouka::External::mal_kousin($info->{$passthrough_id}{mal_id}, $original_part, $info->{$passthrough_id}{sakujosuu}, $original_jyoukyou, 0, $part_turu[1], $info->{$passthrough_id}{hantyuu}, $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17) && defined $info->{$passthrough_id}{mal_id} && $info->{$passthrough_id}{mal_id} ne '';
+		Hyouka::External::al_kousin($info->{$passthrough_id}{al_id}, $original_part, $info->{$passthrough_id}{sakujosuu}, $original_jyoukyou, 0, $original_owari, $part_turu[1], $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17) && defined $info->{$passthrough_id}{al_id} && $info->{$passthrough_id}{al_id} ne '';
 	}
 
 	#audioscrobblerを組み込む

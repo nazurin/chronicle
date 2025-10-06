@@ -63,6 +63,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	my $mikakutei = defined param('mikakutei') && param('mikakutei') ? decode_utf8(param('mikakutei')) : 0;		
 	my $kansou = defined param('kansou') && param('kansou') ? decode_utf8(param('kansou')) : "";		
 	my $yotei = defined param('yotei') && param('yotei') ? decode_utf8(param('yotei')) : 0;		
+	my $sakifuku = defined param('sakifuku') && param('sakifuku') ? decode_utf8(param('sakifuku')) : 0;		
 
 	my $genzai = time();
 	
@@ -148,6 +149,14 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	while(my $v = $hantyuu_get->fetchrow_arrayref){
 		$hantyuu = $v->[0];
 	}
+
+	my ($sitazi_ext, @sitazi_bind_ext);
+	if($hantyuu == 13){
+		my $mal_id = defined param('mal_id') && param('mal_id') ne '' ? decode_utf8(param('mal_id')) : undef;		
+		my $al_id = defined param('al_id') && param('al_id') ne '' ? decode_utf8(param('al_id')) : undef;
+		$sitazi_ext .= "mal_id = ?, al_id = ?, ";
+		push @sitazi_bind_ext, ($mal_id, $al_id);
+	}		
 	
 	if($kansou ne $info->{$id}{kansou}){
 		my $char = length($kansou);
@@ -156,10 +165,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 		$sounyuu_jikkou->execute($id, $genzai, $char, $kansou);
 	}
 		
-	my $meirei = "update sakuhin set yotei = ?, midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
+	my $meirei = "update sakuhin set yotei = ?, sakifuku = ?, ${sitazi_ext} midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
 	
 	my $sakuhin_kousin = $dbh->prepare($meirei);
-	$sakuhin_kousin->execute($yotei, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
+	$sakuhin_kousin->execute($yotei, $sakifuku, @sitazi_bind_ext, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
 } elsif(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kanri') && param('kanri') eq 'del') {
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
 	

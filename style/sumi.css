@@ -272,6 +272,14 @@ div.commander > div.migi > div.narabikae > form select[name=narabi] {
 	text-align: center;
 }
 
+div.commander > div.migi > div.narabikae > form .lang_en select[name=page_siborikomi_hantyuu],
+div.commander > div.migi > div.narabikae > form .lang_en select[name=page_siborikomi_jyoukyou],
+div.commander > div.migi > div.narabikae > form .lang_en select[name=narabi] {
+	padding: 0em 0.5em;
+    letter-spacing: -0.07em;
+    font-size: 0.95em;
+}
+
 div.commander > div.migi > div.narabikae > form select[name=page_siborikomi_jyoukyou] {
 	background-image: url('/img/bg/plflo54.jpg');
 	background-size: cover;
@@ -393,6 +401,11 @@ div.koumoku > div.sakuhinmei > p.sakka {
 
 div.koumoku > div.sakuhinmei > p.fuku_midasi {
 	margin-left: 0.375em;
+}
+
+div.koumoku > div.sakuhinmei > p.fuku_midasi.sakifuku {
+	margin-right: 0.375em;
+	margin-left: 0em;
 }
 
 div.koumoku > div.jyou > div.jyoukyou {
@@ -523,6 +536,7 @@ div.koumoku > div.kansou_kousin {
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div,
+div.koumoku > div.kansou_kousin > form > div.ext > div,
 div.koumoku > div.kansou_kousin > form > div.colle > div {
 	display: inline-block;
 	margin-right: 1em;
@@ -536,6 +550,7 @@ div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div,
 div.koumoku > div.kansou_kousin > form > div.betumei > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div > div,
+div.koumoku > div.kansou_kousin > form > div.ext > div > div,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div {
 	display: inline-block;
 }
@@ -544,12 +559,23 @@ div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div:first-chi
 div.koumoku > div.kansou_kousin > form > div.betumei > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div > div:first-child,
+div.koumoku > div.kansou_kousin > form > div.ext > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div:first-child {
 	width: 5em;
 }
 
 div.koumoku > div.kansou_kousin > form > div.super_extra > div.yotei > div:first-child {
 	width: 7em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.ext a:link,
+div.koumoku > div.kansou_kousin > form > div.ext a:visited {
+	color: inherit;
+	text-decoration: none;
+}
+
+div.koumoku > div.kansou_kousin > form > div.ext > div > div > input[type=number] {
+	width: 6em;
 }
 
 div.koumoku > div.kansou_kousin > form > div.betumei > div:first-child {
@@ -1126,6 +1152,18 @@ div.sakuhinbako > div.hidari > div.kutikomi ~ div.kutikomi {
 	margin-top: 0.25em;
 }
 
+div.sakuhinbako > div.hidari > div.kutikomi a,
+div.koumoku.type_700 a {
+	word-break: break-all;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi a:link,
+div.koumoku.type_700 a:link,
+div.sakuhinbako > div.hidari > div.kutikomi a:visited,
+div.koumoku.type_700 a:visited {
+	color: azure;
+}
+
 div.sakuhinbako > div.hidari > div.kutikomi > div.header {
 	background: linear-gradient(0deg, #ddd, #efefef);
 	display: flex;
@@ -1197,7 +1235,7 @@ div.sakuhinbako > div.hidari > form > div[data-kakejiku='kansou_long']:not(.kake
 	border-radius: 0;
 }
 
-div.sakuhinbako > div.hidari > form > div[data-kakejiku='ten']:not(.kakejiku) input {
+div.sakuhinbako > div.hidari > form > div[data-kakejiku='ten']:not(.kakejiku) input:not([type=radio]) {
 	width: 50%;
 }
 
