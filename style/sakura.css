@@ -1,3 +1,15 @@
+body > div.header {
+	background: url('/img/websozai/himawari_no_kobeya/plflo54.jpg') no-repeat, 
+	linear-gradient(90deg, white 40%, transparent 100%),
+	url('/img/bg/b125.jpg');
+}
+
+body > div.body > div.navi,
+body > div.body > div.migi,
+body > div.footer {
+	background: url('/img/bg/b125.jpg');	
+}
+
 div[class^='hantyuu_']{
 	color: #ca0f6f;
 	background: linear-gradient(50deg, #ffe5ea, #ffc4ff);
