@@ -2,6 +2,14 @@ body {
 	background: url('/img/bg/b100.jpg');
 }
 
+div.body {
+	margin-bottom: 1em;
+}
+
+div.colle.youyaku {
+	/*padding-bottom: 1em;*/
+}
+
 div.commander {
 	/* display: block; */
 	flex-wrap: wrap-reverse;
@@ -32,6 +40,10 @@ div.commander > div.hidari > div.navi {
 
 div.commander > div.migi {
 	flex-shrink: 1;
+}
+
+div.commander > div.migi > div.open {
+	display: block;
 }
 
 div.koumoku {
@@ -79,6 +91,12 @@ div.koumoku > div.jyou {
 
 div.koumoku > div.jyou > div.jyoukyou {
 	padding: 1px 3px;
+}
+
+div.koumoku > div.jyou > span.jyouhou {
+	min-width: 4.875em;
+	display: inline-block;
+	margin-right: 0.5em;
 }
 
 div.koumoku > div.hantyuu {
@@ -306,10 +324,6 @@ div.colle.koumoku.bikou_3 > div.sakuhinmei > div > p.sakka {
 	margin-left: 0.25em;
 }
 
-div.colle.youyaku {
-	padding-bottom: 2em;
-}
-
 div.rireki_box > div.koumoku {
 	padding: 0px 0.25em;
 }
@@ -376,4 +390,71 @@ div.sakuhinbako > div.hidari > form > div[data-kakejiku="kansou_long"]:not(.kake
 
 div.sakuhinbako > div.hidari > div.kutikomi {
 	margin: 0em 0.25em;
+}
+
+div.commander > div.hidari {
+	width: 100%;
+}
+
+div.commander > div.hidari > div.hamarimono {
+	width: 100%;
+}
+
+div.music_box > div.koumoku {
+	padding: 0px 0.25em;
+}
+
+div.music_box > div.koumoku:first-child {
+	border-top: none;
+}
+
+div.music_box > div.koumoku > div.hiduke,
+div.music_box > div.koumoku.lang_ja > div.hiduke {
+	width: 45%;
+	padding-left: 0.5em;
+}
+
+div.music_box > div.koumoku > div.hiduke > span.jikantai {
+	margin-left: 0.5em;
+	float: initial;
+	margin-right: initial;
+}
+
+div.music_box > div.koumoku > div.kyokumei,
+div.music_box > div.koumoku.lang_ja > div.kyokumei,
+div.music_box > div.koumoku.type_700 > div.kyokumei,
+div.music_box > div.koumoku.type_700.lang_ja > div.kyokumei {
+	width: 55%;
+}
+
+div.music_box > div.koumoku > div.hiduke > span.tosi {
+	/* background: hsla(0, 0%, 100%, 0.6); */
+	/* padding: 0px 0.25em;*/
+	position: initial;
+	font-size: 1em;
+	margin-right: 0.25em;
+}
+
+div.music_box > div.koumoku > div.artist {
+	width: 45%;
+	padding: 0px 0px 0px 2em;
+	font-weight: bold;
+}
+
+div.music_box > div.koumoku > div.artist:empty {
+	display: none;
+}
+
+div.music_box > div.koumoku > div.album {
+	width: 50%;
+	padding: 0px 0px 0px 0em;
+}
+
+div.music_box > div.koumoku > div.album:empty {
+	display: none;
+}
+
+div.music_box > div.koumoku > div.artist:empty + div.album {
+	padding: 0px 0px 0px 45%;
+	width: 100%;
 }
