@@ -80,9 +80,21 @@ if(request_method eq 'POST' && defined param('rireki_sousin') && Kahifu::Templat
 		my $mikakutei_kousin = defined param('mikakutei') && param('mikakutei') ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'mikakutei'}[$i]) : decode_utf8($params{'mikakutei'})) : $info_rireki->{$rireki_sid[$i]}{mkt};
 		my $text_kousin = defined $params{'text'} && $params{'text'} ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'text'}[$i]) : decode_utf8($params{'text'})) : $info_rireki->{$rireki_sid[$i]}{text};
 
-		my $rireki_kousin_query = "update rireki set jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ? where id = ?";
+		my $with_syoki = defined $params{'with'} && $params{'with'} ne '' ? (ref($params{'reference'}) eq 'ARRAY' ? decode_utf8($params{'with'}[$i]) : decode_utf8($params{'with'})) : $info_rireki->{$rireki_sid[$i]}{with};
+		my @with_current = split(',', $with_syoki);
+		my @with_list_get = $dbh->selectall_array("select party from `with`");
+		for(my $i=0; $i<scalar(@with_list_get); $i++){$with_list_get[$i] = $with_list_get[$i][0]}
+		#die(scalar(@with_list_get)*2);
+		#my $wish_list_get_syoki_scalar = scalar(@with_list_get);
+		#for(my $i=scalar(@with_list_get); $i<(scalar(@with_list_get)*2); $i++){$with_list_get[$i] = $with_list_get[$i-$wish_list_get_syoki_scalar].'1';}
+		#die(dump @with_list_get);
+		my %to_delete = map { $_ => 1 } @with_list_get;
+		@with_current = grep { $to_delete{$_} } @with_current;
+		my $with_kousin = join ',', @with_current;
+
+		my $rireki_kousin_query = "update rireki set jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?, `with` = ? where id = ?";
 		my $rireki_kousin_jikkou = $dbh->prepare($rireki_kousin_query);
-		$rireki_kousin_jikkou->execute($jiten, $part_kousin, $whole_kousin, $jyoukyou_kousin, $josuu_kousin, $mikakutei_kousin, $text_kousin, $rireki_sid[$i]);	
+		$rireki_kousin_jikkou->execute($jiten, $part_kousin, $whole_kousin, $jyoukyou_kousin, $josuu_kousin, $mikakutei_kousin, $text_kousin, $with_kousin, $rireki_sid[$i]);	
 	}
 }
 
