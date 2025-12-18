@@ -67,7 +67,6 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 
 		$al_id = $hantyuu == 13 ? Hyouka::External::al_manga_kensaku($midasi, $api_json_data) : Hyouka::External::al_anime_kensaku($midasi, $api_json_data);
 		$mal_id = $hantyuu == 13 ? Hyouka::External::mal_manga_kensaku($midasi, $api_json_data) : Hyouka::External::mal_anime_kensaku($midasi, $api_json_data);
-		sleep(2);
 		if($kansyouzumi == 1){
 			Hyouka::External::mal_kousin($mal_id, $whole, $josuu, '終', 0, 700000, $hantyuu, $api_json_data) if defined $mal_id && $mal_id ne '';
 			Hyouka::External::al_kousin($al_id, $whole, $josuu, '終', 0, undef, 700000, $api_json_data) if defined $al_id && $al_id ne '';
@@ -91,7 +90,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	if($kansyouzumi == 1){
 		my $rireki_sousin_query = "insert into rireki (`sid`, `jiten`, `part`, `whole`, `jyoukyou`, `josuu`, `mkt`) values (?, ?, ?, ?, ?, ?, ?)";
 		my $rireki_sousin = $dbh->prepare($rireki_sousin_query);
-		$rireki_sousin->execute($id, $genzai, $whole, $whole, $jyoukyou, $josuu, $mikakutei);
+		$rireki_sousin->execute($id, $owari, $whole, $whole, $jyoukyou, $josuu, $mikakutei);
 	}
 	
 	my $key = 0;
