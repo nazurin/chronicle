@@ -382,9 +382,9 @@ if($paginate == 1){
 	$hantyuu_syutoku = "select YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1) as `week`, `jiten`, `hantyuu`, count(*) as `count` from (SELECT (\@partpre = part AND \@sidpre=sid AND `jyoukyou` not in ('終','葉','中')) AS unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) AS x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id ${kensaku_sitazi} where substring(YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1), 1, 4) = ? ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and not unchanged_status group by `hantyuu`, `week` union all select YEARWEEK(FROM_UNIXTIME(`date` - ${sanjyuujikansei_offset}), 1) as `week`, `date` as `jiten`, 900 as `hantyuu`, floor((count(*) * 4.427)/60)/1.5 as `count` from (select `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 0 as `with`, 0 as `betumei`, 0 as `fukubetumei`, 0 as `sakkabetumei`, 900 as `hantyuu`, '終' as `jyoukyou`, listen.* from `listen`) as listen where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} group by `week` order by jiten desc";
 	#music_syutoku = "select YEARWEEK(FROM_UNIXTIME(`date`), 1) as `week`, 900 as `hantyuu`, floor((count(*) * 4.427)/60) as `count` from `listen` group by `week`"
 	my $koyomi_hantyuu = $dbh->prepare($hantyuu_syutoku);
-	$koyomi_hantyuu->execute(${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind, @sitazi_bind);
+	$koyomi_hantyuu->execute(@sitazi_bind, ${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind);
 	sub collapse_hantyuu {
-		my $hantyuu = shift//6;
+		my $hantyuu = shift;
 		return 7 if $hantyuu == 16 || $hantyuu == 24;
 		return 68 if $hantyuu == 67;
 		return 6 if $hantyuu == 25 || $hantyuu == 26 || $hantyuu == 18;
@@ -397,7 +397,7 @@ if($paginate == 1){
 		undef %{$hantyuu_atumari} if $v->{week} != $last_week_hantyuu;
 		$last_week_hantyuu = $v->{week};
 		$hantyuu_syori = collapse_hantyuu($v->{hantyuu});
-		$hantyuu_atumari->{"$hantyuu_syori"} += $v->{count};
+		$hantyuu_atumari->{"$hantyuu_syori"} += $v->{count} if $hantyuu_syori ne '';
 		my @hantyuu_inner_array = ($v->{week}, $hantyuu_syori, $hantyuu_atumari->{$hantyuu_syori});		
 		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori} || not defined $koyomi_hantyuu_winner{$v->{week}});
 	}
