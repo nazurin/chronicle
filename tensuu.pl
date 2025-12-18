@@ -75,9 +75,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	$sakuhin_kousin->execute(@sitazi_bind, $jiten, $id);
 
 	my $api_json_data = Hyouka::External::api_json_syutoku();
+	
 	if(grep{$_ eq $hantyuu} 13, 14, 17){
-		$hard_kousin_mal == 0 ? Hyouka::External::mal_score_kousin($mal_id, $hantyuu, decode_utf8(param('tensuu_mal_pt')), $api_json_data) : Hyouka::External::mal_hard_kousin($mal_id, $part, $josuu, $jyoukyou, $hantyuu, $hajimari_ymd, $owari_ymd, $param_tensuu_mal_pt, $api_json_data);
-		$hard_kousin_al == 0 ? Hyouka::External::al_score_kousin($al_id, decode_utf8(param('tensuu_al_pt')), $api_json_data) : Hyouka::External::al_hard_kousin($al_id, $part, $josuu, $jyoukyou, $hajimari_y, $hajimari_m, $hajimari_d, $owari_y, $owari_m, $owari_d, $param_tensuu_al_pt, $kakusu, $api_json_data);
+		$hard_kousin_mal == 1 ? Hyouka::External::mal_hard_kousin($mal_id, $part, $josuu, $jyoukyou, $hantyuu, $hajimari_ymd, $owari_ymd, $param_tensuu_mal_pt, $api_json_data) : (defined $mal_pt ? Hyouka::External::mal_score_kousin($mal_id, $hantyuu, decode_utf8(param('tensuu_mal_pt')), $api_json_data) : "");
+		$hard_kousin_al == 1 ? Hyouka::External::al_hard_kousin($al_id, $part, $josuu, $jyoukyou, $hajimari_y, $hajimari_m, $hajimari_d, $owari_y, $owari_m, $owari_d, $param_tensuu_al_pt, $kakusu, $api_json_data) : (defined $al_pt ? Hyouka::External::al_score_kousin($al_id, decode_utf8(param('tensuu_al_pt')), $api_json_data) : "");
 	}
 }
 
