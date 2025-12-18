@@ -1,0 +1,42 @@
+div.podium {
+    padding: 0.25em;
+}
+
+div.heading {
+    color: #0067ff;
+    text-shadow: rgba(36,224,199,1) 4px 4px 6px;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+div.subheading {
+    color: purple;
+    text-shadow: orchid 1px 1px 4px;
+    text-align: center;
+    font-weight: bold;
+}
+
+div.subheading.lang_ja {
+    letter-spacing: 0.25em;
+}
+
+div.body {
+    margin: 0em 4em 0.5em 0.5em;
+}
+
+div.gazou {
+    position: relative;
+    display: inline-block;
+}
+
+div.gazou > img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+div.gazou > svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
