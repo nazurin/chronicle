@@ -55,7 +55,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $hide = defined param('hide') && param('hide') ? decode_utf8(param('hide')) : 0;		
 	my $bikouiti = defined param('bikouiti') && param('bikouiti') ? decode_utf8(param('bikouiti')) : 0;
 	my $kansou_hyouji = defined param('kansou_hyouji') && param('kansou_hyouji') ? decode_utf8(param('kansou_hyouji')) : 0;		
-	
+	my $sort_iti = defined param('sort_iti') && param('sort_iti') ? decode_utf8(param('sort_iti')) : "";		
+	my $sort_ni = defined param('sort_ni') && param('sort_ni') ? decode_utf8(param('sort_ni')) : undef;
+
 	my $jiten = time();
 	
 	my $hyouji = decode_utf8(to_json($process_result{hyouji}));
@@ -81,14 +83,14 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	
 	if(defined param('colle_sinkiroku')){
 		print "Yes!";
-		my $query = "insert into collection set midasi = ?, midasi_seisiki = ?, hyouji = ?, turu = ?, tag = ?, gaiyouran = ?, bikou = ?, kakusu = ?, bikouiti = ?, kansou_hyouji = ?, jiten = ?, color = ?";
+		my $query = "insert into collection set midasi = ?, midasi_seisiki = ?, hyouji = ?, turu = ?, tag = ?, gaiyouran = ?, bikou = ?, kakusu = ?, bikouiti = ?, kansou_hyouji = ?, jiten = ?, color = ?, sort1 = ?, sort2 = ?";
 		my $sinkiroku = $dbh->prepare($query);
-		$sinkiroku->execute($midasi, $midasi_seisiki, $hyouji, $turu, $tag, $gaiyouran, $bikou_serialized, $hide, $bikouiti, $kansou_hyouji, $jiten, $color);
+		$sinkiroku->execute($midasi, $midasi_seisiki, $hyouji, $turu, $tag, $gaiyouran, $bikou_serialized, $hide, $bikouiti, $kansou_hyouji, $jiten, $color, $sort_iti, $sort_ni);
 	} elsif(defined param('colle_hensyuu')){
 		print "Yes!!";
-		my $query = "update collection set midasi = ?, midasi_seisiki = ?, hyouji = ?, turu = ?, tag = ?, gaiyouran = ?, bikou = ?, kakusu = ?, bikouiti = ?, kansou_hyouji = ?, color = ? where midasi_seisiki = ?";
+		my $query = "update collection set midasi = ?, midasi_seisiki = ?, hyouji = ?, turu = ?, tag = ?, gaiyouran = ?, bikou = ?, kakusu = ?, bikouiti = ?, kansou_hyouji = ?, color = ?, sort1 = ?, sort2 = ? where midasi_seisiki = ?";
 		my $hensyuu = $dbh->prepare($query);
-		$hensyuu->execute($midasi, $midasi_seisiki, $hyouji, $turu, $tag, $gaiyouran, $bikou_serialized, $hide, $bikouiti, $kansou_hyouji, $color, $midasi_seisiki);
+		$hensyuu->execute($midasi, $midasi_seisiki, $hyouji, $turu, $tag, $gaiyouran, $bikou_serialized, $hide, $bikouiti, $kansou_hyouji, $color, $sort_iti, $sort_ni, $midasi_seisiki);
 	}
 
 	for my $i (split ',', $turu){
