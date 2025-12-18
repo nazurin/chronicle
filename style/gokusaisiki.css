@@ -65,27 +65,37 @@
 .koumoku.type_7:nth-child(2n),
 .koumoku.type_16:nth-child(2n),
 .koumoku.type_24:nth-child(2n) {
+	/*
 	background-color: hsl(27.8, 75.5%, 86%);
 	color: hsl(33.9, 97.4%, 29%);
+	*/
+	background-color: hsl(332, 70%, 90%);
+	color: hsl(337.9, 98.9%, 37.1%);
 }
 
 .koumoku.type_7:nth-child(2n+1),
 .koumoku.type_16:nth-child(2n+1),
 .koumoku.type_24:nth-child(2n+1) {
-	 background-color: hsl(27.8, 75.5%, 93%);
+	/*
+	background-color: hsl(27.8, 75.5%, 93%);
 	color: hsl(33.9, 97.4%, 29%);
+	*/
+	background-color: hsl(332, 100%, 97%);
+	color: hsl(337.9, 98.9%, 37.1%);
 }
 
 .koumoku.subtype_7,
 .koumoku.subtype_16,
 .koumoku.subtype_24 {
-	background-color: hsl(33.9, 67.4%, 29%);
+	/* background-color: hsl(33.9, 67.4%, 29%); */
+	background-color: hsl(338, 58%, 52%);
 }
 
 .koumoku.subtype_7:nth-child(2n+1),
 .koumoku.subtype_16:nth-child(2n+1),
 .koumoku.subtype_24:nth-child(2n+1) {
-	background-color: hsl(33.9, 67.4%, 39%);
+	/* background-color: hsl(33.9, 67.4%, 39%); */
+	background-color: hsl(338, 58%, 62%);
 }
 
 .hantyuu_femihonn,
@@ -96,8 +106,8 @@
 }
 
 .koumoku.type_18:nth-child(2n+1) {
-	 background-color: hsl(332, 100%, 97%);
-	 color: hsl(338, 88%, 52%);
+	background-color: hsl(332, 100%, 97%);
+	color: hsl(338, 88%, 52%);
 }
 
 .koumoku.subtype_18 {
@@ -385,7 +395,7 @@
 }
 
 div.sakuhinbako > div.hidari > div.kutikomi {
-
+	
 }
 
 div.sakuhinbako > div.hidari > div.kutikomi.type_1 > div.header > span.syurui,
