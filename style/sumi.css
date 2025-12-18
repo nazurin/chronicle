@@ -138,6 +138,13 @@ div.commander > div.hidari > div.hanrei .theme.flora {
 	text-shadow: 1px 1px #b81414;
 }
 
+div.commander > div.hidari > div.hanrei .theme.shoreline {
+	background: linear-gradient(160deg, hsl(180, 100%, 94%) 5%, transparent 40%),
+	linear-gradient(270deg, hsl(43, 83%, 75%), white);
+	color: #237ebe;
+	text-shadow: 1px 1px 1px #fff;
+}
+
 div.commander > div.hidari > div.hanrei .lang.original {
 	color: white;
 	background-color: navy;
@@ -160,10 +167,76 @@ div.commander > div.hidari > div.syuu_mekuri {
 	flex-grow: 1;
 }
 
+div.commander > div.hidari > div.hamarimono {
+	width: 23em;
+	height: 9.5em;
+	flex-grow: 1;
+	border: 3px ridge white;
+	position: relative;
+}
+
+div.commander > div.hidari > div.hamarimono > img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	position: absolute;
+}
+
+div.commander > div.hidari > div.hamarimono > div.hamari {
+	display: block;
+	position: absolute;
+}
+
+div.commander > div.hidari > div.hamarimono > div.hamari img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+div.commander > div.hidari > div.hamarimono > div.hamari span {
+	top: 50%;
+	left: 50%;
+	position: absolute;
+	transform: translate(-50%, -50%);
+	width: 6em;
+  	text-align: center;
+	vertical-align: middle;
+	font-weight: bold;
+	text-shadow: 1px 1px white,
+		-1px -1px white,
+		1px -1px white,
+		-1px 1px white;
+}
+
 div.commander > div.migi {
 	display: flex;
 	flex-direction: column;
-	flex-shrink: 0.95;
+	/*flex-shrink: 0.95;*/
+}
+
+div.commander > div.migi > div.open {
+	display: none;
+	background: url('/img/websozai/himawari_no_kobeya/plflo54.jpg') center right/10em no-repeat,
+		linear-gradient(90deg, white 40%, azure 100%);
+	border: 3px ridge white;
+	border-bottom: none;	
+	padding: 0em 0.25em;
+}
+
+div.commander > div.migi > div.open > span:first-child {
+	font-size: 1.25em;
+	font-style: italic;
+	text-shadow: #c4fcc9 2px 2px 0px;
+    color: rgba(252, 6, 80, 0.795);
+	margin-right: 0.125em;
+}
+
+div.commander > div.migi > div.open > span:nth-child(2) {
+	font-size: 1em;
+    font-style: normal;
+    text-shadow: #93beff 1px 1px 1px;
+    color: #1e4374;
 }
 
 div.commander > div.migi > div.maegaki {
@@ -176,6 +249,7 @@ div.commander > div.migi > div.kinkyou {
 	background-color: rgb(255, 250, 168);
 	border: 3px ridge white;
 	border-bottom: none;
+	/* flex-grow: 1; */
 }
 
 div.commander > div.migi > div.kinkyou > p > span {
@@ -187,6 +261,10 @@ div.commander > div.migi > div.control > form {
 	width: 100%;
 	border: 3px white ridge;
 	border-bottom: none;
+}
+
+div.commander > div.migi > div.control.lang_en > form {
+	flex-wrap: wrap;
 }
 
 div.commander > div.migi > div.control input[type="submit"] {
@@ -205,7 +283,12 @@ div.commander > div.migi > div.control input[type="submit"] {
 	cursor: pointer;
 }	
 
-div.commander > div.migi > div.control input[type="submit"]:disabled {
+div.commander > div.migi > div.control.lang_en input[type="submit"] {
+	min-width: 50%;
+}
+
+div.commander > div.migi > div.control input[type="submit"]:disabled,
+div.commander > div.migi > div.control:nth-child(5) input[type="submit"]:disabled {
 	border-radius: 0;
 	border: 1px ridge firebrick;
 	border-top: 2px ridge firebrick;
@@ -224,6 +307,29 @@ div.commander > div.migi > div.control input[type='submit']:first-of-type {
 
 div.commander > div.migi > div.control input[type='submit']:last-of-type {
 	border-right: 2px ridge purple;
+}
+
+div.commander > div.migi > div.control:nth-child(5) > form {
+	border-top: none;
+}
+
+div.commander > div.migi > div.control:nth-child(5) input[type="submit"] {
+	border-top: none;
+	/*border: 1px ridge green;
+	border-bottom: 2px ridge green;
+	background-color: hsl(139, 97%, 35%);*/
+}
+
+div.commander > div.migi > div.control:nth-child(5) input[type='submit']:first-of-type {
+	border-left: 2px ridge green;
+}
+
+div.commander > div.migi > div.control:nth-child(5) input[type='submit']:last-of-type {
+	border-right: 2px ridge green;
+}
+*/
+div.commander > div.migi > div.control:nth-child(5) input[type="submit"]:disabled {
+	border-top: none;
 }
 
 div.commander > div.migi > div.control input[type='submit']:hover:not(:disabled) {
@@ -351,6 +457,10 @@ div.koumoku > div.jyou {
 
 div.koumoku.ongaku > div.jyou {
 	width: 30%;
+}
+
+div.koumoku.lang_en.ongaku > div.jyou {
+	width: 40%;
 }
 
 div.info > div.hantyuu,
@@ -482,8 +592,21 @@ div.koumoku > div.activity > div.rireki_kakera > div.rirekinai_hiduke > span.mik
 	margin-right: 0.25em;
 }
 
+div.koumoku > div.activity > div.rireki_kakera > div.rirekinai_sinkou {
+	min-width: 6em;
+}
+
 div.koumoku > div.activity > div.rireki_kakera > div.rireki_title {
 	margin-left: 3em;
+}
+
+div.koumoku > div.activity > div.rireki_kakera > div.rireki_title:empty {
+	display: none;
+	margin: 0;
+}
+
+div.koumoku > div.activity > div.rireki_kakera > div.rireki_with {
+	
 }
 
 div.koumoku > div.activity_kousin {
@@ -491,6 +614,14 @@ div.koumoku > div.activity_kousin {
 	width: 100%;
 	padding: 0.25em 0px 0px 1em;
 	display: none;
+}
+
+div.koumoku > div.activity_kousin > form > div.text_collection {
+	display: flex;
+}
+
+div.koumoku > div.activity_kousin > form > div.text_collection span {
+	margin: 0em 0.5em;
 }
 
 div.koumoku > div.activity_kousin > form > div.hiduke_collection {
@@ -820,6 +951,11 @@ div.colle.koumoku > div.sakuhinmei > div > p.fuku_midasi {
 	margin-left: 0.375em;
 }
 
+div.colle.koumoku > div.sakuhinmei > div > p.fuku_midasi:first-child {
+	margin-left: 0em;
+	margin-right: 0.25em;
+}
+
 div.colle.koumoku > div.sakuhinmei.bikou_3 {
 	flex-wrap: wrap;
 }
@@ -969,6 +1105,9 @@ div.syuu_mekuri > div.tosituki > div.month > span.futa {
 
 div.syuu_mekuri > div.youbi {
 	width: 2.25em;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 div.syuu_mekuri > div.youbi > div.youbi {
@@ -1002,7 +1141,7 @@ div.rireki_box > div.koumoku:first-child {
 }
 
 div.rireki_box > div.koumoku > div.hiduke {
-	width: 10%;
+	width: 11%;
 }
 
 div.rireki_box > div.koumoku > div.sakuhinmei {
@@ -1013,13 +1152,18 @@ div.rireki_box > div.koumoku.lang_ja > div.hiduke {
 	width: 12.5%;
 }
 
-div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei {
+div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei,
+div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei.ditto {
 	width: 32.5%;
 }
 
 div.rireki_box > div.koumoku.type_700 > div.sakuhinmei,
 div.rireki_box > div.koumoku.type_700.lang_ja > div.sakuhinmei {
 	width: 75%;
+}
+
+div.rireki_box > div.koumoku.type_700 > div.bikou > span.with {
+	display: none;
 }
 
 div.rireki_box > div.koumoku > div.sakuhinmei.ditto {
@@ -1035,7 +1179,11 @@ div.rireki_box > div.koumoku > div.hiduke > span.jikantai {
 
 div.rireki_box > div.koumoku > div.bikou {
 	font-size: 0.9em;
-	margin-left: 5em;
+	margin-left: 5.5em;
+}
+
+div.rireki_box > div.koumoku > div.bikou > span.with {
+	margin-right: 0.5em;
 }
 
 div.rireki_box > div.koumoku.lang_ja > div.bikou {
@@ -1358,8 +1506,8 @@ div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou
 }
 
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div.jiten {
-	width: 8em;
-	flex-basis: 8em;
+	width: 9em;
+	flex-basis: 9em;
 }
 
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou > div.jiten.mikakutei {
@@ -1393,6 +1541,14 @@ div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou
 	width: 100%;
 }
 
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu > div.with span {
+	margin-right: 0.25em;
+}
+
+div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu > div.with input {
+	flex-grow: 1;
+}
+
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu input[type=text],
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu select {
 	font-size: 0.8em;
@@ -1414,6 +1570,64 @@ div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.part input[type=text],
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.rireki > div.gyou.hensyuu div.whole input[type=text] {
 	width: 4em;
+}
+
+div.music_box > div.koumoku {
+	border-top: 1px solid black;
+	border-bottom: none;
+}
+
+div.music_box > div.koumoku:last-child {
+	border-bottom: 1px solid black;
+}
+
+div.music_box > div.koumoku > div.hiduke {
+	width: 11%;
+	position: relative;
+}
+
+div.music_box > div.koumoku.lang_ja > div.hiduke {
+	width: 12.5%;
+}
+
+div.music_box > div.koumoku > div.hiduke > span.tosi {
+	position: absolute;
+	top: -0.65em;
+	left: 0;
+	z-index: 2;
+	font-weight: bold;
+	font-size: 0.7em;
+	text-shadow: 1px 1px white;
+}
+
+div.music_box > div.koumoku.ditto {
+	border-top: 1px dashed black;
+}
+
+div.music_box > div.koumoku.ditto > div.hiduke > span.kakusi {
+	color: hsla(0, 0%, 100%, 0);
+}
+
+div.music_box > div.koumoku > div.hiduke > span.jikantai {
+	opacity: 0.5;
+	text-shadow: lightgray 1px 1px;
+	float: right;
+	margin-right: 0.375em;
+}
+
+div.music_box > div.koumoku > div.kyokumei {
+	width: 35%;
+	font-weight: bold;
+}
+
+div.music_box > div.koumoku > div.artist {
+	width: 25%;
+}
+
+div.music_box > div.koumoku > div.album {
+	width: 26%;
+	color: hsla(0, 0%, 0%, 0.4);
+	/*font-size: 0.9em;*/
 }
 
 /* おまけ　extra */
