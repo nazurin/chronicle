@@ -1,0 +1,450 @@
+/* 上書き */
+body > div.header {
+	background: url('/img/websozai/himawari_no_kobeya/plflo54.jpg') no-repeat, 
+    linear-gradient(90deg, white 0%, white 30%, transparent 100%),
+	linear-gradient(0deg, transparent 0%, hsl(180, 100%, 94%) 90%, hsl(180, 100%, 94%) 100%),
+	white;
+}
+
+body > div.body > div.navi,
+body > div.body > div.migi,
+div.podium {
+    background: linear-gradient(180deg, white 0em, transparent 40%),
+	hsla(43, 83%, 75%, 1);
+}
+
+div.hidari {
+    /* background: */
+    /*    linear-gradient(0deg, transparent 0%, red 100%), */
+    /*    repeating-conic-gradient(#001cff0f 0 25%, #0000 0 50%) 50% / 10px 10px; */
+}
+
+div.koumoku,
+div.rireki_box > div.koumoku:first-child {
+    border: none;
+    text-shadow: 1px 1px white;
+}
+
+div.colle.koumoku > div.sakuhinmei > div.bikou {
+    text-shadow: none;
+}
+
+div.koumoku[class*=subtype] {
+    text-shadow: 1px 1px black;
+}
+
+div.info {
+	color: black;
+    text-shadow: 1px 1px white;
+    border: none;
+    background-color: hsl(180, 100%, 94%);
+}
+
+.info.colle {
+	color: #fff;
+	background-color: hsl(200, 76%, 42%);
+}
+
+div.info > div {
+    border-right: none;
+}
+
+.ten {
+	color: inherit;
+}
+
+.hanrei {
+	color: rgb(63, 139, 221);
+}
+
+.selected_category {
+	box-shadow: 0px 1px 10px #ff0048;
+	font-style: italic !important;
+	color: white !important;
+	background: none !important;
+	background-color: red !important;
+	border: 1px double red !important;
+}
+
+.hantyuu_all {
+	font-weight: bold;
+	background: conic-gradient( #EAC0C1 16.666%, #EECFC6 16.666%, #E3C4BB 33.333%, #ECD1BC 33.333%, #F2CFB3 50%, #E1EEB7 50%, #E6F0C5 66.666%, #c4d1ee 66.666%, #b6c7ec 83.333%, #F0BCEA 83.333%);
+	color: #2b1066;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_bungakukei {
+	font-weight: bold;
+	background: conic-gradient( #FFECC0 16.666%, #FDB7DE 16.666%, #F9CBEF 33.333%, #F4B5CD 33.333%, #E8F0AE 50%, #E1EEB7 50%, #F0C5E3 66.666%, #e6bbd7 66.666%, #f0b3db 83.333%, #E6E6E6 83.333%);
+	color: #a65915;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_sityoukei {
+	font-weight: bold;
+	background: conic-gradient( #E68E90 16.666%, #DD633F 16.666%, #8BD3D7 33.333%, #BAF0F2 33.333%, #C2EEF2 50%, #CDF0D8 50%, #E6F0C5 66.666%, #eed8c4 66.666%, #eccfb6 83.333%, #EE9EB4 83.333%);
+	color: #0b5e56;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_souhoukei {
+	font-weight: bold;
+	background: conic-gradient( #DDC0EA 16.666%, #E3C6EE 16.666%, #DABBE3 33.333%, #EBBCEC 33.333%, #F0B3F2 50%, #DFB7EE 50%, #EBC5F0 66.666%, #dfc4ee 66.666%, #e5b6ec 83.333%, #F0BCEA 83.333%);
+	color: #2b1066;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_syousetu,
+.hannyou.type_7,
+.hannyou.type_16,
+.hannyou.type_24,
+.koumoku.type_7:nth-child(2n),
+.koumoku.type_16:nth-child(2n),
+.koumoku.type_24:nth-child(2n) {
+	background-color: hsla(27.8, 75.5%, 86%, 0.4);
+	color: hsl(33.9, 97.4%, 29%);
+}
+
+.koumoku.type_7:nth-child(2n+1),
+.koumoku.type_16:nth-child(2n+1),
+.koumoku.type_24:nth-child(2n+1) {
+	 background-color: hsla(27.8, 75.5%, 93%, 0.4);
+	color: hsl(33.9, 97.4%, 29%);
+}
+
+.koumoku.subtype_7,
+.koumoku.subtype_16,
+.koumoku.subtype_24 {
+	background-color: hsla(33.9, 67.4%, 29%, 0.4);
+}
+
+.koumoku.subtype_7:nth-child(2n+1),
+.koumoku.subtype_16:nth-child(2n+1),
+.koumoku.subtype_24:nth-child(2n+1) {
+	background-color: hsla(33.9, 67.4%, 39%, 0.4);
+}
+
+.hantyuu_femihonn,
+.hannyou.type_18,
+.koumoku.type_18:nth-child(2n) {
+	background-color: hsla(332, 70%, 90%, 0.4);
+	color: hsl(338, 88%, 52%);
+}
+
+.koumoku.type_18:nth-child(2n+1) {
+	 background-color: hsla(332, 100%, 97%, 0.4);
+	 color: hsl(338, 88%, 52%);
+}
+
+.koumoku.subtype_18 {
+	background-color: hsla(338, 58%, 52%, 0.4);
+}
+
+.koumoku.subtype_18:nth-child(2n+1) {
+	background-color: hsla(338, 58%, 62%, 0.4);
+}
+
+.hantyuu_si,
+.hantyuu_sisyuu,
+.hannyou.type_67,
+.hannyou.type_68,
+.koumoku.type_67:nth-child(2n), 
+.koumoku.type_68:nth-child(2n) {
+	background-color: hsla(161, 69%, 90%, 0.4);
+	color: hsl(161.1, 100%, 25.7%);
+}
+
+.koumoku.type_67:nth-child(2n+1),
+.koumoku.type_68:nth-child(2n+1) {
+	 background-color: hsla(161.1, 100%, 97%, 0.4);
+	 color: hsl(161.1, 100%, 25.7%);
+}
+
+.koumoku.subtype_67,
+.koumoku.subtype_68 {
+	background-color: hsla(161.1, 100%, 25.7%, 0.4);
+}
+
+.koumoku.subtype_67:nth-child(2n+1),
+.koumoku.subtype_68:nth-child(2n+1) {
+	background-color: hsla(161.1, 100%, 35%, 0.4);
+}
+
+.hantyuu_anime,
+.hannyou.type_14,
+.hannyou.type_17,
+.koumoku.type_14:nth-child(2n),
+.koumoku.type_17:nth-child(2n) {
+	background-color: hsla(3, 68.6%, 100%, 0.4);
+	color: hsl(0, 100%, 39.3%);
+}
+
+.koumoku.type_14:nth-child(2n+1),
+.koumoku.type_17:nth-child(2n+1) {
+	background-color: hsla(3.4, 100%, 98%, 0.4);
+	color: hsl(0, 100%, 39.3%);
+}
+
+.koumoku.subtype_14,
+.koumoku.subtype_17 {
+	background-color: hsla(0, 100%, 39.3%, 0.4);
+}
+
+.koumoku.subtype_14:nth-child(2n+1),
+.koumoku.subtype_17:nth-child(2n+1) {
+	background-color: hsla(0, 100%, 48%, 0.4);
+}
+
+/* テレビ */
+.hantyuu_tele,
+.hannyou.type_10,
+.koumoku.type_10:nth-child(2n) {
+	background-color: hsla(109.7, 100%, 90%, 0.4);
+	color: hsl(109.7, 100%, 29.1%)
+}
+
+.koumoku.type_10:nth-child(2n+1) {
+	background-color: hsla(109.7, 100%, 98%, 0.4);
+	color: hsl(109.7, 100%, 29.1%);
+}
+
+.koumoku.subtype_10 {
+	background-color: hsla(109.7, 100%, 29.1%, 0.4);
+}
+
+.koumoku.subtype_10:nth-child(2n+1) {
+	background-color: hsla(109.7, 100%, 40%, 0.4);
+}
+
+/* 映画 */
+.hantyuu_eiga,
+.hannyou.type_9,
+.koumoku.type_9:nth-child(2n) {
+	background-color: hsla(183.4, 100%, 90%, 0.4);
+	color: hsl(183.4, 100%, 30%);
+}
+
+.koumoku.type_9:nth-child(2n+1) {
+	background-color: hsla(183.4, 100%, 98%, 0.4);
+	color: hsl(183.4, 100%, 30%);
+}
+
+.koumoku.subtype_9 {
+	background-color: hsla(183.4, 100%, 30%, 0.4);
+}
+
+.koumoku.subtype_9:nth-child(2n+1) {
+	background-color: hsla(183.4, 100%, 40%, 0.4);
+}
+
+/* 本 */
+.hantyuu_honn,
+.hannyou.type_6,
+.hannyou.type_25,
+.hannyou.type_26,
+.koumoku.type_6:nth-child(2n),
+.koumoku.type_25:nth-child(2n),
+.koumoku.type_26:nth-child(2n) {
+	background-color: hsla(42.3, 100%, 88%, 0.4);
+	color: hsl(42.3, 100%, 33%);
+}
+
+.koumoku.type_6:nth-child(2n+1),
+.koumoku.type_25:nth-child(2n+1),
+.koumoku.type_26:nth-child(2n+1) {
+	background-color: hsla(42.3, 100%, 98%, 0.4);
+	color: hsl(42.3, 100%, 33%);
+}
+
+.koumoku.subtype_6,
+.koumoku.subtype_25,
+.koumoku.subtype_26 {
+	background-color: hsla(42.3, 100%, 33%, 0.4);
+}
+
+.koumoku.subtype_6:nth-child(2n+1),
+.koumoku.subtype_25:nth-child(2n+1),
+.koumoku.subtype_26:nth-child(2n+1) {
+	background-color: hsla(42.3, 100%, 42%, 0.4);
+}
+
+/* 雑誌 */
+.hantyuu_zassi,
+.hannyou.type_11,
+.koumoku.type_11:nth-child(2n) {
+	background-color: hsla(53.1, 100%, 88%, 0.4);
+	color: hsl(53.1, 100%, 30%);
+}
+
+.koumoku.type_11:nth-child(2n+1) {
+	background-color: hsla(53.1, 100%, 88%, 0.4);
+	color: hsl(53.1, 100%, 30%);
+}
+
+.koumoku.subtype_11 {
+	background-color: hsla(53.1, 100%, 30%, 0.4);
+}
+
+.koumoku.subtype_11:nth-child(2n+1) {
+	background-color: hsla(53.1, 100%, 40%, 0.4);
+}
+
+/* 漫画 */
+.hantyuu_manga,
+.hannyou.type_13,
+.koumoku.type_13:nth-child(2n) {
+	background-color: hsla(0, 0%, 92%, 0.4);
+	color: hsl(0, 0%, 40%);
+}
+
+.koumoku.type_13:nth-child(2n+1) {
+	background-color: hsla(0, 0%, 98%, 0.4);
+	color: hsl(0, 0%, 40%);
+}
+
+.koumoku.subtype_13 {
+	background-color: hsla(0, 0%, 40%, 0.4);
+}
+
+.koumoku.subtype_13:nth-child(2n+1) {
+	background-color: hsla(0, 0%, 50%, 0.4);
+}
+
+/* 演劇 */
+.hantyuu_play,
+.hannyou.type_8,
+.koumoku.type_8:nth-child(2n) {
+	background-color: hsla(30.6, 100%, 90%, 0.4);
+	color: hsl(30.6, 100%, 20%);
+}
+
+.koumoku.type_8:nth-child(2n+1) {
+	background-color: hsla(30.6, 100%, 95%, 0.4);
+	color: hsl(30.6, 100%, 20%);
+}
+
+.koumoku.subtype_8 {
+	background-color: hsla(30.6, 100%, 20%, 0.4);
+}
+
+.koumoku.subtype_8:nth-child(2n+1) {
+	background-color: hsla(30.6, 100%, 30%, 0.4);
+}
+
+.hantyuu_script,
+.hannyou.type_103,
+.koumoku.type_103:nth-child(2n) {
+	/*background-color: hsl(32, 32%, 90%);*/
+	/*color: hsl(30.6, 98.6%, 20%);*/
+	background-color: hsla(222, 100%, 95%, 0.4);
+	color: hsl(222, 100%, 40%);
+}
+
+.koumoku.type_103:nth-child(2n+1) {
+	background-color: hsla(222, 100%, 99%, 0.4);
+	color: hsl(222, 100%, 40%);
+}
+
+.koumoku.subtype_103 {
+	background-color: hsla(222, 100%, 40%, 0.4);
+}
+
+.koumoku.subtype_103:nth-child(2n+1) {
+	background-color: hsla(222, 100%, 50%, 0.4);
+}
+
+/* ゲーム */
+.hantyuu_game,
+.hannyou.type_12,
+.hannyou.type_15,
+.hannyou.type_102,
+.koumoku.type_12:nth-child(2n),
+.koumoku.type_15:nth-child(2n),
+.koumoku.type_102:nth-child(2n) {
+	/*background-color: hsl(242, 68.6%, 90%);*/
+	/*color: hsl(242, 48.6%, 38%);*/
+	background-color: hsla(270, 100%, 90%, 0.4);
+	color: hsl(270, 100%, 38%);
+}
+
+.koumoku.type_12:nth-child(2n+1),
+.koumoku.type_15:nth-child(2n+1),
+.koumoku.type_102:nth-child(2n+1) {
+	/*background-color: hsl(242, 68.6%, 95%);*/
+	/*color: hsl(242, 48.6%, 38%);*/
+	background-color: hsla(270, 100%, 95%, 0.4);
+	color: hsl(270, 100%, 48%);
+}
+
+.koumoku.subtype_12,
+.koumoku.subtype_15,
+.koumoku.subtype_102 {
+	background-color: hsla(270, 100%, 38%, 0.4);
+}
+
+.koumoku.subtype_12:nth-child(2n+1),
+.koumoku.subtype_15:nth-child(2n+1),
+.koumoku.subtype_102:nth-child(2n+1) {
+	background-color: hsla(270, 100%, 49%, 0.4);
+}
+
+.koumoku.ongaku,
+.hannyou.type_900,
+.koumoku.ongaku:nth-child(2n) {
+	background-color: hsla(348, 100%, 90%, 0.4);
+  	color: hsl(340.4, 100%, 36.3%);
+}
+
+.koumoku.ongaku,
+.koumoku.ongaku:nth-child(2n+1) {
+	background-color: hsla(348, 100%, 96%, 0.4);
+  	color: hsl(340.4, 100%, 36.3%);
+}
+
+.koumoku.type_700 {
+	color: white;
+}
+/*
+.koumoku.type_700 {
+	background-color: darkblue;
+	color: white;
+}
+
+.koumoku.type_700:nth-child(2n+1) {
+	background-color: hsl(343, 100%, 27%);
+	color: white;
+}
+*/
+
+.hanrei.jyoukyou_itirann div {
+	border: rgba(228, 224, 224, 0.76) 1px dotted;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi {
+	
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_1 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_1 {
+	background-color: hsl(206, 100%, 50%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_2 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_2 {
+	background-color: hsl(35, 100%, 50%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_3 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_3 {
+	background-color: hsl(113, 62%, 41%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_4 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_4 {
+	background-color: hsl(271, 100%, 50%);
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_5 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_5 {
+	background-color: hsl(325, 100%, 50%);
+}
