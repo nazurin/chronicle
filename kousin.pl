@@ -81,7 +81,14 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $owari = param('tosi_owari').param('tuki_owari').param('hi_owari').param('ji_owari').param('fun_owari') ne "" ? timestamp_syutoku(param('tosi_owari'), param('tuki_owari'), param('hi_owari'), param('ji_owari'), param('fun_owari')) : (param('unix_owari') ne '' ? param('unix_owari') : time());
 	my $josuu = decode_utf8(param('josuu')) eq '儘' ? $info->{$passthrough_id}{sakujosuu} : decode_utf8(param('josuu'));
 	my $text = decode_utf8(param('title'));
-	my @part_turu = split /0000/, param('part');
+	my $with_syoki = decode_utf8(param('with'));
+	my @with_current = split(',', $with_syoki);
+	my @with_list_get = $dbh->selectall_array("select party from `with`");
+	for(my $i=0; $i<scalar(@with_list_get); $i++){$with_list_get[$i] = $with_list_get[$i][0]}
+	my %to_delete = map { $_ => 1 } @with_list_get;
+	@with_current = grep { $to_delete{$_} } @with_current;
+	my $with = join ',', @with_current;
+	my @part_turu = split /0000|9999/, param('part');
 	my $part = $part_turu[0];
 	push @part_turu, 700000 if !defined $part_turu[1];
 ### 初期関数設定ずみ ###############
@@ -96,9 +103,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		$jyoukyou = "終" if $part == param('whole');
 		my $text = decode_utf8(param('title'));
 		my $josuu = decode_utf8(param('josuu')) eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
-		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
+		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?, `with` = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text, $with);
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, josuu = ?, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
 		$sakuhin_kousin->execute($josuu, $jyoukyou, $part, param('whole'), $hajimari, $owari, param('reference'));
@@ -113,9 +120,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		$jyoukyou = "没" if param('mode') == 1 or param('mode') == 2;
 		$jyoukyou = "終" if $part == param('whole');
 		my $josuu = decode_utf8(param('josuu')) eq '儘' ? (defined $info->{$passthrough_id}{josuu} ? $info->{$passthrough_id}{josuu} : $info->{$passthrough_id}{sakujosuu}) : decode_utf8(param('josuu'));
-		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
+		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?, `with` = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text, $with);
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
 		$sakuhin_kousin->execute($jyoukyou, $part, param('whole'), $hajimari, $owari, param('reference'));
@@ -163,9 +170,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		my $jyoukyou;
 		$jyoukyou = "飛" if param('mode') == 4;
 		$jyoukyou = "葉" if param('mode') == 5;
-		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
+		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?, `with` = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text, $with);
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
 		my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
 		$sakuhin_kousin->execute($part, param('whole'), $hajimari, $owari, param('reference'));
@@ -178,9 +185,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		$jyoukyou = "飛" if param('mode') == 4;
 		$jyoukyou = "葉" if param('mode') == 5;
 		my $josuu = decode_utf8(param('josuu')) eq '儘' ? $info->{$passthrough_id}{josuu} : decode_utf8(param('josuu'));
-		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?";
+		my $rireki_tuika_query = "insert into `rireki` set sid = ?, jiten = ?, part = ?, whole = ?, jyoukyou = ?, josuu = ?, mkt = ?, text = ?, `with` = ?";
 		my $rireki_tuika = $dbh->prepare($rireki_tuika_query);
-		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text);
+		$rireki_tuika->execute(param('reference'), $owari, $part, param('whole'), $jyoukyou, $josuu, param('jikoku_mikakutei'), $text, $with);
 		$jyoukyou = "中";
 		$jyoukyou = "終" if $part == param('whole');
 		my $sakuhin_kousin_query = "update sakuhin set yotei = 0, jyoukyou = ?, part = ?, whole = ?, hajimari = ?, owari = ? where id = ?";
@@ -266,54 +273,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	}
 
 	#audioscrobblerを組み込む
-	my $info_audioscrobbler_query = "select date from listen order by id desc limit 1";
-	my $info_audioscrobbler_syutoku = $dbh->prepare($info_audioscrobbler_query);
-	$info_audioscrobbler_syutoku->execute();
-	my $from_timestamp;
-	while(my $v = $info_audioscrobbler_syutoku->fetchrow_arrayref){
-		$from_timestamp = $v->[0];
-	}
-	$from_timestamp = $from_timestamp + 1;
-
-	my $initial_url = "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=@{[Kahifu::Key::api_user]}&api_key=@{[Kahifu::Key::api_key]}&format=json&limit=1000&from=${from_timestamp}";
-
-    my $request = LWP::UserAgent->new;
-    my $response = $request->get($initial_url);
-
-    if ($response->is_success) {
-        my $content = $response->decoded_content;
-        my $json = from_json(decode_utf8($content));
-        my $page_count = $json->{recenttracks}{'@attr'}{totalPages};
-        my $total = $json->{recenttracks}{'@attr'}{total};
-		sleep(1) if $page_count > 1;
-		if($total > 0){
-			for my $j (reverse 1 .. $page_count){
-				my $page_item_count = $j == $page_count ? $total - (($page_count - 1) * 1000) : $json->{recenttracks}{'@attr'}{perPage};
-				my $update_url = "https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=@{[Kahifu::Key::api_user]}&api_key=@{[Kahifu::Key::api_key]}&format=json&limit=1000&from=${from_timestamp}&page=${j}";
-				my $inside_request = LWP::UserAgent->new;
-				my $inside_response = $inside_request->get($update_url);
-				if ($inside_response->is_success) {
-					my $new_content = $inside_response->decoded_content;
-					my $new_json = from_json(decode_utf8($new_content));
-					for my $c (reverse 0 .. $page_item_count - 1){
-						my $this_track = $new_json->{recenttracks}{track}[$c];
-						my $this_artist = $this_track->{artist}{'#text'};
-						my $this_name = $this_track->{name};
-						my $this_album = $this_track->{album}{'#text'};
-						my $this_date = $this_track->{date}{uts};
-						if(defined $this_date){
-							my $track_query = "insert into `listen` set name = ?, artist = ?, album = ?, date = ?";
-							my $track = $dbh->prepare($track_query);
-							$track->execute($this_name, $this_artist, $this_album, $this_date);
-						}
-					}
-				}
-			}
-			my $lag_kousin_query = "update listen join (select listen.*, lead(`date`) over (order by `date`) - `date` as `lagged` from listen) listened on listen.id = listened.id set listen.`lag` = `lagged` where listen.id > 58535 and listen.`lag` is null";
-			my $lag_kousin = $dbh->prepare($lag_kousin_query);
-			$lag_kousin->execute();
-		}
-    } 
+	Hyouka::External::audioscrobbler_kousin($dbh);
 }
 
 my $query=new CGI;
