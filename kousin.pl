@@ -163,6 +163,8 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 			my $sakuhin_kousin = $dbh->prepare($sakuhin_kousin_query);
 			$sakuhin_kousin->execute($jyoukyou, param('reference'));
 		}
+		Hyouka::External::mal_kousin($info->{$passthrough_id}{mal_id}, $part, $josuu, $jyoukyou, 1, $part_turu[1], $info->{$passthrough_id}{hantyuu}, $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17) && defined $info->{$passthrough_id}{mal_id} && $info->{$passthrough_id}{mal_id} ne '';
+		Hyouka::External::al_kousin($info->{$passthrough_id}{al_id}, $part, $josuu, $jyoukyou, 1, $owari, $part_turu[1], $api_json_data) if (grep{$_ eq $info->{$passthrough_id}{hantyuu}} 13, 14, 17) && defined $info->{$passthrough_id}{al_id} && $info->{$passthrough_id}{al_id} ne '';
 	}
 	
 	sub update_special_jyou {
