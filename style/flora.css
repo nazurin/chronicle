@@ -4,8 +4,8 @@
 }
 
 .info {
-	color: #fff3f3;
-	background-color: rgb(63, 139, 221);
+	font-size: 1.2em;
+	font-weight: bold;
 }
 
 .info.colle {
@@ -58,9 +58,26 @@
 	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
 }
 
+div.koumoku {
+  border: none;
+}
+
+div.info > div.sakuhin, div.koumoku > div.sakuhinmei {
+  width: 100%;
+}
+
+div.info > div.jyou, div.koumoku > div.jyou {
+  margin-left: 1em;
+}
+
+div.jyoukyou {
+  padding: 0px 2px;
+}
+
+
 .koumoku[class*=type_],
 .koumoku.ongaku {
-    text-shadow: 1px 1px white,
+    /*text-shadow: 1px 1px white,
                         1px -1px white,
                         -1px 1px white,
                         -1px -1px white,
@@ -75,7 +92,7 @@
                         0px 0px 5px white,
                         0px 0px 5px white,
                         0px 0px 5px white,
-                        0px 0px 10px white;
+                        0px 0px 10px white;*/
 }
 
 .youbi.hannyou {
@@ -110,31 +127,27 @@
 .koumoku.type_7:nth-child(2n),
 .koumoku.type_16:nth-child(2n),
 .koumoku.type_24:nth-child(2n) {
-	background-color: hsl(27.8, 75.5%, 86%);
 	color: hsl(33.9, 97.4%, 19%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/b.gif');*/
 }
 
 .koumoku.type_7:nth-child(2n+1),
 .koumoku.type_16:nth-child(2n+1),
 .koumoku.type_24:nth-child(2n+1) {
-	background-color: hsl(27.8, 75.5%, 93%);
 	color: hsl(33.9, 97.4%, 19%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/a.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/a.gif');*/
 }
 
 .hantyuu_femihonn,
 .hannyou.type_18,
 .koumoku.type_18:nth-child(2n) {
-	background-color: hsl(332, 70%, 90%);
 	color: hsl(338, 88%, 52%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/b.gif');*/
 }
 
 .koumoku.type_18:nth-child(2n+1) {
-	background-color: hsl(332, 100%, 97%);
 	color: hsl(338, 88%, 52%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/a.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/a.gif');*/
 }
 
 .hantyuu_si,
@@ -143,16 +156,14 @@
 .hannyou.type_68,
 .koumoku.type_67:nth-child(2n), 
 .koumoku.type_68:nth-child(2n) {
-	background-color: hsl(161.1, 68.6%, 90%);
 	color: hsl(161.1, 88%, 25.7%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');*/
 }
 
 .koumoku.type_67:nth-child(2n+1),
 .koumoku.type_68:nth-child(2n+1) {
-	background-color: hsl(161.1, 100%, 97%);
 	color: hsl(161.1, 88%, 25.7%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/a.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/a.gif');*/
 }
 
 .hantyuu_anime,
@@ -160,46 +171,40 @@
 .hannyou.type_17,
 .koumoku.type_14:nth-child(2n),
 .koumoku.type_17:nth-child(2n) {
-	background-color: hsl(3, 68.6%, 90%);
 	color: hsl(0, 98.6%, 29.3%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/b.gif');*/
 }
 
 .koumoku.type_14:nth-child(2n+1),
 .koumoku.type_17:nth-child(2n+1) {
-	background-color: hsl(3.4, 68.6%, 98%);
 	color: hsl(0, 98.6%, 29.3%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/a.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/a.gif');*/
 }
 
 /* テレビ */
 .hantyuu_tele,
 .hannyou.type_10,
 .koumoku.type_10:nth-child(2n) {
-	background-color: hsl(109.7, 68.6%, 90%);
 	color: hsl(109.7, 68.6%, 19.1%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');*/
 }
 
 .koumoku.type_10:nth-child(2n+1) {
-	background-color: hsl(109.7, 68.6%, 98%);
 	color: hsl(109.7, 68.6%, 19.1%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/a.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/a.gif');*/
 }
 
 /* 映画 */
 .hantyuu_eiga,
 .hannyou.type_9,
 .koumoku.type_9:nth-child(2n) {
-	background-color: hsl(183.4, 68.6%, 90%);
 	color: hsl(183.4, 68.6%, 30%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');*/
 }
 
 .koumoku.type_9:nth-child(2n+1) {
-	background-color: hsl(183.4, 68.6%, 98%);
 	color: hsl(183.4, 68.6%, 30%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/c.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/c.gif');*/
 }
 
 /* 本 */
@@ -210,29 +215,25 @@
 .koumoku.type_6:nth-child(2n),
 .koumoku.type_25:nth-child(2n),
 .koumoku.type_26:nth-child(2n) {
-	background-color: hsl(42.3, 98.6%, 88%);
 	color: hsl(42.3, 98.6%, 33%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');*/
 }
 
 .koumoku.type_6:nth-child(2n+1),
 .koumoku.type_25:nth-child(2n+1),
 .koumoku.type_26:nth-child(2n+1) {
-	background-color: hsl(42.3, 98.6%, 98%);
 	color: hsl(42.3, 98.6%, 33%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/a.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/a.gif');*/
 }
 
 /* 雑誌 */
 .hantyuu_zassi,
 .hannyou.type_11,
 .koumoku.type_11:nth-child(2n) {
-	background-color: hsl(53.1, 68.6%, 88%);
 	color: hsl(53.1, 68.6%, 30%);
 }
 
 .koumoku.type_11:nth-child(2n+1) {
-	background-color: hsl(53.1, 68.6%, 88%);
 	color: hsl(53.1, 68.6%, 30%);
 }
 
@@ -240,44 +241,38 @@
 .hantyuu_manga,
 .hannyou.type_13,
 .koumoku.type_13:nth-child(2n) {
-	background-color: hsl(0, 0%, 92%);
 	color: hsl(0, 0%, 40%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo203/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo203/b.gif');*/
 }
 
 .koumoku.type_13:nth-child(2n+1) {
-	background-color: hsl(0, 0%, 98%);
 	color: hsl(0, 0%, 40%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo203/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo203/b.gif');*/
 }
 
 /* 演劇 */
 .hantyuu_play,
 .hannyou.type_8,
 .koumoku.type_8:nth-child(2n) {
-	background-color: hsl(30.6, 68.6%, 90%);
 	color: hsl(30.6, 98.6%, 20%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');*/
 }
 
 .koumoku.type_8:nth-child(2n+1) {
-	background-color: hsl(30.6, 68.6%, 95%);
 	color: hsl(30.6, 98.6%, 20%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo504/b.gif');*/
 }
 
 .hantyuu_script,
 .hannyou.type_103,
 .koumoku.type_103:nth-child(2n) {
-	background-color: hsl(222, 100%, 95%);
 	color: hsl(222, 60.6%, 40%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');*/
 }
 
 .koumoku.type_103:nth-child(2n+1) {
-	background-color: hsl(222, 100%, 99%);
 	color: hsl(222, 60.6%, 40%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/c.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/c.gif');*/
 }
 
 /* ゲーム */
@@ -288,32 +283,28 @@
 .koumoku.type_12:nth-child(2n),
 .koumoku.type_15:nth-child(2n),
 .koumoku.type_102:nth-child(2n) {
-	background-color: hsl(270, 48.5%, 28%);
-	color: hsl(270, 70.5%, 95%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');
+	color: hsl(270, 48.5%, 38%);
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/d.gif');*/
 }
 
 .koumoku.type_12:nth-child(2n+1),
 .koumoku.type_15:nth-child(2n+1),
 .koumoku.type_102:nth-child(2n+1) {
-	background-color: hsl(270, 48.5%, 38%);
-	color: hsl(270, 70.5%, 95%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/c.gif');
+	color: hsl(270, 48.5%, 38%);
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo2/flo201/c.gif');*/
 }
 
 .koumoku.ongaku,
 .hannyou.type_900,
 .koumoku.ongaku:nth-child(2n) {
-	background-color: hsl(348, 48.4%, 90%);
   	color: hsl(340.4, 76.2%, 36.3%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/s.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/s.gif');*/
 }
 
 .koumoku.ongaku,
 .koumoku.ongaku:nth-child(2n+1) {
-	background-color: hsl(348, 48.4%, 96%);
   	color: hsl(340.4, 76.2%, 36.3%);
-    background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/s.gif');
+    /*background-image: url('https://kahifu.net/img/websozai/kabegami.tank.jp/flo5/flo505/s.gif');*/
 }
 
 .hanrei.jyoukyou_itirann div {
