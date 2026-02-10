@@ -1017,6 +1017,14 @@ div.collection_box div.koumoku > div.count {
 	width: 10%;
 }
 
+div.collection_box div.koumoku:has(.kensuu_0) {
+	opacity: 0.2;
+}
+
+div.collection_box div.koumoku:has(.kensuu_0) + div.koumoku:not(:has(.kensuu_0)) {
+	border-top: 1px solid black;
+}
+
 div.koyomi {
 	text-align: center;
 	background-color: rgba(237, 140, 255, 0.419);
