@@ -21,7 +21,7 @@ use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Kahifu::Key;
-use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku);
+use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei title_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku);
 
 my $uri = Kahifu::Template::fetch_uri(__FILE__);
 my $ami = Kahifu::Template::fetch_ami($uri);
@@ -867,7 +867,7 @@ if($paginate == 1){
 							}
 							print "</div>";
 							print "<div class='rireki_title'>";
-							print $_->[8];
+							print title_settei($_->[8]);
 							print "</div>";
 						print "</div>";
 					}
@@ -1116,7 +1116,7 @@ if($paginate == 1){
 					print "</a>";
 					print "</span>";
 				print "</div>";
-				print "<div class='count'>";
+				#print "<div class='count'>";
 					if((scalar @sitazi_bind != 0) && ($v->{turu} ne '' || ($v->{turu} eq '' && $v->{tag} eq 'yotei'))){
 						my @sakuhin_colle;
 						if($v->{id}==1){
@@ -1135,8 +1135,10 @@ if($paginate == 1){
 						my $kensuu_collebetu = $dbh->prepare($colle_meirei);
 						$kensuu_collebetu->execute(@sakuhin_colle, @sitazi_bind);
 						my $row_count = $kensuu_collebetu->fetchall_arrayref();
+						print "<div class='count kensuu_", $row_count->[0][0],"'>";
 						print $row_count->[0][0], '件';
 					} else {
+						print "<div class='count'>";
 						print my $row_count = scalar(split(/,/,$v->{turu})), '件' if $v->{tag} ne 'yotei';
 					}
 				print "</div>";
@@ -1248,7 +1250,7 @@ if($paginate == 1){
 				print "<div class='bikou${\( sub { return ' ari' if defined $v->{text} && $v->{text} }->() )}'>";
 					print with_sengen($v->{with}, \%with_color, \%with_kigou) if defined $v->{with} && $v->{with} ne '' && !Kahifu::Infra::mobile();
 					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && Kahifu::Infra::mobile();
-					print Kahifu::Infra::bunsyou($v->{text}) if defined $v->{text} && $v->{text};
+					print title_settei(Kahifu::Infra::bunsyou($v->{text})) if defined $v->{text} && $v->{text};
 				print "</div>";
 			print "</div>";
 			$last_sakuhin = $v->{sid};
