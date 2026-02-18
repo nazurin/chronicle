@@ -1495,10 +1495,19 @@ div.sakuhinbako > div.migi > div.isbn > div.syuu {
 	text-align: right;
 }
 
-div.sakuhinbako > div.migi > div.isbn > span.isbn10 {
+div.sakuhinbako > div.migi > div.isbn > span.isbn10,
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 {
 	display: block;
+	padding: 0 0 0 0.5rem;
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn10 {
 	font-size: 0.8em;
 	line-height: 1;
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 {
+	font-size: 1em;
 }
 
 div.sakuhinbako > div.migi > div.isbn > div:not(.syuu) {
@@ -1555,9 +1564,11 @@ div.sakuhinbako > div.migi > div.isbn > span.isbn13 > span.funintei {
 	text-shadow: 1px 1px white;
 }
 
-div.sakuhinbako > div.migi > div.isbn > span.isbn13 {
-	display: block;
-	font-size: 1em;
+div.sakuhinbako > div.migi > div.isbn > :not(span) + span.isbn10,
+div.sakuhinbako > div.migi > div.isbn > :not(span) + span.isbn13,
+div.sakuhinbako > div.migi > div.isbn > :not(div) + div.syuppan,
+div.sakuhinbako > div.migi > div.isbn > :not(div) + div.group {
+	margin-top: 0.125rem;
 }
 
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.midasi {
