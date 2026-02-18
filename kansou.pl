@@ -64,6 +64,8 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	my $kansou = defined param('kansou') && param('kansou') ? decode_utf8(param('kansou')) : "";		
 	my $yotei = defined param('yotei') && param('yotei') ? decode_utf8(param('yotei')) : 0;		
 	my $sakifuku = defined param('sakifuku') && param('sakifuku') ? decode_utf8(param('sakifuku')) : 0;		
+	my $isbn = defined param('isbn') && param('isbn') ? decode_utf8(param('isbn')) : undef;		
+	my $isbn13 = defined param('isbn13') && param('isbn13') ? decode_utf8(param('isbn13')) : undef;	
 
 	my $genzai = time();
 	
@@ -165,10 +167,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 		$sounyuu_jikkou->execute($id, $genzai, $char, $kansou);
 	}
 		
-	my $meirei = "update sakuhin set yotei = ?, sakifuku = ?, ${sitazi_ext} midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
+	my $meirei = "update sakuhin set yotei = ?, sakifuku = ?, ${sitazi_ext} midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, isbn = ?, isbn13 = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
 	
 	my $sakuhin_kousin = $dbh->prepare($meirei);
-	$sakuhin_kousin->execute($yotei, $sakifuku, @sitazi_bind_ext, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
+	$sakuhin_kousin->execute($yotei, $sakifuku, @sitazi_bind_ext, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $isbn, $isbn13, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
 } elsif(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kanri') && param('kanri') eq 'del') {
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
 	

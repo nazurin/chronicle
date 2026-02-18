@@ -21,7 +21,7 @@ use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Kahifu::Key;
-use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei title_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku);
+use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei title_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku isbn_check isbn_check_13 ordinal);
 
 my $uri = Kahifu::Template::fetch_uri(__FILE__);
 my $ami = Kahifu::Template::fetch_ami($uri);
@@ -205,6 +205,82 @@ if(defined param('id') && param('id')){
 					print $v->{midasi};
 					print "</a>";
 					print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' && defined from_json($v->{bikou})->{param('id')} }->() )} if defined $v->{bikou} && $v->{bikou} ne '';
+				print "</div>";
+			}
+			if((defined $sakuhin_info->{$passthrough_id}{isbn} || defined $sakuhin_info->{$passthrough_id}{isbn13}) && ($sakuhin_info->{$passthrough_id}{isbn} || $sakuhin_info->{$passthrough_id}{isbn13})){
+				print "<div class='isbn' style='background-color: hsla(${\(color_makase($sakuhin_info->{$passthrough_id}{isbn13}))}, 60%, 88%, 0.6)'>";
+				my ($isbn, $syuume, $syuume_syori, $isbn10);
+				$syuume = 0;
+				for my $p (split '\+\+', $sakuhin_info->{$passthrough_id}{isbn}){
+					my $gyou = (index($p, '::') != -1) ? split ('\:\:', $p) : $p;
+					my $gyou_value = (ref $gyou eq 'ARRAY') ? $gyou->[1] : $gyou;
+					my $last_isbn;
+					my $naisyuume = 0;
+					for my $q (split ',', $gyou_value){
+						$q = substr($last_isbn, 0, 10 - length($q)) . $q if length($q) != 10;
+						$isbn10->[$syuume]{isbn}[$naisyuume]{check} = substr $q, -1, 1;
+						$naisyuume++;
+					}
+					$syuume++;
+				}
+				$syuume = 0;
+				for my $p (split '\+\+', $sakuhin_info->{$passthrough_id}{isbn13}){
+					my $gyou = index($p, '::') != -1 ? [split('\:\:', $p)] : $p;
+					my $gyou_key = (ref $gyou eq 'ARRAY') ? $gyou->[0] : undef;
+					my $gyou_value = (ref $gyou eq 'ARRAY') ? $gyou->[1] : $gyou;
+					my $last_isbn;
+					my $naisyuume = 0;
+					$isbn->[$syuume]{title} = $gyou_key;
+					for my $g (split ',', $gyou_value){
+						$g = substr($last_isbn, 0, 13 - length($g)) . $g if length($g) != 13;
+						$last_isbn = $g;
+						my $loop_isbn = $g;
+						my ($syuppan_itti, $isbn_head, $isbn_group, $isbn_syuppan, $isbn_title, $isbn_check, $isbn_syuppan_text, $isbn_group_text);
+						while(!$syuppan_itti){
+							$loop_isbn = substr $loop_isbn, 0, -1;
+							my $isbn_query = "select * from isbn where ${loop_isbn} = concat(`head`,`group`,coalesce(`syuppan`,''))";
+							my $isbn_syutoku = $dbh->prepare($isbn_query);
+							$isbn_syutoku->execute();
+							while(my $v = $isbn_syutoku->fetchrow_hashref){
+								$isbn_head = $v->{head};
+								$isbn_group = $v->{group};
+								$isbn_syuppan = $v->{syuppan};
+								$isbn_syuppan_text = $v->{name};
+								$isbn_title = $g =~ s/$isbn_head$isbn_group$isbn_syuppan//r;
+								$isbn_check = substr $isbn_title, -1, 1;
+								$isbn_title = substr $isbn_title, 0, -1;
+								my $isbn_group_query = "select name from isbn where `syuppan` is null and `group` = ${isbn_group} and `head` = ${isbn_head} limit 1";
+								$isbn_group_text = from_json($dbh->selectrow_array($isbn_group_query));
+								$syuppan_itti = 1;
+							}
+							$syuppan_itti = 1 if length $loop_isbn <= 4;
+						} #while !syuppan_itti
+						$isbn->[$syuume]{isbn}[$naisyuume]{head} = $isbn_head;
+						$isbn->[$syuume]{isbn}[$naisyuume]{group} = $isbn_group;
+						$isbn->[$syuume]{isbn}[$naisyuume]{syuppan} = $isbn_syuppan;
+						$isbn->[$syuume]{isbn}[$naisyuume]{title} = $isbn_title;
+						$isbn->[$syuume]{isbn}[$naisyuume]{check} = $isbn_check;
+						$isbn->[$syuume]{isbn}[$naisyuume]{text}{syuppan} = $isbn_syuppan_text;
+						$isbn->[$syuume]{isbn}[$naisyuume]{text}{group} = $isbn_group_text;
+						$naisyuume++;
+					}
+					$syuume++;
+				}
+				for my $q (0 .. scalar @$isbn - 1){
+					if(scalar(@$isbn) - 1 > 0){
+						print "<div class='syuu'>";
+						print defined $isbn->[$q]{title} ? $isbn->[$q]{title} : ($q+1) . ${\( sub { return ordinal_en($q+1) if $Kahifu::Junbi::lang eq 'en' }->() )} . ${\(Kahifu::Template::dict('ISBN_SYUU_HEADING'))};
+						print "</div>";
+					}
+					for my $r (0 .. scalar(@{$isbn->[$q]{isbn}}) - 1){
+						print "<span class='isbn10'>$isbn->[$q]{isbn}[$r]{group}-", ${\( sub { return $isbn->[$q]{isbn}[$r]{syuppan} if defined $isbn->[$q]{isbn}[$r]{syuppan}}->())}, ${\( sub { return "-" if defined $isbn->[$q]{isbn}[$r]{syuppan}}->())}, "$isbn->[$q]{isbn}[$r]{title}-", ${\( sub { return "<span class='nintei'>" if isbn_check($isbn->[$q]{isbn}[$r]{group}.$isbn->[$q]{isbn}[$r]{syuppan}.$isbn->[$q]{isbn}[$r]{title}.$isbn10->[$q]{isbn}[$r]{check}) eq $isbn10->[$q]{isbn}[$r]{check} ; return "<span class='funintei'>"; }->() )}, $isbn10->[$q]{isbn}[$r]{check},"</span></span>" if defined $isbn10->[$q]{isbn}[$r]{check};
+
+						print "<span class='isbn13'><span class='group' style='color: hsl(${\(color_makase($isbn->[$q]{isbn}[$r]{group}+7, 2880)%360)}, 100%, 35%)'>$isbn->[$q]{isbn}[$r]{head}-$isbn->[$q]{isbn}[$r]{group}</span>-", ${\( sub { return "<span class='syuppan' style='color: hsl(${\(color_makase($isbn->[$q]{isbn}[$r]{syuppan}+7, 2880)%360)}, 100%, 35%)'>$isbn->[$q]{isbn}[$r]{syuppan}</span>" if defined $isbn->[$q]{isbn}[$r]{syuppan}}->())}, ${\( sub { return "-" if defined $isbn->[$q]{isbn}[$r]{syuppan}}->())}, "$isbn->[$q]{isbn}[$r]{title}-", ${\( sub { return "<span class='nintei'>" if isbn_check_13($isbn->[$q]{isbn}[$r]{head}.$isbn->[$q]{isbn}[$r]{group}.$isbn->[$q]{isbn}[$r]{syuppan}.$isbn->[$q]{isbn}[$r]{title}.$isbn->[$q]{isbn}[$r]{check}) eq substr $isbn->[$q]{isbn}[$r]{check}, -1, 1; return "<span class='funintei'>"; }->() )}, $isbn->[$q]{isbn}[$r]{check},"</span></span>";
+						print "<div class='group' style='background-color: hsla(${\(color_makase($isbn->[$q]{isbn}[$r]{group}+7, 2880)%360)}, 100%, 35%, 0.5)'>", $isbn->[$q]{isbn}[$r]{text}{group}->{$Kahifu::Junbi::lang}, "</div>" if !(defined $isbn->[$q]{isbn}[$r+1] && $isbn->[$q]{isbn}[$r+1]{text}{group}->{$Kahifu::Junbi::lang} eq $isbn->[$q]{isbn}[$r]{text}{group}->{$Kahifu::Junbi::lang});
+						print "<div class='syuppan' style='background-color: hsla(${\(color_makase($isbn->[$q]{isbn}[$r]{syuppan}+7, 2880)%360)}, 100%, 35%, 0.5)'>", $isbn->[$q]{isbn}[$r]{text}{syuppan}, "</div>" if defined $isbn->[$q]{isbn}[$r]{syuppan} && !(defined $isbn->[$q]{isbn}[$r+1] && $isbn->[$q]{isbn}[$r+1]{text}{syuppan} eq $isbn->[$q]{isbn}[$r]{text}{syuppan});
+						#if defined $isbn->[$q]{isbn}[$r]{syuppan} && !($r > 0 && $isbn->[$q]{isbn}[$r-1]{text}{syuppan} eq $isbn->[$q]{isbn}[$r]{text}{syuppan}); #上に置けば
+					}
+				}
 				print "</div>";
 			}
 			print "<div class='kansyourirekisyo'>";
@@ -908,6 +984,7 @@ if($paginate == 1){
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_FUKUSAKINI'))}</div><div><input id='sakifuku$v->{id}1' type='radio' name='sakifuku' value='1'${\( sub { return 'checked=checked' if defined $v->{sakifuku} && $v->{sakifuku}==1 }->() )}><label for='sakifuku$v->{id}1'>${\(Kahifu::Template::dict('IRI'))}</label><input id='sakifuku$v->{id}0' type='radio' name='sakifuku' value='0'${\( sub { return 'checked=checked' if defined $v->{sakifuku} && $v->{sakifuku}==0 || not defined $v->{sakifuku} }->() )}><label for='sakifuku$v->{id}0'>${\(Kahifu::Template::dict('KIRI'))}</label></div></div>";
 					print "</div>";
 					print "<div class='ext'><div><div><a target='_blank' href='https://myanimelist.net/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/", $v->{mal_id},"'>MALID</a></div><div><input name='mal_id' value='", $v->{mal_id},"' type='number' placeholder='", $v->{mal_id},"'></div></div><div><div><a target='_blank' href='https://anilist.co/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/", $v->{al_id},"'>ALID</a></div><div><input name='al_id' value='", $v->{al_id},"' type='number' placeholder='", $v->{al_id},"'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 13, 14, 17;
+					print "<div class='ext isbn'><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN</a></div><div><input name='isbn' value='", $v->{isbn},"' type='text' placeholder='", $v->{isbn},"'></div></div><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN-13</a></div><div><input name='isbn13' value='", $v->{isbn13},"' type='text' placeholder='", $v->{isbn13},"'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 6,7,16,24,68,67,103,11,25,26,18,13; #bungakukei
 					print "<div class='colle'><div><div>${\(Kahifu::Template::dict('KIROKU_COLLECTION_ALT'))}</div><div><input type='text' size='30' name='collection' placeholder='' value='", $v->{colle}//'', "'></div></div></div>";
 					print "<div class='bunsyou'><textarea name='kansou' form='kansou_$v->{id}'>", $v->{kansou}//'', "</textarea></div>";
 					print "<div class='meirei'><input type='submit' name='kousin' value='${\(Kahifu::Template::dict('KIROKU_KOUSIN'))}'></div>";

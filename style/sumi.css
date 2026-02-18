@@ -709,6 +709,10 @@ div.koumoku > div.kansou_kousin > form > div.ext > div > div > input[type=number
 	width: 6em;
 }
 
+div.koumoku > div.kansou_kousin > form > div.ext.isbn > div > div > input[type=number] {
+	width: 12em;
+}
+
 div.koumoku > div.kansou_kousin > form > div.betumei > div:first-child {
 	vertical-align: top;
 }
@@ -1450,6 +1454,14 @@ div.sakuhinbako > div.migi > div.tensuu {
 	background-color: rgba(0, 0, 0, 0.85);
 }
 
+div.sakuhinbako > div.migi > div.isbn {
+	max-width: 16em;
+	border: black 1px solid;
+	padding: 0.125em 0.5em;
+	color: black;
+	margin-bottom: 0.25em;
+}
+
 div.sakuhinbako > div.migi > div.kansyourirekisyo {
 	max-width: 16em;
 	border: black 1px solid;
@@ -1476,6 +1488,76 @@ div.sakuhinbako > div.migi > div.colle > a {
 	text-decoration: none;
 	color: inherit;
 	text-shadow: white 1px 1px;
+}
+
+div.sakuhinbako > div.migi > div.isbn > div.syuu {
+	font-size: 0.7em;
+	text-align: right;
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn10 {
+	display: block;
+	font-size: 0.8em;
+	line-height: 1;
+}
+
+div.sakuhinbako > div.migi > div.isbn > div:not(.syuu) {
+	color: white;
+	padding: 0 0.25em 0 0.5em;
+	text-shadow: 1px 1px black;
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn10 > span.group,
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 > span.group {
+	/*color: hsl(0, 100%, 100%);*/
+	/*background-color: hsl(0, 100%, 37%);*/
+	color: hsl(330, 100%, 37%);
+	text-shadow: 1px 1px white;
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 > span.group > span.kugiri {
+	color: hsl(0, 100%, 0%);
+	text-shadow: none;
+}
+
+div.sakuhinbako > div.migi > div.isbn > div.group {
+	background-color: hsla(330, 100%, 37%, 0.5);
+	color: white;
+	padding: 0 0 0 0.5em;
+	text-shadow: 1px 1px black;
+	/*text-shadow: -1px -1px hsl(330, 100%, 37%),
+						1px 1px white;*/
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn10 > span.syuppan,
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 > span.syuppan {
+	color: hsl(300, 100%, 25%);
+	text-shadow: 1px 1px white;
+}
+
+div.sakuhinbako > div.migi > div.isbn > div.syuppan {
+	background-color: hsla(300, 100%, 25%, 0.5);
+	/*text-shadow: -1px -1px hsl(300, 100%, 25%),
+						1px 1px white;*/
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn10 > span.nintei,
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 > span.nintei {
+	/*color: hsl(0, 100%, 100%);*/
+	/*background-color: hsl(0, 100%, 37%);*/
+	color: hsl(0, 100%, 37%);
+	text-shadow: 1px 1px white;
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn10 > span.funintei,
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 > span.funintei {
+	color: hsl(240, 100%, 37%);
+	text-shadow: 1px 1px white;
+}
+
+div.sakuhinbako > div.migi > div.isbn > span.isbn13 {
+	display: block;
+	font-size: 1em;
 }
 
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.midasi {
