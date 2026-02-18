@@ -159,9 +159,19 @@ if(defined param('id') && param('id')){
 	print "<div class='sakuhinbako' style=\"background-image: url('${\(image_makase('flower/png', $seed+1))}')\">";
 		print "<div class='hidari' style=\"background-image: url('${\(image_makase('flower/png', $seed))}')\">";
 			print "<a class='modoru' href='${\(url_get_hazusi(\%url_get, 'id'))}'>${\(Kahifu::Template::dict('MODORU'))}</a>";
-			print "<div class='heading'>$sakuhin_info->{$passthrough_id}{midasi}</div>";
-			print "<div class='subheading'>$sakuhin_info->{$passthrough_id}{fukumidasi}</div>";
-			print "<div class='sakka'>$sakuhin_info->{$passthrough_id}{sakka}</div>";
+			#my $betudai;
+			#$betudai->{midasi} = from_json($sakuhin_info->{$passthrough_id}{betumei}) if defined $sakuhin_info->{$passthrough_id}{betumei} && $sakuhin_info->{$passthrough_id}{betumei};
+			#$betudai->{fukumidasi} = from_json($sakuhin_info->{$passthrough_id}{fukubetumei}) if defined $sakuhin_info->{$passthrough_id}{fukubetumei} && $sakuhin_info->{$passthrough_id}{fukubetumei};
+			#$betudai->{sakka} = from_json($sakuhin_info->{$passthrough_id}{sakkabetumei}) if defined $sakuhin_info->{$passthrough_id}{sakkabetumei} && $sakuhin_info->{$passthrough_id}{sakkabetumei};
+			print "<div class='heading'>";
+				print midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{midasi}, $sakuhin_info->{$passthrough_id}{betumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
+			print "</div>";
+			print "<div class='subheading'>";
+				print midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{fukumidasi}, $sakuhin_info->{$passthrough_id}{fukubetumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
+			print "</div>";
+			print "<div class='sakka'>";
+				print midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{sakka}, $sakuhin_info->{$passthrough_id}{sakkabetumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
+			print "</div>";
 			print "<div class='bunsyou'>";
 			my $kansou_query = "select * from kansou_long where sid = ?";
 			my $kansou_syutoku = $dbh->prepare($kansou_query);
@@ -202,7 +212,7 @@ if(defined param('id') && param('id')){
 				my $colle_seed = $v->{jiten} + 2;
 				print "<div style='background-color: hsl(${\(color_makase($colle_seed))}, 60%, 88%)' class='colle'>";
 					print "<a href='${\(url_get_tuke(\%url_get, 'collection', $v->{id}))}'>";
-					print $v->{midasi};
+					print midasi_settei($v->{midasi});
 					print "</a>";
 					print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' && defined from_json($v->{bikou})->{param('id')} }->() )} if defined $v->{bikou} && $v->{bikou} ne '';
 				print "</div>";
@@ -274,7 +284,7 @@ if(defined param('id') && param('id')){
 					}
 					for my $r (0 .. scalar(@{$isbn->[$q]{isbn}}) - 1){
 						print "<div class='group' style='background-color: hsla(${\(color_makase($isbn->[$q]{isbn}[$r]{group}+7, 2880)%360)}, 100%, 35%, 0.5)'>", $isbn->[$q]{isbn}[$r]{text}{group}->{$Kahifu::Junbi::lang}, "</div>" if defined $isbn->[$q]{isbn}[$r]{group} && !($r > 0 && $isbn->[$q]{isbn}[$r-1]{text}{group}->{$Kahifu::Junbi::lang} eq $isbn->[$q]{isbn}[$r]{text}{group}->{$Kahifu::Junbi::lang});
-						print "<div class='syuppan' style='background-color: hsla(${\(color_makase($isbn->[$q]{isbn}[$r]{syuppan}+7, 2880)%360)}, 100%, 35%, 0.5)'>", $isbn->[$q]{isbn}[$r]{text}{syuppan}, "</div>" if defined $isbn->[$q]{isbn}[$r]{syuppan} && !($r > 0 && $isbn->[$q]{isbn}[$r-1]{text}{syuppan} eq $isbn->[$q]{isbn}[$r]{text}{syuppan}); #上に置きます…paddingの変更を忘れずに
+						print "<div class='syuppan' style='background-color: hsla(${\(color_makase($isbn->[$q]{isbn}[$r]{syuppan}+7, 2880)%360)}, 100%, 35%, 0.5)'>${\(midasi_settei($isbn->[$q]{isbn}[$r]{text}{syuppan}))}</div>" if defined $isbn->[$q]{isbn}[$r]{syuppan} && !($r > 0 && $isbn->[$q]{isbn}[$r-1]{text}{syuppan} eq $isbn->[$q]{isbn}[$r]{text}{syuppan}); #上に置きます…paddingの変更を忘れずに
 
 						print "<span class='isbn10'>$isbn->[$q]{isbn}[$r]{group}-", ${\( sub { return $isbn->[$q]{isbn}[$r]{syuppan} if defined $isbn->[$q]{isbn}[$r]{syuppan}}->())}, ${\( sub { return "-" if defined $isbn->[$q]{isbn}[$r]{syuppan}}->())}, "$isbn->[$q]{isbn}[$r]{title}-", ${\( sub { return "<span class='nintei'>" if isbn_check($isbn->[$q]{isbn}[$r]{group}.$isbn->[$q]{isbn}[$r]{syuppan}.$isbn->[$q]{isbn}[$r]{title}.$isbn10->[$q]{isbn}[$r]{check}) eq $isbn10->[$q]{isbn}[$r]{check} ; return "<span class='funintei'>"; }->() )}, $isbn10->[$q]{isbn}[$r]{check},"</span></span>" if defined $isbn10->[$q]{isbn}[$r]{check};
 
@@ -310,7 +320,7 @@ if(defined param('id') && param('id')){
 						}
 						print "</div>";
 						print "<div class='sintyoku'>", $v->{part}, '／', $v->{whole}, $josuu_tati_tekilang->{$v->{josuu}}{"$Kahifu::Junbi::lang"}, "</div>";
-						print "<div class='memo'>", $v->{text}, "</div>" if defined $v->{text};
+						print "<div class='memo'>${\(midasi_settei($v->{text}))}</div>" if defined $v->{text};
 					print "</div>";
 					print "<div class='gyou hensyuu' data-rireki='", $v->{id}, "'>";
 						print "<input type='hidden' name='reference' value='", $v->{id}, "'>";
