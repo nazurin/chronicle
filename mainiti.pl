@@ -31,7 +31,7 @@ use Hyouka::External qw(access_token_mukou mal_authorize al_authorize audioscrob
 if(Kahifu::Template::tenmei()){
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
     #audioscrobblerを組み込む
-	#Hyouka::External::audioscrobbler_kousin($dbh);
+	Hyouka::External::audioscrobbler_kousin($dbh);
 
     my $yonnsyuukan = time() - 1209600; #2週間
 
@@ -138,7 +138,6 @@ if(Kahifu::Template::tenmei()){
         my $yotei_kakunin_syutoku = $dbh->prepare($yotei_kakunin_query);
         $yotei_kakunin_syutoku->execute(@turu);
         $waku_id->{$v->{sort1}} = defined $waku_id->{$v->{sort1}} ? $waku_id->{$v->{sort1}} : ($waku_id ? (scalar keys %{$waku_id}) : 0);
-        die dump $waku_id->{$v->{sort1}} . $v->{sort1} if $m == 10;
         my $turu_syorizumi = $yotei_kakunin_syutoku->fetchall_arrayref();
         $config->{hantyuu}{jyouhou}{total}{waku}[$waku_id->{$v->{sort1}}] = {
             "namae" => $v->{sort1},

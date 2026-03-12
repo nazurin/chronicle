@@ -1193,14 +1193,16 @@ if($paginate == 1){
 	} else {
 		#　一覧コレクション外 （Collection listing）	
 		#my $meirei = "select id, midasi, hyouji, turu, color from collection";
-		my $meirei = ("select id, midasi, midasi_seisiki, tag, hyouji, turu, color from collection order by field(`tag`, 'yotei', 'favorite', 'award', 'waku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
+		my $meirei = ("select id, midasi, midasi_seisiki, tag, hyouji, turu, color, sort1, sort2 from collection order by field(`tag`, 'yotei', 'favorite', 'award', 'waku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
 		my $colleran = $dbh->prepare($meirei);
-		print "<div>";
-		print "</div>";
 		$colleran->execute();
+		print "<div class='collection_container lang_${Kahifu::Junbi::lang}'>";
 		print "<div class='collection_box'>";
 		print "<div class='koumoku'><div class='midasi'><span><a href='${\(url_get_irekae(\%url_get, 'directory', 'isbn', 'collection'))}'>${\(Kahifu::Template::dict('ISBN_COLLECTION_HEADING'))}</a></span></div></div>";
+		my $colle_waku;
+		push @$colle_waku, ["isbn", "isbn"];
 		while(my $v = $colleran->fetchrow_hashref){
+			push @$colle_waku, [$v->{tag}, $v->{tag} . $v->{sort1}];
 			print "<div class='koumoku type_${\( sub { return $v->{color} if defined $v->{color} }->() )}'>";
 				print "<div class='midasi'>";
 					print "<span>";
@@ -1238,6 +1240,20 @@ if($paginate == 1){
 			print "</div>";
 		}
 		print "</div>"; #div.collection_box
+		my $wakuna = ["oowaku", "kowaku"];
+		my $colle_stop = scalar(@$colle_waku);
+		for my $j (reverse 0 .. 1){
+			my $colle_group;
+			print "<div class='collection_tag $wakuna->[$j]'>";
+			for my $i (0 .. $colle_stop){
+				print "</div>" if $i != 0 && ($colle_waku->[$i][$j] ne $colle_group || $i == $colle_stop); 
+				print "<div class='colle_group'><span class='$colle_waku->[$i][$j]${\( sub { return ' rinsetunasi' if $j == 0 && $colle_waku->[$i][1] eq $colle_waku->[$i][0] }->() )}'><span>${\( sub { return Kahifu::Template::dict('COLLE_WAKU_' . uc($colle_waku->[$i][$j])) if !($j == 1 && $colle_waku->[$i][1] eq $colle_waku->[$i][0]) }->() )}</span></span>" if $colle_waku->[$i][$j] ne $colle_group && $i != $colle_stop;
+				print "<div class='koumoku'>　</div>" if $i != $colle_stop;
+				$colle_group = $colle_waku->[$i][$j];
+			}
+			print "</div>";
+		}
+		print "</div>";
 	}
 } elsif ($paginate == 3){
 	#　PAGINATE=3

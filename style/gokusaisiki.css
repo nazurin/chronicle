@@ -422,3 +422,108 @@ div.sakuhinbako > div.hidari > div.kutikomi.type_5 > div.header > span.syurui,
 div.koumoku.type_700 span.syurui.type_5 {
 	background-color: hsl(325, 100%, 50%);
 }
+
+.collection_container > div.collection_tag > div.colle_group > span.yotei {
+	background-color: hsl(270, 68.6%, 90%);
+	color: hsl(270, 48.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.favorite {
+	background-color: hsl(43, 74%, 70%);
+	color: hsl(40, 48.5%, 28%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.award {
+	background-color: hsl(150, 68.6%, 95%);
+	color: hsl(150, 18.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.waku {
+	background-color: hsl(119, 68.6%, 90%);
+	color: hsl(119, 48.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.misc {
+	background-color: hsl(220, 28.6%, 90%);
+	color: hsl(220, 48.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.period {
+	background-color: hsl(300, 68.6%, 90%);
+	color: hsl(300, 48.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.tag {
+	background-color: hsl(80, 68.6%, 90%);
+	color: hsl(80, 48.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.tagKANSYOU {
+	background-color: hsl(110, 68.6%, 90%);
+	color: hsl(110, 48.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.tagLANG {
+	background-color: hsl(140, 68.6%, 90%);
+	color: hsl(140, 48.5%, 38%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.periodCOMIC {
+	background-color: hsl(0, 0%, 92%);
+	color: hsl(0, 0%, 40%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.periodDRAMA {
+	background-color: hsl(109.7, 68.6%, 90%);
+	color: hsl(109.7, 68.6%, 29.1%)
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.wakuWOWOW {
+	background-color: hsl(0, 0%, 96%);
+	color: hsl(213, 100%, 33%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.wakuASAHI {
+	background-color: hsl(0, 0%, 96%);
+	color: hsl(331, 100%, 50%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.wakuNHK {
+	background-color: hsl(0, 0%, 96%);
+	color: hsl(0, 0%, 50%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.wakuFUJI {
+	background-color: hsl(0, 0%, 96%);
+	color: hsl(0, 100%, 48%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.wakuTBS {
+	background-color: hsl(0, 0%, 96%);
+	color: hsl(241, 100%, 57%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.wakuNTV {
+	background-color: hsl(0, 0%, 96%);
+	color: hsl(30, 6%, 13%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.awardLIT {
+	background-color: hsl(42.3, 98.6%, 88%);
+	color: hsl(42.3, 98.6%, 33%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.awardFILM {
+	background-color: hsl(183.4, 68.6%, 90%);
+	color: hsl(183.4, 68.6%, 30%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.awardDRAMA {
+	background-color: hsl(109.7, 68.6%, 90%);
+	color: hsl(109.7, 68.6%, 29.1%)
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.awardMANGA {
+	background-color: hsl(0, 0%, 92%);
+	color: hsl(0, 0%, 40%);
+}

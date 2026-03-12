@@ -1029,6 +1029,63 @@ div.collection_box div.koumoku:has(.kensuu_0) + div.koumoku:not(:has(.kensuu_0))
 	border-top: 1px solid black;
 }
 
+.collection_container {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+.collection_container > div {
+	
+}
+
+.collection_container > div.collection_box {
+	flex-grow: 1;
+}
+
+.collection_container > div.collection_tag {
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+}
+
+.collection_container > div.collection_tag > div.colle_group {
+	position: relative;
+}
+
+.collection_container > div.collection_tag > div.colle_group > span {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	border: 2px ridge white;
+	overflow: hidden;
+}
+
+.collection_container > div.collection_tag > div.colle_group > span > span {
+	writing-mode: vertical-rl;
+	line-height: 1.2;
+	padding-top: 0.25em;
+	transform: skewY(-10deg) scaleY(1.1);
+	white-space: nowrap;
+}
+
+.collection_container.lang_en > div.collection_tag > div.colle_group > span > span {
+	transform: skewY(-10deg) scaleX(1.1);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span:has(span:empty) {
+	border-left: 0;
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.rinsetunasi {
+	border-right: 0;
+}
+
+.collection_container > div.collection_tag > div.colle_group > div.koumoku {
+	visibility: hidden;
+}
+
 div.koyomi {
 	text-align: center;
 	background-color: rgba(237, 140, 255, 0.419);
@@ -1736,7 +1793,7 @@ body > div.body > div.migi > div.box.daizu {
 	display: flex;
 	flex-basis: 23em;
     flex-grow: 1;
-    max-height: 40em;
+    max-height: 50em;
 	flex-direction: column;
 }
 
@@ -1874,6 +1931,19 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukus
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu {
 	flex-basis: 100%;
 	flex-direction: row-reverse;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div:nth-child(1) {
+	z-index: 4;
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div:nth-child(2) {
+	z-index: 3;
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div:nth-child(3) {
+	z-index: 2;
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div:nth-child(4) {
+	z-index: 1;
 }
 
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div,
