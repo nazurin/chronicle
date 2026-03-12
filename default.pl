@@ -21,7 +21,7 @@ use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Kahifu::Key;
-use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei title_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku isbn_check isbn_check_13 ordinal);
+use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei title_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi url_get_irekae week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku isbn_check isbn_check_13 ordinal);
 
 my $uri = Kahifu::Template::fetch_uri(__FILE__);
 my $ami = Kahifu::Template::fetch_ami($uri);
@@ -99,7 +99,7 @@ my $sanjyuujikan_seido = $config->{sanjyuujikan_seido}; # 0 = 24h, 1 = 30h
 
 my $sanjyuujikansei_offset = $sanjyuujikan_seido * 21600;
 
-my @josuu_tati = $dbh->selectall_array("select `josuu`, `ja`, `en` from `josuu`");
+my @josuu_tati = $dbh->selectall_array("select `josuu`, `ja`, `en` from `josuu` order by `sort` asc, `id` asc");
 my $josuu_tati_tekilang;
 for my $j (@josuu_tati){ $josuu_tati_tekilang->{$j->[0]}{ja} = defined $j->[1] ? $j->[1] : undef; $josuu_tati_tekilang->{$j->[0]}{en} = defined $j->[2] ? ' '.$j->[2] : undef; }
 
@@ -131,7 +131,7 @@ sub with_sengen {
 	my $with_return;
 	$with_return .= "<span class='with'>";
 	my @with = split /,/,$with_pass;
-	for my $p (0 .. scalar @with){
+	for my $p (0 .. scalar @with - 1){
 		my $color = defined $with_color->{$with[$p]} && $with_color->{$with[$p]} ne '' ? " style='color: hsl($with_color->{$with[$p]}, 1)'" : '';
 		$with_return .= "<span${color}>" . $with_kigou->{$with[$p]} . "</span>";
 	}
@@ -310,13 +310,14 @@ if(defined param('id') && param('id')){
 					print "<div class='jyou'>${\(Kahifu::Template::dict('HAJIMARI_JYOU'))}</div>";
 				print "</div>";
 				while(my $v = $rireki_syutoku->fetchrow_hashref){
-					print "<div class='gyou' data-rireki='", $v->{id}, "'>";
+					print "<div class='gyou' data-rireki='${\( sub { return $v->{id} if defined $v->{id} }->() )}'>";
 						print "<div class='jiten${\( sub { return ' mikakutei' if $v->{mkt}==1 }->() )}'>", date($v->{jiten}, $v->{mkt}, 1), "</div>";
 						print "<div class='jyou'>", jyoukyou_settei($v->{jyoukyou}, $sakuhin_info->{$passthrough_id}{hajimari}, $v->{owari}, 609, $sakuhin_info->{$passthrough_id}{eternal}), "</div>";
 						print "<div class='with'>";
-						my @with = split /,/,$v->{with};
-						for my $p (0 .. scalar @with){
-							print "<span style='color: hsl($with_color{$with[$p]}, 1)'>" . $with_kigou{$with[$p]} . "</span>" if defined $p;
+						my @with;
+						@with = split /,/,$v->{with} if defined $v->{with};
+						for my $p (0 .. scalar @with - 1){
+							print "<span style='color: hsl(${\( sub { return $with_color{$with[$p]} if defined $with_color{$with[$p]}; }->() )}, 1)'>${\( sub { return $with_kigou{$with[$p]} if defined $with_kigou{$with[$p]}; }->() )}</span>" if defined $p;
 						}
 						print "</div>";
 						print "<div class='sintyoku'>", $v->{part}, '／', $v->{whole}, $josuu_tati_tekilang->{$v->{josuu}}{"$Kahifu::Junbi::lang"}, "</div>";
@@ -325,12 +326,12 @@ if(defined param('id') && param('id')){
 					print "<div class='gyou hensyuu' data-rireki='", $v->{id}, "'>";
 						print "<input type='hidden' name='reference' value='", $v->{id}, "'>";
 						print "<div class='jiten_hi'>";
-							print "<div class='jiten_y'><input type='text' name='jiten_y'  placeholder='", date_split($v->{jiten}, 0), "' value='", date_split($v->{jiten}, 0), "'>${\(Kahifu::Template::dict('TOSI'))}</div>";
-							print "<div class='jiten_m'><input type='text' name='jiten_m'  placeholder='", date_split($v->{jiten}, 1), "' value='", date_split($v->{jiten}, 1), "'>${\(Kahifu::Template::dict('TUKI'))}</div>";
-							print "<div class='jiten_d'><input type='text' name='jiten_d'  placeholder='", date_split($v->{jiten}, 2), "' value='", date_split($v->{jiten}, 2), "'>${\(Kahifu::Template::dict('HI'))}</div>";
+							print "<div class='jiten_y'><input type='text' name='jiten_y'  placeholder='${\( sub { return date_split($v->{jiten}, 0) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 0) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('TOSI'))}</div>";
+							print "<div class='jiten_m'><input type='text' name='jiten_m'  placeholder='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('TUKI'))}</div>";
+							print "<div class='jiten_d'><input type='text' name='jiten_d'  placeholder='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('HI'))}</div>";
 						print "</div>";
 						print "<div class='jiten_jikan'>";
-							print "<div class='jiten_h'><input type='text' name='jiten_h' placeholder='", date_split($v->{jiten}, 3), "' value='", date_split($v->{jiten}, 3), "'>${\(Kahifu::Template::dict('JI'))}</div>";
+							print "<div class='jiten_h'><input type='text' name='jiten_h' placeholder='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('JI'))}</div>";
 							print "<div class='jiten_i'><input type='text' name='jiten_i'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}'>${\(Kahifu::Template::dict('FUN'))}</div>";
 							print "<div class='jiten_s'><input type='text' name='jiten_s'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}'>${\(Kahifu::Template::dict('BYOU'))}</div>";
 							print "<div class='jiten_unix'><input type='text'  name='jiten_unix' placeholder='", $v->{jiten}, "'></div>";
@@ -353,7 +354,7 @@ if(defined param('id') && param('id')){
 						print "</div>";
 						print "<div class='with'>";
 							print "<span>with</span>";
-							print "<input type='text'  name='with' placeholder='", defined $v->{with} ? $v->{with} : undef, "' value='", defined $v->{with} ? $v->{with} : undef, "'>";
+							print "<input type='text'  name='with' placeholder='${\( sub { return $v->{with} if defined $v->{with} }->() )}' value='${\( sub { return $v->{with} if defined $v->{with} }->() )}'>";
 						print "</div>";
 					print "</div>";
 				}
@@ -383,10 +384,10 @@ my ($kensaku, $kensaku_sitazi, $gyaku_kensaku_sitazi, $hantyuu_sibori_sitazi, $h
 $gyaku_kensaku_sitazi = defined param('yoteiran') && param('yoteiran') == 1 ? "" : "(`yotei` <> 1 or `yotei` is null) and ";
 if (defined param('kensaku') && param('kensaku')){
 	$kensaku = "${\(decode_utf8(param('kensaku')))}";
-	$kensaku_sitazi = "and (`midasi` like ? or `fukumidasi` like ? or `sakka` like ? or `betumei` like ? or `fukubetumei` like ? or `sakkabetumei` like ?)";
+	$kensaku_sitazi = "and (`midasi` like ? or `fukumidasi` like ? or `sakka` like ? or `betumei` like ? or `fukubetumei` like ? or `sakkabetumei` like ? or `isbn` like ? or `isbn13` like ?)";
 	$gyaku_kensaku_sitazi = "";
-	push @sitazi_bind, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%");
-	push @sitazi_bind_2, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%") if $page == 1;	
+	push @sitazi_bind, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%");
+	push @sitazi_bind_2, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%") if $page == 1;	
 } else { $kensaku_sitazi = ""; }
 if (defined $siborikomi_hantyuu && $siborikomi_hantyuu && $siborikomi_hantyuu ne '50'){ 
 	if(index($siborikomi_hantyuu, ',') != -1){
@@ -480,7 +481,7 @@ if($paginate == 1){
 	}
 	my ($hantyuu_atumari, $last_week_hantyuu, $hantyuu_syori);
 	while(my $v = $koyomi_hantyuu->fetchrow_hashref){
-		undef %{$hantyuu_atumari} if $v->{week} != $last_week_hantyuu;
+		undef %{$hantyuu_atumari} if defined $last_week_hantyuu && $v->{week} != $last_week_hantyuu;
 		$last_week_hantyuu = $v->{week};
 		$hantyuu_syori = collapse_hantyuu($v->{hantyuu});
 		$hantyuu_atumari->{"$hantyuu_syori"} += $v->{count} if $hantyuu_syori ne '';
@@ -555,7 +556,8 @@ print "<div class='commander'>";
 				print "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
 			} elsif ($paginate == 2){
 				print "<a href='${\(url_get_hazusi(\%url_get, 'collection'))}'>${\(Kahifu::Template::dict('MODORUZEYO'))}</a>" if defined param('collection');
-				print "<span>${\(Kahifu::Template::dict('COLLECTION_HEADING'))}</span>" if not defined param('collection');
+				print "<a href='${\(url_get_hazusi(\%url_get, 'directory'))}'>${\(Kahifu::Template::dict('MODORUZEYO'))}</a>" if defined param('directory');
+				print "<span>${\(Kahifu::Template::dict('COLLECTION_HEADING'))}</span>" if !(defined param('collection') || defined param('directory'));
 			} elsif ($paginate == 3){
 				print "<a href='${\(url_get_tuke(\%url_get, 'week', ${\($week-1)}))}'>←</a>" if $week != 0;
 				print "<span>${\(sub { return $week>0 ? \"第${week}週\" : \"${\(Kahifu::Template::dict('WEEK_TITLE_FIRST'))}\" }->())}${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(Kahifu::Template::dict('NYORO'))}${\(week($dst_musi_week_limit_lower))[0]}${\(Kahifu::Template::dict('SUFFIX_TOSI'))}${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(map { s/###/${\(week($dst_musi_week_limit_lower))[1]}/; $_ } do { ${\(Kahifu::Template::dict('WEEK_TITLE'))} }) }${\(Kahifu::Template::dict('NYORO'))}</span>";
@@ -740,8 +742,8 @@ print "<div class='commander'>";
 					}
 					print "</select>";
 					print "<select class='jyoukyou_type_1' name='page_siborikomi_jyoukyou'>";
-					for my $i (0 .. scalar @jyoukyou_name - 1) {
-						print "<option class='jyoukyou_type_${\($i+1)} $jyoukyou_class{$jyoukyou_name[$i]}' value='${\($i+1)}' ${\( sub { return 'selected=selected' if defined ${siborikomi_jyoukyou} && ${siborikomi_jyoukyou}==${\($i+1)} }->() )}>${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . ${\($i+1)}))}</option>";
+					for my $i (0 .. scalar @jyoukyou_name - 2) {
+						print "<option class='jyoukyou_type_${\($i+1)}${\( sub { return ' ' . $jyoukyou_class{$jyoukyou_name[$i]} if defined $jyoukyou_name[$i] && defined $jyoukyou_class{$jyoukyou_name[$i]} }->() )}' value='${\($i+1)}' ${\( sub { return 'selected=selected' if defined ${siborikomi_jyoukyou} && ${siborikomi_jyoukyou}==${\($i+1)} }->() )}>${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . ${\($i+1)}))}</option>";
 					}
 					print "</select>";
 					print "<select name='narabi'>";
@@ -938,7 +940,7 @@ if($paginate == 1){
 								print "<span class='kaisuu'>${\(Kahifu::Infra::nihon_suuji($kansyou_kaisuu))}</span>" if defined $kansyou_kaisuu && $kansyou_kaisuu > 1 && $_->[5] eq '終';
 							print "</div>";
 							print "<div title='", date_split($_->[2], 8, 1),"' class='rirekinai_hiduke'>";
-							print $_->[7] == 1 ? "<span class='mikakutei_kome'>※</span>" : "";
+							print defined $_->[7] && $_->[7]== 1 ? "<span class='mikakutei_kome'>※</span>" : "";
 							print date($_->[2], $_->[7], 1);
 							print "</div>";
 							print "<div class='rirekinai_sinkou'>";
@@ -947,13 +949,14 @@ if($paginate == 1){
 							print $_->[6];
 							print "</div>";
 							print "<div class='rireki_with'>";
-							my @with = split /,/,$_->[9];
-							for my $p (0 .. scalar @with){
-								print "<span style='color: hsl($with_color{$with[$p]}, 1)'>" . $with_kigou{$with[$p]} . "</span>";
+							my @with;
+							@with = split /,/,$_->[9] if defined $_->[9];
+							for my $p (0 .. scalar @with - 1){
+								print "<span style='color: hsl(${\( sub { return $with_color{$with[$p]} if defined $with[$p] && defined $with_color{$with[$p]} }->() )}, 1)'>" . $with_kigou{$with[$p]} . "</span>";
 							}
 							print "</div>";
 							print "<div class='rireki_title'>";
-							print title_settei($_->[8]);
+							print title_settei($_->[8]) if defined $_->[8];
 							print "</div>";
 						print "</div>";
 					}
@@ -993,8 +996,8 @@ if($paginate == 1){
 						print "<div class='yotei'><div>${\(Kahifu::Template::dict('KIROKU_YOTEI_ALT'))}</div><div><input id='yotei$v->{id}1' type='radio' name='yotei' value='1'${\( sub { return 'checked=checked' if defined $v->{yotei} && $v->{yotei}==1 }->() )}><label for='yotei$v->{id}1'>${\(Kahifu::Template::dict('IRI'))}</label><input id='yotei$v->{id}0' type='radio' name='yotei' value='0'${\( sub { return 'checked=checked' if defined $v->{yotei} && $v->{yotei}==0 || not defined $v->{yotei} }->() )}><label for='yotei$v->{id}0'>${\(Kahifu::Template::dict('KIRI'))}</label></div></div>" if $v->{part} == 0;
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_FUKUSAKINI'))}</div><div><input id='sakifuku$v->{id}1' type='radio' name='sakifuku' value='1'${\( sub { return 'checked=checked' if defined $v->{sakifuku} && $v->{sakifuku}==1 }->() )}><label for='sakifuku$v->{id}1'>${\(Kahifu::Template::dict('IRI'))}</label><input id='sakifuku$v->{id}0' type='radio' name='sakifuku' value='0'${\( sub { return 'checked=checked' if defined $v->{sakifuku} && $v->{sakifuku}==0 || not defined $v->{sakifuku} }->() )}><label for='sakifuku$v->{id}0'>${\(Kahifu::Template::dict('KIRI'))}</label></div></div>";
 					print "</div>";
-					print "<div class='ext'><div><div><a target='_blank' href='https://myanimelist.net/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/", $v->{mal_id},"'>MALID</a></div><div><input name='mal_id' value='", $v->{mal_id},"' type='number' placeholder='", $v->{mal_id},"'></div></div><div><div><a target='_blank' href='https://anilist.co/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/", $v->{al_id},"'>ALID</a></div><div><input name='al_id' value='", $v->{al_id},"' type='number' placeholder='", $v->{al_id},"'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 13, 14, 17;
-					print "<div class='ext isbn'><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN</a></div><div><input name='isbn' value='", $v->{isbn},"' type='text' placeholder='", $v->{isbn},"'></div></div><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN-13</a></div><div><input name='isbn13' value='", $v->{isbn13},"' type='text' placeholder='", $v->{isbn13},"'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 6,7,16,24,68,67,103,11,25,26,18,13; #bungakukei
+					print "<div class='ext'><div><div><a target='_blank' href='https://myanimelist.net/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/${\( sub { return $v->{mal_id} if defined $v->{mal_id}}->() ) }'>MALID</a></div><div><input name='mal_id' value='${\( sub { return $v->{mal_id} if defined $v->{mal_id}}->() ) }' type='number' placeholder='${\( sub { return $v->{mal_id} if defined $v->{mal_id}}->() ) }'></div></div><div><div><a target='_blank' href='https://anilist.co/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/${\( sub { return $v->{al_id} if defined $v->{al_id}}->() ) }'>ALID</a></div><div><input name='al_id' value='${\( sub { return $v->{al_id} if defined $v->{al_id}}->() ) }' type='number' placeholder='${\( sub { return $v->{al_id} if defined $v->{al_id}}->() ) }'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 13, 14, 17;
+					print "<div class='ext isbn'><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN</a></div><div><input name='isbn' value='${\( sub { return $v->{isbn} if defined $v->{isbn}}->() ) }' type='text' placeholder='${\( sub { return $v->{isbn} if defined $v->{isbn}}->() ) }'></div></div><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN-13</a></div><div><input name='isbn13' value='${\( sub { return $v->{isbn13} if defined $v->{isbn13}}->() ) }' type='text' placeholder='${\( sub { return $v->{isbn13} if defined $v->{isbn13}}->() ) }'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 6,7,16,24,68,67,103,11,25,26,18,13; #bungakukei
 					print "<div class='colle'><div><div>${\(Kahifu::Template::dict('KIROKU_COLLECTION_ALT'))}</div><div><input type='text' size='30' name='collection' placeholder='' value='", $v->{colle}//'', "'></div></div></div>";
 					print "<div class='bunsyou'><textarea name='kansou' form='kansou_$v->{id}'>", $v->{kansou}//'', "</textarea></div>";
 					print "<div class='meirei'><input type='submit' name='kousin' value='${\(Kahifu::Template::dict('KIROKU_KOUSIN'))}'></div>";
@@ -1185,6 +1188,8 @@ if($paginate == 1){
 				delayOnTouchOnly: true
 			});
 		</script>";
+	} elsif(defined param('directory') && param('directory') eq 'isbn'){
+
 	} else {
 		#　一覧コレクション外 （Collection listing）	
 		#my $meirei = "select id, midasi, hyouji, turu, color from collection";
@@ -1194,8 +1199,9 @@ if($paginate == 1){
 		print "</div>";
 		$colleran->execute();
 		print "<div class='collection_box'>";
+		print "<div class='koumoku'><div class='midasi'><span><a href='${\(url_get_irekae(\%url_get, 'directory', 'isbn', 'collection'))}'>${\(Kahifu::Template::dict('ISBN_COLLECTION_HEADING'))}</a></span></div></div>";
 		while(my $v = $colleran->fetchrow_hashref){
-			print "<div class='koumoku type_$v->{color}'>";
+			print "<div class='koumoku type_${\( sub { return $v->{color} if defined $v->{color} }->() )}'>";
 				print "<div class='midasi'>";
 					print "<span>";
 					print "<a href='${\(url_get_tuke(\%url_get, 'collection', $v->{id}))}'>";
@@ -1248,7 +1254,7 @@ if($paginate == 1){
 		my @listen_info_album = reverse @{$_[2]};
 		my @listen_info_track = reverse @{$_[3]};
 		for my $p (0 .. scalar @listen_time){
-			if($listen_time[$p] < $saigentei && $listen_time[$p] >= $teigentei){
+			if(defined $listen_time[$p] && $listen_time[$p] < $saigentei && $listen_time[$p] >= $teigentei){
 				#　音楽セッションを挿入す
 				my $artist_json = from_json($listen_info_artist[$p]);
 				my $album_json = from_json($listen_info_album[$p]);
@@ -1297,7 +1303,7 @@ if($paginate == 1){
 				$last_sakuhin = 0;
 			}
 		}
-		return $last_sakuhin == 0 ? undef : $last_sakuhin;
+		return defined $last_sakuhin && $last_sakuhin == 0 ? undef : $last_sakuhin;
 	}
 
 	print "<div class='rireki_box'>";

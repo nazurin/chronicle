@@ -1731,6 +1731,487 @@ div.music_box > div.koumoku > div.album {
 	/*font-size: 0.9em;*/
 }
 
+/* 右側の図（大図）*/
+body > div.body > div.migi > div.box.daizu {
+	display: flex;
+	flex-basis: 23em;
+    flex-grow: 1;
+    max-height: 40em;
+	flex-direction: column;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu {
+	display: flex;
+	flex-grow: 1;
+	padding: 0 0.25em 0.25em 0.25em;
+	flex-direction: column;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div {
+	display: flex;
+	background-color: white;
+	height: 100%;
+	flex-direction: row-reverse;
+}
+
+body > div.body > div.migi > div.box.daizu div[style*='flex-basis: 0%'] {
+	display: none;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.bungakukei {
+	background-color: #a65915;
+	z-index: 3;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.sityoukei {
+	background-color: #0b5e56;
+	z-index: 2;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.souhoukei {
+	background-color: #2b1066;
+	z-index: 1;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.daihantyuu {
+	flex-basis: 1em;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.daihantyuu > span {
+	display: block;
+	transform: skewY(-20deg) scaleY(1.1) scaleX(0.9);
+}
+
+body > div.body > div.migi > div.box.daizu.lang_en > div.zu > div > div.daihantyuu > span {
+	writing-mode: vertical-rl;
+	transform: skewY(-20deg) scaleX(1.1) scaleY(0.9);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.bungakukei > div.daihantyuu {
+	background-color: orange;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.sityoukei > div.daihantyuu {
+	background-color: blue;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.souhoukei > div.daihantyuu {
+	background-color: purple;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu {
+	/*flex-basis: 40%;*/
+	flex-basis: 100%;
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.tizimase > div.retu:not(.count) {
+	flex-direction: row-reverse;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count {
+	width: 0;
+	flex-basis: 0;
+	flex-grow: 1;
+	display: flex;
+	font-size: 0.8em;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count > div {
+	position: relative;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count > div > span.fuji {
+	position: absolute;
+	right: 0em;
+	letter-spacing: -0em;
+	width: 1.5em;
+	text-align: right;
+	background-color: initial;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count > div > span.fuji > span {
+	display: inline-block;
+	transform: skewY(-30deg) scaleY(1.2) scaleX(1);
+	font-size: 0.7em;
+	text-shadow: 1px 1px white, 0px 0px 4px white, 0px 0px 2px white;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count > div:nth-child(3n) {
+	background: linear-gradient(0deg, hsl(0, 0%, 94%) 40%, hsl(0, 0%, 98%) 100%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count > div:nth-child(3n+1) {
+	background: linear-gradient(180deg, hsl(0, 0%, 94%) 40%, hsl(0, 0%, 98%) 100%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count > div:nth-child(3n+2) {
+	background: hsl(0, 0%, 98%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.sonota,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.sonota,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.sonota {
+	/*background: repeating-linear-gradient(
+		to right, transparent, 
+		transparent 2px, 
+		white 2px, 
+		white 4px),
+	repeating-linear-gradient(
+		to bottom, transparent,  
+		transparent 2px, 
+		white 2px, 
+		white 4px);*/
+	flex-grow: 1;
+	background: hsla(0, 0%, 100%, 0.6);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu {
+	flex-basis: 100%;
+	flex-direction: row-reverse;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div {
+	display: flex;
+	flex-direction: column;		
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div {
+	flex-basis: 100%;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.tandoku,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.sonota {
+	position: relative;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.tandoku > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.sonota > span {
+	position: absolute;
+	top: 0em;
+	line-height: 1;
+	font-size: 0.7em;
+	text-shadow: 1px 1px gray;
+	color: white;
+	/*font-weight: bold;*/
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.sonota > span {
+	color: initial;
+	text-shadow: white 1px 1px;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div:not(.tizimase) > div.retu > div.tandoku:not(:last-child):not(:nth-last-child(2)) > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div:not(.tizimase) > div.retu > div.sonota > span {
+	width: 1em;
+	right: 0em;
+}
+
+body > div.body > div.migi > div.box.daizu.lang_en > div.zu > div > div.retu > div.tandoku:not(:last-child):not(:nth-last-child(2)) > span,
+body > div.body > div.migi > div.box.daizu.lang_en > div.zu > div.tizimase > div.retu > div.tandoku > span {
+	writing-mode: vertical-rl;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.comic > div > span {
+	font-weight: normal;
+	text-shadow: 1px 1px white;
+	color: hsl(0, 0%, 40%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.scenario > span {
+	font-weight: normal;
+	text-shadow: 1px 1px white;
+	color: hsl(222, 60.6%, 40%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama.fukusuu > div > div > span {
+	font-weight: normal;
+	text-shadow: 1px 1px white;
+	color: hsl(109.7, 68.6%, 29.1%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.movie > span {
+	font-weight: normal;
+	text-shadow: 1px 1px white;
+	color: hsl(183.4, 68.6%, 30%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime_eiga > span {
+	font-weight: normal;
+	text-shadow: 1px 1px white;
+	color: hsl(0, 98.6%, 39.3%)
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.souhoukei > div.retu > div > span {
+	font-weight: normal;
+	text-shadow: 1px 1px white;
+	color: hsl(270, 48.5%, 38%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div:nth-child(5n) > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div:nth-child(5n) > span {
+	right: 0%;		
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div:nth-child(5n+1) > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div:nth-child(5n+1) > span {
+	right: 20%;		
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div:nth-child(5n+2) > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div:nth-child(5n+2) > span {
+	right: 40%;		
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div:nth-child(5n+3) > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div:nth-child(5n+3) > span {
+	right: 60%;		
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div:nth-child(5n+4) > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div:nth-child(5n+4) > span {
+	right: 80%;		
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.tizimase > div.retu > div.tandoku > span {
+	right: 0;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.tizimase > div.retu > div.tandoku:nth-child(4n) > span {
+	top: 0%;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.tizimase > div.retu > div.tandoku:nth-child(4n+1) > span {
+	top: 25%;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.tizimase > div.retu > div.tandoku:nth-child(4n+2) > span {
+	top: 50%;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div.tizimase > div.retu > div.tandoku:nth-child(4n+3) > span {
+	top: 75%;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc > div {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc > div > div[class^=ndc2_] {
+	position: relative;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc > div > span.ndc_key {
+	z-index: 2;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc > div > div[class^=ndc2_] {
+	z-index: 1;
+	border-left: 1px hsla(0, 100%, 100%, 0.7) dotted;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc > div > div[class^=ndc2_] > span {
+	position: absolute;
+	font-size: 0.6em;
+	color: hsla(0, 100%, 100%, 0.5);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n) > span {
+	top: 0%;
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+1) > span {
+	top: 20%;
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+2) > span {
+	top: 40%;
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+3) > span {
+	top: 60%;
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+4) > span {
+	top: 80%;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_0xx {
+	background-color: hsl(0, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_1xx {
+	background-color: hsl(36, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_2xx {
+	background-color: hsl(72, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_3xx {
+	background-color: hsl(108, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_4xx {
+	background-color: hsl(144, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_5xx {
+	background-color: hsl(180, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_6xx {
+	background-color: hsl(216, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_7xx {
+	background-color: hsl(252, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_8xx {
+	background-color: hsl(288, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_9xx {
+	background-color: hsl(324, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_50s {
+	background-color: hsl(0, 0%, 90%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_50s {
+	background-color: hsl(0, 0%, 50%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_60s {
+	background-color: hsl(0, 0%, 60%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_70s {
+	background-color: hsl(0, 0%, 70%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_80s {
+	background-color: hsl(0, 0%, 80%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_90s {
+	background-color: hsl(0, 0%, 85%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_00s {
+	background-color: hsl(0, 0%, 87%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_10s {
+	background-color: hsl(0, 0%, 90%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_20s {
+	background-color: hsl(0, 0%, 93%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc {
+	z-index: 3;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.comic {
+	z-index: 2;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu:not(.count) > div.scenario {
+	background-color: hsl(222, 60.6%, 90%);
+	z-index: 1;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.drama_70s,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.drama_70s {
+	background-color: hsl(109.7, 68.6%, 70%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.drama_80s,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.drama_80s {
+	background-color: hsl(109.7, 68.6%, 75%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.drama_90s,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.drama_90s {
+	background-color: hsl(109.7, 68.6%, 80%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.drama_00s,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.drama_00s {
+	background-color: hsl(109.7, 68.6%, 83%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.drama_10s,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.drama_10s {
+	background-color: hsl(109.7, 68.6%, 85%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.drama_20s,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.drama_20s {
+	background-color: hsl(109.7, 68.6%, 90%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div.sonota,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div.sonota {
+	background-color: hsl(109.7, 28.6%, 90%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.movie {
+	background-color: hsl(183.4, 68.6%, 90%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime {
+	background-color: hsl(3, 68.6%, 90%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime_eiga {
+	background-color: hsl(3, 68.6%, 95%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku:nth-child(2n) {
+	background-color: hsl(0, 0%, 90%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku:nth-child(2n+1) {
+	background-color: hsl(0, 0%, 95%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_NHK > span {
+	color: hsl(0, 0%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_FUJI > span {
+	color: hsl(0, 100%, 48%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_TBS > span {
+	color: hsl(241, 100%, 57%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_NTV > span {
+	color: rgb(35, 33, 31);
+}
+
+.hantyuu_bungakukei_tate {
+	font-weight: bold;
+	background: conic-gradient( #FFECC0, #FDB7DE, #F9CBEF, #F4B5CD 48%, #E8F0AE 50%, #E1EEB7 50%, #F0C5E3 52%, #e6bbd7, #f0b3db, #E6E6E6);
+	color: #a65915;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_sityoukei_tate {
+	font-weight: bold;
+	background: conic-gradient( #E68E90, #DD633F 2%, #8BD3D7 46%, #BAF0F2 49%, #C2EEF2 50%, #CDF0D8 50%, #E6F0C5 51%, #eed8c4 54%, #eccfb6 98%, #EE9EB4);
+	color: #0b5e56;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
+.hantyuu_souhoukei_tate {
+	font-weight: bold;
+	background: conic-gradient( #DDC0EA, #E3C6EE, #DABBE3, #EBBCEC 48%, #F0B3F2 50%, #DFB7EE 50%, #EBC5F0 52%, #dfc4ee, #e5b6ec, #F0BCEA);
+	color: #2b1066;
+	text-shadow: 1px 1px 1px white, 0px 0px 4px white;
+}
+
 /* おまけ　extra */
 
 span.sagasimono {
