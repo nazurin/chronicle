@@ -1653,4 +1653,4 @@ print <<HTML
 HTML
 ;
 # html>exeunt
-print Kahifu::Template::html_noti();
+print Kahifu::Template::html_noti('Hyouka');
