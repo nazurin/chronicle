@@ -1309,7 +1309,14 @@ div.sakuhinbako > div.hidari > div.heading {
 		1px -1px 0.5px orchid,
 		2px 2px 1px purple;
 	color: pink;
+}
+
+div.sakuhinbako > div.hidari > div.heading > span.hiwabun {
 	font-style: italic;
+}
+
+div.sakuhinbako > div.hidari > div.heading > span.fuji {
+	letter-spacing: -0.05em;
 }
 
 div.sakuhinbako > div.hidari > div.heading {

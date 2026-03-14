@@ -163,11 +163,31 @@ if(defined param('id') && param('id')){
 			#$betudai->{midasi} = from_json($sakuhin_info->{$passthrough_id}{betumei}) if defined $sakuhin_info->{$passthrough_id}{betumei} && $sakuhin_info->{$passthrough_id}{betumei};
 			#$betudai->{fukumidasi} = from_json($sakuhin_info->{$passthrough_id}{fukubetumei}) if defined $sakuhin_info->{$passthrough_id}{fukubetumei} && $sakuhin_info->{$passthrough_id}{fukubetumei};
 			#$betudai->{sakka} = from_json($sakuhin_info->{$passthrough_id}{sakkabetumei}) if defined $sakuhin_info->{$passthrough_id}{sakkabetumei} && $sakuhin_info->{$passthrough_id}{sakkabetumei};
-			print "<div class='heading'>";
-				print midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{midasi}, $sakuhin_info->{$passthrough_id}{betumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
+			print "<div class='heading' style='text-shadow: 1px 1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), -1px 1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), -1px -1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), 1px -1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), 2px 2px 1px hsl(${\(color_makase($seed, 360))}, 100%, 25%); color: hsl(${\(color_makase($seed, 360)+10)}, 100%, 88%);'>";
+				my $sakuhin_midasi = midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{midasi}, $sakuhin_info->{$passthrough_id}{betumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
+				if($sakuhin_midasi =~ /[\p{Han}\p{Hiragana}\p{Katakana}]/){
+					my @sakuhin_midasi_char = split //, $sakuhin_midasi;
+					print "<span class='fuji'>";
+					for my $i (0 .. scalar @sakuhin_midasi_char - 1){
+						print "<span>$sakuhin_midasi_char[$i]</span>";
+					}
+					print "</span>";
+				} else {
+					print "<span class='hiwabun'>$sakuhin_midasi</span>";
+				}
 			print "</div>";
 			print "<div class='subheading'>";
-				print midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{fukumidasi}, $sakuhin_info->{$passthrough_id}{fukubetumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
+				my $sakuhin_fukumidasi = midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{fukumidasi}, $sakuhin_info->{$passthrough_id}{fukubetumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
+				if($sakuhin_fukumidasi =~ /[\p{Han}\p{Hiragana}\p{Katakana}]/){
+					my @sakuhin_fukumidasi_char = split //, $sakuhin_fukumidasi;
+					print "<span class='fuji'>";
+					for my $i (0 .. scalar @sakuhin_fukumidasi_char - 1){
+						print "<span>$sakuhin_fukumidasi_char[$i]</span>";
+					}
+					print "</span>";
+				} else {
+					print "<span class='hiwabun'>$sakuhin_fukumidasi</span>";
+				}
 			print "</div>";
 			print "<div class='sakka'>";
 				print midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{sakka}, $sakuhin_info->{$passthrough_id}{sakkabetumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
