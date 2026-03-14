@@ -110,6 +110,14 @@ if(Kahifu::Template::tenmei()){
         $config->{hantyuu}{jyouhou}{comic}{$v->{comic}} = $v->{count} if looks_like_number($v->{comic});
         $config->{hantyuu}{jyouhou}{total}{comic} = $config->{hantyuu}{jyouhou}{total}{comic} + $v->{count} if looks_like_number($v->{comic});
 	}
+    my $anime_nendai_query = "select substr(substring_index(colle, 'anime',  -1), 1, 2) as 'anime', count(*) as count from sakuhin where hantyuu = 14 and (yotei <> 1 or yotei is null) group by anime";
+    $config->{hantyuu}{jyouhou}{total}{anime} = 0;
+    my $anime_nendai_syutoku = $dbh->prepare($anime_nendai_query);
+	$anime_nendai_syutoku->execute();
+	while(my $v = $anime_nendai_syutoku->fetchrow_hashref){
+        $config->{hantyuu}{jyouhou}{anime}{$v->{anime}} = $v->{count} if looks_like_number($v->{anime});
+        $config->{hantyuu}{jyouhou}{total}{anime} = $config->{hantyuu}{jyouhou}{total}{anime} + $v->{count} if looks_like_number($v->{anime});
+	}
     my $hantyuu_count_query = "select saku.hantyuu, count(*) as count, kei from sakuhin saku join hantyuu han on saku.hantyuu = han.orig_id where (yotei <> 1 or yotei is null) group by saku.hantyuu";
     my $hantyuu_count_syutoku = $dbh->prepare($hantyuu_count_query);
 	$hantyuu_count_syutoku->execute();
