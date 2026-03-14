@@ -1086,6 +1086,10 @@ div.collection_box div.koumoku:has(.kensuu_0) + div.koumoku:not(:has(.kensuu_0))
 	visibility: hidden;
 }
 
+.collection_container > div.collection_tag > div.colle_group > div.koumoku.border {
+	border-top: 1px solid black;
+}
+
 div.koyomi {
 	text-align: center;
 	background-color: rgba(237, 140, 255, 0.419);

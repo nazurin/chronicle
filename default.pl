@@ -1234,6 +1234,7 @@ if($paginate == 1){
 						my $row_count = $kensuu_collebetu->fetchall_arrayref();
 						print "<div class='count kensuu_", $row_count->[0][0],"'>";
 						print $row_count->[0][0], '件';
+						$colle_waku->[scalar(@$colle_waku)-1][2] = $row_count->[0][0] > 0 ? 1 : 0;
 					} else {
 						print "<div class='count'>";
 						print my $row_count = scalar(split(/,/,$v->{turu})), '件' if $v->{tag} ne 'yotei';
@@ -1250,7 +1251,7 @@ if($paginate == 1){
 			for my $i (0 .. $colle_stop){
 				print "</div>" if $i != 0 && ($colle_waku->[$i][$j] ne $colle_group || $i == $colle_stop); 
 				print "<div class='colle_group'><span class='$colle_waku->[$i][$j]${\( sub { return ' rinsetunasi' if $j == 0 && $colle_waku->[$i][1] eq $colle_waku->[$i][0] }->() )}'><span>${\( sub { return Kahifu::Template::dict('COLLE_WAKU_' . uc($colle_waku->[$i][$j])) if !($j == 1 && $colle_waku->[$i][1] eq $colle_waku->[$i][0]) }->() )}</span></span>" if $colle_waku->[$i][$j] ne $colle_group && $i != $colle_stop;
-				print "<div class='koumoku'>　</div>" if $i != $colle_stop;
+				print "<div class='koumoku${\( sub { return ' border' if defined $colle_waku->[$i-1][2] && $colle_waku->[$i-1][2] == 0 && $colle_waku->[$i][2] == 1 }->() )}'>　</div>" if $i != $colle_stop;
 				$colle_group = $colle_waku->[$i][$j];
 			}
 			print "</div>";
