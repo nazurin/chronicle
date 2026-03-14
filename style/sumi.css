@@ -1887,7 +1887,7 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu.count > div
 	position: absolute;
 	right: 0em;
 	letter-spacing: -0em;
-	width: 1.5em;
+	width: 2em;
 	text-align: right;
 	background-color: initial;
 }
@@ -1963,6 +1963,20 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.sonot
 	position: relative;
 }
 
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div {
+	position: relative;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > span:not(.fuji) {
+	position: absolute;
+	top: 0;
+	right: 0;
+	z-index: 20;
+	opacity: 0.5;
+	line-height: 1;
+	font-size: 0.7em;
+}
+
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div > span,
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.fukusuu > div > div > span,
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.tandoku > span,
@@ -2018,7 +2032,8 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.movie
 }
 
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime > span,
-body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime_eiga > span {
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime_eiga > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.anime > div > span {
 	font-weight: normal;
 	text-shadow: 1px 1px white;
 	color: hsl(0, 98.6%, 39.3%)
@@ -2182,6 +2197,25 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div
 }
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_20s {
 	background-color: hsl(0, 0%, 93%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.anime_70s {
+	background-color: hsl(3, 68.6%, 70%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.anime_80s {
+	background-color: hsl(3, 68.6%, 80%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.anime_90s {
+	background-color: hsl(3, 68.6%, 85%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.anime_00s {
+	background-color: hsl(3, 68.6%, 88%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.anime_10s {
+	background-color: hsl(3, 68.6%, 90%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.anime_20s {
+	background-color: hsl(3, 68.6%, 92%);
 }
 
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc {
