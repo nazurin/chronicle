@@ -32,9 +32,31 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my @bikou_naiyou = param('test');
 	my $id = param('collection');	
 	
+	for my $i (0 .. scalar(@bikou_naiyou) - 1){
+		$bikou_naiyou[$i] = decode_utf8($bikou_naiyou[$i]);
+	}
+	if(defined(param('jidou_hiduke_sort'))){
+		my @leading_bikou_naiyou;
+		for my $i (0 .. scalar @array_junban - 1){
+			my $tosi = substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '年')-4, 4);
+			my $tuki = (index($bikou_naiyou[$i], '月') - index($bikou_naiyou[$i], '年') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-1, 1) : substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-2, 2);
+			my $hi = (index($bikou_naiyou[$i], '日') - index($bikou_naiyou[$i], '月') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-1, 1) : substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-2, 2);
+			$leading_bikou_naiyou[$i] = $tosi . '-' . $tuki . '-' . $hi;
+			# 先行ゼロを削除する
+			$hi = substr($hi, 1) if substr($hi, 0, 1) eq '0';
+			$tuki = substr($tuki, 1) if substr($tuki, 0, 1) eq '0';
+			$bikou_naiyou[$i] = $tosi . '年' . $tuki . '月' . $hi . '日';
+		}
+		#die dump @leading_bikou_naiyou;
+		my @sort_arrange = sort { $leading_bikou_naiyou[$a] cmp $leading_bikou_naiyou[$b] } 0 .. $#leading_bikou_naiyou;
+		@array_junban = @array_junban[@sort_arrange];
+		@bikou_naiyou = @bikou_naiyou[@sort_arrange];
+		$turu = join ',', @array_junban;
+	}
+
 	my %bikou_sousin;
-	for(my $i = 0; $i < scalar(param('junban')); $i++){
-		$bikou_sousin{$array_junban[$i]} = decode_utf8($bikou_naiyou[$i]);
+	for(my $i = 0; $i < scalar(@bikou_naiyou); $i++){
+		$bikou_sousin{$array_junban[$i]} = $bikou_naiyou[$i];
 	}
 	delete($bikou_sousin{""});
 	my $bikou_serialized = to_json(\%bikou_sousin);
