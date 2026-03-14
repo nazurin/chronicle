@@ -527,3 +527,8 @@ div.koumoku.type_700 span.syurui.type_5 {
 	background-color: hsl(0, 0%, 92%);
 	color: hsl(0, 0%, 40%);
 }
+
+.collection_container > div.collection_tag > div.colle_group > span.periodANIME {
+	background-color: hsl(3, 68.6%, 90%);
+	color: hsl(0, 98.6%, 39.3%);
+}
