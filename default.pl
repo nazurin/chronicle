@@ -404,7 +404,7 @@ if (defined $siborikomi_hantyuu && $siborikomi_hantyuu && $siborikomi_hantyuu ne
 	}
 } else { $hantyuu_sibori_sitazi = ""; }
 if (defined $siborikomi_jyoukyou && $siborikomi_jyoukyou && $siborikomi_jyoukyou ne '1'){ 
-	$jyoukyou_sibori_sitazi = "and (`jyoukyou` in (?))";
+	$jyoukyou_sibori_sitazi = "and (`jyoukyou` in (?)${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_SITAZI_' . ${\($siborikomi_jyoukyou)}))})"; #ちょっと危ない
 	push @sitazi_bind, ("${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . ${\($siborikomi_jyoukyou)}))}");
 	push @sitazi_bind_2, ("${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . ${\($siborikomi_jyoukyou)}))}") if $page == 1;
 } else { $jyoukyou_sibori_sitazi = ""; }
