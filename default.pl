@@ -238,13 +238,13 @@ if(defined param('id') && param('id')){
 				print "</div>";
 			}
 			if((defined $sakuhin_info->{$passthrough_id}{isbn} || defined $sakuhin_info->{$passthrough_id}{isbn13}) && ($sakuhin_info->{$passthrough_id}{isbn} || $sakuhin_info->{$passthrough_id}{isbn13})){
-				print "<div class='isbn' style='background-color: hsla(${\(color_makase($sakuhin_info->{$passthrough_id}{isbn13}))}, 60%, 88%, 0.6)'>";
+				print "<div class='isbn' style='background-color: hsla(${\(color_makase($sakuhin_info->{$passthrough_id}{isbn10}))}, 60%, 88%, 0.6)'>";
 				my ($isbn, $syuume, $syuume_syori, $isbn10);
 				$syuume = 0;
 				for my $p (split '\+\+', $sakuhin_info->{$passthrough_id}{isbn}){
 					my $gyou = (index($p, '::') != -1) ? split ('\:\:', $p) : $p;
 					my $gyou_value = (ref $gyou eq 'ARRAY') ? $gyou->[1] : $gyou;
-					my $last_isbn;
+					my $last_isbn = '';
 					my $naisyuume = 0;
 					for my $q (split ',', $gyou_value){
 						$q = substr($last_isbn, 0, 10 - length($q)) . $q if length($q) != 10;
@@ -331,7 +331,7 @@ if(defined param('id') && param('id')){
 				print "</div>";
 				while(my $v = $rireki_syutoku->fetchrow_hashref){
 					print "<div class='gyou' data-rireki='${\( sub { return $v->{id} if defined $v->{id} }->() )}'>";
-						print "<div class='jiten${\( sub { return ' mikakutei' if $v->{mkt}==1 }->() )}'>", date($v->{jiten}, $v->{mkt}, 1), "</div>";
+						print "<div class='jiten${\( sub { return ' mikakutei' if defined $v->{mkt} && $v->{mkt}==1 }->() )}'>", date($v->{jiten}, $v->{mkt}, 1), "</div>";
 						print "<div class='jyou'>", jyoukyou_settei($v->{jyoukyou}, $sakuhin_info->{$passthrough_id}{hajimari}, $v->{owari}, 609, $sakuhin_info->{$passthrough_id}{eternal}), "</div>";
 						print "<div class='with'>";
 						my @with;
@@ -367,7 +367,7 @@ if(defined param('id') && param('id')){
 							print "<div class='part'><input type='text'  name='part' placeholder='", $v->{part}, "' value='", $v->{part}, "'></div>／";
 							print "<div class='whole'><input type='text' name='whole'  placeholder='", $v->{whole}, "' value='", $v->{whole}, "'></div>";
 							print "<div class='josuu'><input type='text' name='josuu'  placeholder='", $v->{josuu}, "' value='", $v->{josuu}, "'></div>";
-							print "<div class='mikakutei'><select name='mikakutei' ><option value='1'${\( sub { return ' selected=selected' if $v->{mkt}==1 }->() )}>${\(Kahifu::Template::dict('MIKAKUTEI_JYOU'))}</option><option value='0'${\( sub { return ' selected=selected' if $v->{mkt}==0 }->() )}>${\(Kahifu::Template::dict('KAKUTEI_JYOU'))}</option></select></div>";
+							print "<div class='mikakutei'><select name='mikakutei' ><option value='1'${\( sub { return ' selected=selected' if defined $v->{mkt} && $v->{mkt}==1 }->() )}>${\(Kahifu::Template::dict('MIKAKUTEI_JYOU'))}</option><option value='0'${\( sub { return ' selected=selected' if (defined $v->{mkt} && $v->{mkt}==0) || !defined $v->{mkt} }->() )}>${\(Kahifu::Template::dict('KAKUTEI_JYOU'))}</option></select></div>";
 						print "</div>";
 						print "<div class='text'>";
 							print "<input type='text'  name='text' placeholder='", $v->{text}, "' value='", $v->{text}, "'>";
@@ -391,7 +391,7 @@ if(defined param('id') && param('id')){
 		$(\'div.rireki_sousin\').show();
 	});
   	</script>';
-	print Kahifu::Template::html_noti();
+	print Kahifu::Template::html_noti('Hyouka');
 	exit;
 }
 
@@ -862,7 +862,7 @@ if($paginate == 1){
 					my $tekisetu_reference = midasi_tekisetuka($v->{midasi}, $v->{betumei}, $v->{colle}, $sitei_gengo);
 					print midasi_settei($tekisetu_reference, $v->{mikakutei}, $v->{current}, $kensaku);
 					print "</p>";
-					print "<p class='fuku_midasi $v->{id}'>" . midasi_tekisetuka($v->{fukumidasi}, $v->{fukubetumei}, $v->{colle}, $sitei_gengo) . "</p>" if $v->{fukumidasi} ne '' && (!defined $v->{sakifuku} || $v->{sakifuku} == 0);
+					print "<p class='fuku_midasi $v->{id}'>" . title_settei(midasi_tekisetuka($v->{fukumidasi}, $v->{fukubetumei}, $v->{colle}, $sitei_gengo)) . "</p>" if $v->{fukumidasi} ne '' && (!defined $v->{sakifuku} || $v->{sakifuku} == 0);
 					print "<span class='sakka'>" . sakka_settei(midasi_tekisetuka($v->{sakka}, $v->{sakkabetumei}, $v->{colle}, $sitei_gengo), $kensaku) . "</span>" if defined $v->{sakka};				
 				print "</div>";
 				print "<div class='jyou'>";
