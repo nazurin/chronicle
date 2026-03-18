@@ -2290,6 +2290,11 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama
 	background-color: hsl(0, 0%, 95%);
 }
 
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.kogara > span {
+	font-size: 0.5em;
+	opacity: 0.5;
+}
+
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_NHK > span {
 	color: hsl(0, 0%, 50%);
 }
