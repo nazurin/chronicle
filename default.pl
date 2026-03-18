@@ -326,7 +326,7 @@ if(defined param('id') && param('id')){
 					print "<div class='jyou'>${\(Kahifu::Template::dict('TOUROKU_JYOU'))}</div>";
 				print "</div>";
 				print "<div class='gyou'>";
-					print "<div class='jiten${\( sub { return ' mikakutei' if $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{hajimari}, $sakuhin_info->{$passthrough_id}{mikakutei}, 1), "</div>";
+					print "<div class='jiten${\( sub { return ' mikakutei' if defined $sakuhin_info->{$passthrough_id}{mikakutei} && $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{hajimari}, $sakuhin_info->{$passthrough_id}{mikakutei}, 1), "</div>";
 					print "<div class='jyou'>${\(Kahifu::Template::dict('HAJIMARI_JYOU'))}</div>";
 				print "</div>";
 				while(my $v = $rireki_syutoku->fetchrow_hashref){
