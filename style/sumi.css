@@ -2311,6 +2311,29 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama
 	color: rgb(35, 33, 31);
 }
 
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_CBS > span {
+	color: rgb(35, 33, 31);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_ABC > span {
+	color: rgb(35, 33, 31);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_NBC > span {
+	background-image: linear-gradient(90deg, hsl(49, 100%, 50%) 0%, hsl(49, 100%, 50%) 16%, hsl(24, 100%, 50%) 16%, hsl(24, 100%, 50%) 33%, hsl(351, 100%, 50%) 33%, hsl(351, 100%, 50%) 50%, hsl(263, 77%, 56%) 50%, hsl(263, 77%, 56%) 67%, hsl(200, 100%, 45%) 67%, hsl(200, 100%, 45%) 86%, hsl(135, 100%, 36%) 86%, hsl(135, 100%, 36%) 100%);
+    color: hsla(0, 0%, 0%, 0.3);
+    background-clip: text;
+	text-shadow: none;
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_HBO > span {
+	color: rgb(128, 128, 128);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_FX > span {
+	color: rgb(0, 0, 0);
+}
+
 .hantyuu_bungakukei_tate {
 	font-weight: bold;
 	background: conic-gradient( #FFECC0, #FDB7DE, #F9CBEF, #F4B5CD 48%, #E8F0AE 50%, #E1EEB7 50%, #F0C5E3 52%, #e6bbd7, #f0b3db, #E6E6E6);

@@ -37,15 +37,32 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	}
 	if(defined(param('jidou_hiduke_sort'))){
 		my @leading_bikou_naiyou;
+		my $kisetu = {
+			'冬' => '01',
+			'春' => '04',
+			'夏' => '07',
+			'秋' => '10',
+			'Winter' => '01',
+			'Mid-Winter' => '02',
+			'Spring' => '04',
+			'Summer' => '07',
+			'Fall' => '10',
+			'前半' => '04',
+			'後半' => '10',
+		};
+		my @kisetu_keys = keys %$kisetu;
 		for my $i (0 .. scalar @array_junban - 1){
-			my $tosi = substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '年')-4, 4);
-			my $tuki = (index($bikou_naiyou[$i], '月') - index($bikou_naiyou[$i], '年') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-1, 1) : substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-2, 2);
-			my $hi = (index($bikou_naiyou[$i], '日') - index($bikou_naiyou[$i], '月') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-1, 1) : substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-2, 2);
+			my ($tosi) = index($bikou_naiyou[$i], '年') != -1 ? $bikou_naiyou[$i] =~ /([0-9]{1,4})年/ : $bikou_naiyou[$i] =~ /([0-9]{1,4})/;
+			my $tuki = index($bikou_naiyou[$i], '月') != -1 && (index($bikou_naiyou[$i], '月') - index($bikou_naiyou[$i], '年') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-1, 1) : 
+			(index($bikou_naiyou[$i], '月') != -1 && (index($bikou_naiyou[$i], '月') - index($bikou_naiyou[$i], '年') == 3) ?
+				substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-2, 2) : 
+				((grep { $bikou_naiyou[$i] =~ /\Q$_/ } @kisetu_keys) ? $kisetu->{[grep { $bikou_naiyou[$i] =~ /\Q$_/ } @kisetu_keys]->[0]} : '00'));
+			my $hi = (index($bikou_naiyou[$i], '日') - index($bikou_naiyou[$i], '月') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-1, 1) : (index($bikou_naiyou[$i], '日') - index($bikou_naiyou[$i], '月') == 3 ? substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-2, 2) : '00');
 			$leading_bikou_naiyou[$i] = $tosi . '-' . $tuki . '-' . $hi;
-			# 先行ゼロを削除する
-			$hi = substr($hi, 1) if substr($hi, 0, 1) eq '0';
-			$tuki = substr($tuki, 1) if substr($tuki, 0, 1) eq '0';
-			$bikou_naiyou[$i] = $tosi . '年' . $tuki . '月' . $hi . '日';
+			# 先行ゼロを削除して備考欄を更新する
+			#$hi = substr($hi, 1) if substr($hi, 0, 1) eq '0';
+			#$tuki = substr($tuki, 1) if substr($tuki, 0, 1) eq '0';
+			#$bikou_naiyou[$i] = $tosi . '年' . $tuki . '月' . $hi . '日';
 		}
 		#die dump @leading_bikou_naiyou;
 		my @sort_arrange = sort { $leading_bikou_naiyou[$a] cmp $leading_bikou_naiyou[$b] } 0 .. $#leading_bikou_naiyou;

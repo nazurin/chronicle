@@ -1215,7 +1215,7 @@ if($paginate == 1){
 	} else {
 		#　一覧コレクション外 （Collection listing）	
 		#my $meirei = "select id, midasi, hyouji, turu, color from collection";
-		my $meirei = ("select id, midasi, midasi_seisiki, tag, hyouji, turu, color, sort1, sort2 from collection order by field(`tag`, 'yotei', 'favorite', 'award', 'waku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
+		my $meirei = ("select id, midasi, midasi_seisiki, tag, hyouji, turu, color, sort1, sort2 from collection order by field(`tag`, 'yotei', 'favorite', 'award', 'waku', 'wakuame', 'kyoku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
 		my $colleran = $dbh->prepare($meirei);
 		$colleran->execute();
 		print "<div class='collection_container lang_${Kahifu::Junbi::lang}'>";

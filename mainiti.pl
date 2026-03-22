@@ -130,7 +130,7 @@ if(Kahifu::Template::tenmei()){
         $config->{hantyuu}{jyouhou}{total}{$v->{kei}} = $config->{hantyuu}{jyouhou}{total}{$v->{kei}} + $v->{count};
         $config->{hantyuu}{jyouhou}{total}{total} = $config->{hantyuu}{jyouhou}{total}{total} + $v->{count};
 	}
-    my $waku_count_query = "select turu, midasi_seisiki, sort1 from collection where tag = 'waku'";
+    my $waku_count_query = "select turu, midasi_seisiki, sort1 from collection where tag in ('waku', 'wakuame', 'kyoku')";
     my $waku_count_syutoku = $dbh->prepare($waku_count_query);
     $waku_count_syutoku->execute();
     my ($m, $waku_id);
