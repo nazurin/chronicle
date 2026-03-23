@@ -697,21 +697,24 @@ print "<div class='commander'>";
 				my $syurui = shift;
 				my $hamarido = shift;
 				my $jun = shift;
+				my $jun_max = shift;
 				my $hana;
 				my $img;
 				my ($kihon_x, $kihon_y, $sin_x, $sin_y);
-				$kihon_x = 4.5 if $jun == 0;
-				$kihon_y = 5.75 if $jun == 0;
-				$kihon_x = 18.25 if $jun == 1;
-				$kihon_y = 4 if $jun == 1;
-				$kihon_x = 13 if $jun == 2;
-				$kihon_y = 8 if $jun == 2;
-				$sin_x = $kihon_x - ($hamarido/2);
-				$sin_y = $kihon_y - ($hamarido/2);
+				my $kihon_xy = [
+					[4.5, 5.75],
+					[18.25, 4],
+					[13, 8],
+					[21, 7],
+					[1, 3],
+					[14, 0],
+				];
+				$sin_x = $kihon_xy->[$jun][0] - ($hamarido/2);
+				$sin_y = $kihon_xy->[$jun][1] - ($hamarido/2);
 				$img = "https://kahifu.net/node/img/prim/cosmos.png" if $syurui eq 'kasyu';
 				$img = "https://kahifu.net/node/img/prim/mokkoubara.png" if $syurui eq 'uta';
 				$img = "https://kahifu.net/node/img/prim/tutuzi.png" if $syurui eq 'album';
-				$hana .= "<div style='filter: hue-rotate(${\(Kahifu::Infra::sitei_rand(${namae}, 360))}deg) brightness(110%) contrast(160%); left: ${sin_x}rem; top: ${sin_y}rem; width: ${hamarido}rem; height: ${hamarido}rem' class='hamari jun_$jun'>";
+				$hana .= "<div style='filter: hue-rotate(${\(Kahifu::Infra::sitei_rand(${namae}, 360))}deg) brightness(110%) contrast(160%); left: ${sin_x}rem; top: ${sin_y}rem; width: ${hamarido}rem; height: ${hamarido}rem; z-index: ${\($jun_max-$jun)}' class='hamari jun_$jun'>";
 					$hana .= "<img src='$img'>";
 					$hana .= "<span>$namae</span>";
 				$hana .= "</div>";
@@ -720,7 +723,7 @@ print "<div class='commander'>";
 			print "<img src='/img/ref/chronicle/kosumosu.jpg'>";
 			my $hamarimono = $config->{hamarimono};
 			for my $i (0 .. scalar @$hamarimono - 1){
-				print hamarimono_seisei($hamarimono->[$i]{namae}, $hamarimono->[$i]{syurui}, $hamarimono->[$i]{hamarido}, $i);
+				print hamarimono_seisei($hamarimono->[$i]{namae}, $hamarimono->[$i]{syurui}, $hamarimono->[$i]{hamarido}, $i, scalar(@$hamarimono)-1);
 			}
 			print "</div>";
 		}
