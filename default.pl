@@ -540,7 +540,7 @@ if($paginate == 1){
 		do '/var/www/html/chronicle/mainiti.pl';
 	}
 
-	$meirei_presitami = $dbh->prepare("select `id`, `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, null as `betumei`, null as `fukubetumei`, null as `sakkabetumei`, null as `hantyuu`, null as `jyoukyou` from `listen` having 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}");
+	$meirei_presitami = $dbh->prepare("select `id`, `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, null as `betumei`, null as `fukubetumei`, null as `sakkabetumei`, null as `isbn`, null as `isbn13`, null as `hantyuu`, null as `jyoukyou` from `listen` having 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}");
 	$meirei_presitami->execute(@sitazi_bind);
 	$kansyou_all_rows = $meirei_presitami->rows();
 	$page_subete = ceil((($kansyou_all_rows - 100) / 100) + 1);
@@ -549,7 +549,7 @@ if($paginate == 1){
 	my $ongaku_narabi_tuuka = (defined $ongaku_narabi_henkan[$narabi-1]) ? $ongaku_narabi_henkan[$narabi-1] : $ongaku_narabi_henkan[0];
 	my $row_count = 100;
 
-	@meirei = ("select *, `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, null as `betumei`, null as `fukubetumei`, null as `sakkabetumei`, null as `hantyuu`, null as `jyoukyou` from `listen` having 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${ongaku_narabi_tuuka} ${jun_tuuka} limit ${row_count} offset ?");
+	@meirei = ("select *, `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, null as `betumei`, null as `fukubetumei`, null as `sakkabetumei`, null as `hantyuu`, null as `isbn`, null as `isbn13`, null as `jyoukyou` from `listen` having 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${ongaku_narabi_tuuka} ${jun_tuuka} limit ${row_count} offset ?");
 }
 
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
