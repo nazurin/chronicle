@@ -93,6 +93,24 @@ if(Kahifu::Template::tenmei()){
 	while(my $v = $ndc2_syutoku->fetchrow_hashref){
         $config->{ndc2}{$v->{ndcl1}}{$v->{ndcl2}} = $v->{count};
 	}
+
+    # ddcで同じ処理仕方
+    my $ddc_query = "select left(ddc, 1) as ddcl1, count(*) as count from sakuhin where ddc is not null and ddc <> '' and ndc <> '726.1' and (yotei <> 1 or yotei is null) group by ddcl1";
+    $config->{hantyuu}{jyouhou}{total}{ddc} = 0;
+	my $ddc_syutoku = $dbh->prepare($ddc_query);
+	$ddc_syutoku->execute();
+	while(my $v = $ddc_syutoku->fetchrow_hashref){
+        $config->{ddc}{$v->{ddcl1}} = $v->{count};
+        $config->{hantyuu}{jyouhou}{total}{ddc} = $config->{hantyuu}{jyouhou}{total}{ddc} + $v->{count};
+	}
+
+    my $ddc2_query = "select right(left(ddc, 2),1) as ddcl2, left(ddc, 1) as ddcl1, count(*) as count from sakuhin where ddc is not null and ddc <> '' and ddc not like '741.5%' and yotei <> 1 group by ddcl1, ddcl2";
+    $config->{ddc2} = undef;
+	my $ddc2_syutoku = $dbh->prepare($ddc2_query);
+	$ddc2_syutoku->execute();
+	while(my $v = $ddc2_syutoku->fetchrow_hashref){
+        $config->{ddc2}{$v->{ddcl1}}{$v->{ddcl2}} = $v->{count};
+	}
     
     #ソート
     #映画用：select replace(substr(substring_index(colle, 'gengo_',  -1), 1, 3), ',', '') as 'gengo', count(*) as count from sakuhin where hantyuu = 9 and (yotei <> 1 or yotei is null) group by gengo

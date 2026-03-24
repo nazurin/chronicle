@@ -2151,19 +2151,19 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.ndc >
 	color: hsla(0, 100%, 100%, 0.5);
 }
 
-body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n) > span {
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class*=dc] > div:nth-child(5n) > span {
 	top: 0%;
 }
-body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+1) > span {
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class*=dc] > div:nth-child(5n+1) > span {
 	top: 20%;
 }
-body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+2) > span {
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class*=dc] > div:nth-child(5n+2) > span {
 	top: 40%;
 }
-body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+3) > span {
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class*=dc] > div:nth-child(5n+3) > span {
 	top: 60%;
 }
-body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class^=ndc] > div:nth-child(5n+4) > span {
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div[class*=dc] > div:nth-child(5n+4) > span {
 	top: 80%;
 }
 
@@ -2205,6 +2205,46 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div
 
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ndc_9xx {
 	background-color: hsl(324, 68.6%, 50%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_0xx {
+	background-color: hsl(4, 21%, 26%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_1xx {
+	background-color: hsl(325, 100%, 31%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_2xx {
+	background-color: hsl(0, 53%, 43%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_3xx {
+	background-color: hsl(28, 93%, 40%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_4xx {
+	background-color: hsl(55, 90%, 32%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_5xx {
+	background-color: hsl(90, 100%, 23%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_6xx {
+	background-color: hsl(170, 90%, 31%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_7xx {
+	background-color: hsl(200, 100%, 31%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_8xx {
+	background-color: hsl(240, 60%, 41%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.ddc_9xx {
+	background-color: hsl(280, 100%, 31%);
 }
 
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_50s {
