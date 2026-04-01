@@ -475,7 +475,12 @@ div.koumoku.type_700 span.syurui.type_5 {
 
 .collection_container > div.collection_tag > div.colle_group > span.periodDRAMA {
 	background-color: hsl(109.7, 68.6%, 90%);
-	color: hsl(109.7, 68.6%, 29.1%)
+	color: hsl(109.7, 68.6%, 29.1%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.periodFILM {
+	background-color: hsl(183.4, 68.6%, 90%);
+	color: hsl(183.4, 68.6%, 30%);
 }
 
 .collection_container > div.collection_tag > div.colle_group > span.wakuWOWOW {
