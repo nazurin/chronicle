@@ -486,7 +486,7 @@ if($paginate == 1){
 	$dst_musi_week_limit_lower = ($week_border_original[0] - (($week - 0) * 604800)) + 3600;
 	$koyomi_week_count = week_count(${\(week($dst_musi_week_limit_lower))[0]}) == 1 ? 52 : 53; # yr from yr,wk of weeklimlower to count
 	#　part != 前のpart & jyou!=終（再開の場合を除く）	→週別（yearweek）で範疇の頻度を
-	$hantyuu_syutoku = "select YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1) as `week`, `jiten`, `hantyuu`, count(*) as `count` from (SELECT (\@partpre = part AND \@sidpre=sid AND `jyoukyou` not in ('終','葉','中')) AS unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) AS x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id ${kensaku_sitazi} where not unchanged_status ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and substring(YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1), 1, 4) = ? group by `hantyuu`, `week` union all select YEARWEEK(FROM_UNIXTIME(`date` - ${sanjyuujikansei_offset}), 1) as `week`, `date` as `jiten`, 900 as `hantyuu`, floor((count(*) * 4.427)/60)/1.5 as `count` from (select `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 0 as `with`, 0 as `betumei`, 0 as `fukubetumei`, 0 as `sakkabetumei`, 900 as `hantyuu`, '終' as `jyoukyou`, listen.* from `listen`) as listen where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} group by `week` order by jiten desc";
+	$hantyuu_syutoku = "select YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1) as `week`, `jiten`, `hantyuu`, count(*) as `count` from (SELECT (\@partpre = part AND \@sidpre=sid AND `jyoukyou` not in ('終','葉','中')) AS unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) AS x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id ${kensaku_sitazi} where not unchanged_status ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and substring(YEARWEEK(FROM_UNIXTIME(reki.`jiten` - ${sanjyuujikansei_offset}), 1), 1, 4) = ? group by `hantyuu`, `week` union all select YEARWEEK(FROM_UNIXTIME(`date` - ${sanjyuujikansei_offset}), 1) as `week`, `date` as `jiten`, 900 as `hantyuu`, floor((count(*) * 4.427)/60)/1.5 as `count` from (select `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 0 as `with`, 0 as `betumei`, 0 as `fukubetumei`, 0 as `sakkabetumei`, 0 as `isbn`, 0 as `isbn13`, 900 as `hantyuu`, '終' as `jyoukyou`, listen.* from `listen`) as listen where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} group by `week` order by jiten desc";
 	#music_syutoku = "select YEARWEEK(FROM_UNIXTIME(`date`), 1) as `week`, 900 as `hantyuu`, floor((count(*) * 4.427)/60) as `count` from `listen` group by `week`"
 	my $koyomi_hantyuu = $dbh->prepare($hantyuu_syutoku);
 	$koyomi_hantyuu->execute(@sitazi_bind, ${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind);
@@ -512,7 +512,7 @@ if($paginate == 1){
 	#audioscrobbler/listen組み込み
 	my $listen_row_iter;
 	# 	my $listen_query = "select * from (select *,  `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, '終' as `jyoukyou`, lead(`date`) over (order by `date`) - `date` as `lag` from `listen`) as `listen` where `date` < ? && `date` >= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}"; # 処理時間が長すぎたため、`lag`を保存するようにしました。400ms->20msになりましたが、更新時（現在kousin.plの264-266行を参照）に800msくらいのupdateクエリーを行う必要があります。一得一失うんぬん。
-	my $listen_query = "select * from (select *,  `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, 0 as `with`, 0 as `betumei`, 0 as `fukubetumei`, 0 as `sakkabetumei`, '終' as `jyoukyou` from `listen`) as `listen` where `date` < ? && `date` >= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}";
+	my $listen_query = "select * from (select *,  `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, 900 as `hantyuu`, 0 as `with`, 0 as `betumei`, 0 as `fukubetumei`, 0 as `sakkabetumei`, 0 as `isbn`, 0 as `isbn13`, '終' as `jyoukyou` from `listen`) as `listen` where `date` < ? && `date` >= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}";
 	my $listen_syutoku = $dbh->prepare($listen_query);
 	$listen_syutoku->execute($week_limit_upper, $week_limit_lower, @sitazi_bind);
 	my $listen_row_count = $listen_syutoku->rows;
@@ -562,7 +562,10 @@ if(!(Kahifu::Template::tenmei() || $ninsyou)){
 	print "</form>";
 }
 
-print "<div class='commander'>";
+print "<div class='commander' style=\"background-image: url('${\(image_makase('flower/png', date_split($imagenzai, 51)+1))}')\">";
+#background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' font-style='italic' font-family='Times New Roman' height='24px' width='150px'><text x='0' y='20' fill='white' stroke='black' font-size='24'>No.65: Daisy</text></svg>"), url('/img/websozai/himawari_no_kobeya/png/2bigflo65.png');
+#background-position: bottom right, center;
+#background-repeat: no-repeat, repeat;
 	print "<div class='hidari'>";
 		print "<div class='navi'>";
 			if($paginate == 1){
@@ -734,6 +737,7 @@ print "<div class='commander'>";
 			print "<span>${\(Kahifu::Template::dict('HYOUKA_TITLE'))}</span><span>${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(Kahifu::Template::dict('HYOUKA_SUBTITLE'))}</span>";
 		print "</div>";
 		print "<div class='maegaki'>";
+			#print "<p class='alt $Kahifu::Junbi::langa'>${\(Kahifu::Template::dict('HYOUKA_MAEGAKI', $Kahifu::Junbi::langa))}</p>";
 			print "<p>${\(Kahifu::Template::dict('HYOUKA_MAEGAKI'))}</p>";
 		print "</div>";
 		print "<div class='kinkyou'>";
