@@ -549,7 +549,18 @@ if($paginate == 1){
 	my $ongaku_narabi_tuuka = (defined $ongaku_narabi_henkan[$narabi-1]) ? $ongaku_narabi_henkan[$narabi-1] : $ongaku_narabi_henkan[0];
 	my $row_count = 100;
 
-	@meirei = ("select *, `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, null as `betumei`, null as `fukubetumei`, null as `sakkabetumei`, null as `hantyuu`, null as `isbn`, null as `isbn13`, null as `jyoukyou` from `listen` having 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${ongaku_narabi_tuuka} ${jun_tuuka} limit ${row_count} offset ?");
+	@meirei = ("select
+		a.id, a.date, a.name, a.album, a.artist,
+		a.name as `midasi`, a.album as `fukumidasi`, a.artist as `sakka`,
+		a.lag,
+		if(b.year is null, if(c.year is null, d.year, c.year), b.year) as `year`,
+		if(b.genre is null, if(c.genre is null, d.genre, c.genre), b.genre) as `genre`,
+		null as `betumei`, null as `fukubetumei`, null as `sakkabetumei`, null as `isbn`, null as `isbn13`, null as `hantyuu`, null as `jyoukyou` 
+	from listen a
+		left join listen_meta b on (a.artist = b.artist and a.name = b.name and a.album = b.album)
+		left join listen_meta c on (a.artist = c.artist and a.name = c.name)
+		left join listen_meta d on (a.artist = d.artist and a.album = d.album)
+	having 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${ongaku_narabi_tuuka} ${jun_tuuka} limit ${row_count} offset ?");
 }
 
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
