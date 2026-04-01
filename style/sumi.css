@@ -53,6 +53,8 @@ div.aikotoba > span {
 div.commander {
 	display: flex;
 	padding-bottom: 0.25em;
+	/*background-position: bottom right;
+	background-repeat: no-repeat;*/
 }
 
 div.commander > div.hidari {
@@ -269,7 +271,29 @@ div.commander > div.migi > div.maegaki {
 	background-color: rgb(247, 210, 227);
 	border: 3px ridge white;
 	border-bottom: none;
+	position: relative;
+	/*flex-grow: 1;*/
 }
+
+/*div.commander > div.migi > div.maegaki > p.main {
+	position: relative;
+}
+
+div.commander > div.migi > div.maegaki > p.alt {
+	position: absolute;
+	bottom: 0;
+	overflow: hidden;
+	color: hsla(0, 0%, 100%, 0.4);
+	font-style: italic;
+}
+
+div.commander > div.migi > div.maegaki > p.alt.ja {
+	top: 2em;
+    left: 0;
+    right: 0;
+    writing-mode: vertical-rl;
+    overflow: hidden;
+}*/
 
 div.commander > div.migi > div.kinkyou {
 	background-color: rgb(255, 250, 168);
@@ -2062,7 +2086,8 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama
 	color: hsl(109.7, 68.6%, 29.1%);
 }
 
-body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.movie > span {
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.movie > span,
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.movie > div > span {
 	font-weight: normal;
 	text-shadow: 1px 1px white;
 	color: hsl(183.4, 68.6%, 30%);
@@ -2274,6 +2299,40 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div
 }
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.comic_20s {
 	background-color: hsl(0, 0%, 93%);
+}
+
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_20s {
+	background-color: hsl(183.4, 68.6%, 70%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_30s {
+	background-color: hsl(183.4, 68.6%, 73%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_40s {
+	background-color: hsl(183.4, 68.6%, 76%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_50s {
+	background-color: hsl(183.4, 68.6%, 80%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_60s {
+	background-color: hsl(183.4, 68.6%, 83%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_70s {
+	background-color: hsl(183.4, 68.6%, 86%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_80s {
+	background-color: hsl(183.4, 68.6%, 88%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_90s {
+	background-color: hsl(183.4, 68.6%, 90%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_00s {
+	background-color: hsl(183.4, 68.6%, 92%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_10s {
+	background-color: hsl(183.4, 68.6%, 94%);
+}
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.movie_20s {
+	background-color: hsl(183.4, 68.6%, 96%);
 }
 
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div > div.anime_70s {
