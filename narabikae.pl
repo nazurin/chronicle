@@ -60,9 +60,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 			my $hi = (index($bikou_naiyou[$i], '日') - index($bikou_naiyou[$i], '月') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-1, 1) : (index($bikou_naiyou[$i], '日') - index($bikou_naiyou[$i], '月') == 3 ? substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '日')-2, 2) : '00');
 			$leading_bikou_naiyou[$i] = $tosi . '-' . $tuki . '-' . $hi;
 			# 先行ゼロを削除して備考欄を更新する
-			$hi = substr($hi, 1) if substr($hi, 0, 1) eq '0';
-			$tuki = substr($tuki, 1) if substr($tuki, 0, 1) eq '0';
-			$bikou_naiyou[$i] = $tosi . '年' . $tuki . '月' . $hi . '日';
+			#$hi = substr($hi, 1) if substr($hi, 0, 1) eq '0';
+			#$tuki = substr($tuki, 1) if substr($tuki, 0, 1) eq '0';
+			#$bikou_naiyou[$i] = $tosi . '年' . $tuki . '月' . $hi . '日';
 		}
 		#die dump @leading_bikou_naiyou;
 		my @sort_arrange = sort { $leading_bikou_naiyou[$a] cmp $leading_bikou_naiyou[$b] } 0 .. $#leading_bikou_naiyou;
