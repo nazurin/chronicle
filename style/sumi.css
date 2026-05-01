@@ -1140,6 +1140,45 @@ div.collection_box div.koumoku:has(.kensuu_0) + div.koumoku:not(:has(.kensuu_0))
 	border-top: 1px solid black;
 }
 
+div.dendou > div.cour {
+	border: 3px ridge white;
+}
+
+div.dendou > div.cour > div.midasi {
+	font-weight: bold;
+	padding: 0 0.5em;
+	line-height: 1;
+	font-size: 1.2em;
+}
+
+div.dendou > div.cour > div.gyou {
+	border-bottom: 1px solid black;
+	padding: 0 0.5em;
+	display: flex;
+	margin: 0 0.25em;
+}
+
+
+div.dendou > div.cour > div.gyou > div.bumon {
+	flex-basis: 10em;
+	width: 10em;
+}
+
+div.dendou > div.cour > div.kouhoran {
+	margin: 0.25em 0.25em;
+	border: 3px ridge white;
+	padding: 0 0.25em;
+}
+
+div.dendou > div.cour > div.kouhoran > span:first-child {
+	font-weight: bold;
+}
+
+div.dendou > div.cour > div.kouhoran > span {
+	margin-right: 0.5em;
+	display: inline-block;
+}
+
 div.koyomi {
 	text-align: center;
 	background-color: rgba(237, 140, 255, 0.419);
@@ -1303,6 +1342,10 @@ div.rireki_box > div.koumoku > div.hiduke > span.jikantai {
 div.rireki_box > div.koumoku > div.bikou {
 	font-size: 0.9em;
 	margin-left: 5.5em;
+}
+
+div.rireki_box > div.koumoku > div.bikou:empty {
+	display: none;
 }
 
 div.rireki_box > div.koumoku > div.bikou > span.with {
@@ -1491,6 +1534,34 @@ div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou {
 	background-color: hsla(0, 0%, 100%, 0.7);
 	display: block;
 	padding: 0.125em 0.25em;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou > p.empty {
+	display: none;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi.type_7 > div.naiyou > span {
+	font-weight: bold;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou > div.genbun:hover:has(div.trans[class*=lang_]) {
+	background-color: hsla(84, 100%, 89%, 0.5);
+	border-left: 3px solid green;
+	position: relative;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou > div.genbun:hover:has(div.trans[class*=lang_]) > div.trans {
+	display: block;
+	transition: all 1s ease-out;
+}
+
+div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou > div.genbun > div.trans {
+	display: none;
+	top: 0.5em;
+	left: 0.5em;
+	border: 2px gray dotted;
+	padding: 0 0.25em;
+	background-color: hsla(0, 0%, 100%, 0.8);
 }
 
 div.sakuhinbako > div.hidari > div.kakejiku {
@@ -2428,6 +2499,10 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama
 	color: hsl(0, 100%, 48%);
 }
 
+body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_KTV > span {
+	color: hsl(322, 100%, 50%);
+}
+
 body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama > div > div.waku.waku_TBS > span {
 	color: hsl(241, 100%, 57%);
 }
@@ -2484,10 +2559,14 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama
 
 span.sagasimono {
 	color: yellow;
-	text-shadow: -1px 1px red,
-	-1px -1px red,
-	1px -1px red,
-	1px 1px red;
+	text-shadow: -1px 1px 0.5px red,
+	-1px -1px 0.5px red,
+	1px -1px 0.5px red,
+	1px 1px 0.5px red,
+	-1px 0px 0.5px red,
+	0px -1px 0.5px red,
+	1px 0px 0.5px red,
+	0px 1px 0.5px red;
 }
 
 .hankakusi {
