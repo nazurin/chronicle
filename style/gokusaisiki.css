@@ -423,6 +423,11 @@ div.koumoku.type_700 span.syurui.type_5 {
 	background-color: hsl(325, 100%, 50%);
 }
 
+div.sakuhinbako > div.hidari > div.kutikomi.type_7 > div.header > span.syurui,
+div.koumoku.type_700 span.syurui.type_7 {
+	background-color: hsl(180, 62%, 41%);
+}
+
 .collection_container > div.collection_tag > div.colle_group > span.yotei {
 	background-color: hsl(270, 68.6%, 90%);
 	color: hsl(270, 48.5%, 38%);
@@ -501,6 +506,11 @@ div.koumoku.type_700 span.syurui.type_5 {
 .collection_container > div.collection_tag > div.colle_group > span.wakuFUJI {
 	background-color: hsl(0, 0%, 96%);
 	color: hsl(0, 100%, 48%);
+}
+
+.collection_container > div.collection_tag > div.colle_group > span.wakuKTV {
+	background-color: hsl(0, 0%, 96%);
+	color: hsl(322, 100%, 50%);
 }
 
 .collection_container > div.collection_tag > div.colle_group > span.wakuTBS {
