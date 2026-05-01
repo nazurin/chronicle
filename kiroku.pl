@@ -61,10 +61,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	
 	my @bikou_split = split('\+\+', $bikou) if $bikou;
 
-	my ($al_id, $mal_id);
+	my ($al_id, $mal_id, $tmdb_id);
+	my $api_json_data = Hyouka::External::api_json_syutoku();
 	if((grep{$_ eq $hantyuu} 13, 14, 17) && index($colle_turu, "gengo_ja") != -1){
-		my $api_json_data = Hyouka::External::api_json_syutoku();
-
 		$al_id = $hantyuu == 13 ? Hyouka::External::al_manga_kensaku($midasi, $api_json_data) : Hyouka::External::al_anime_kensaku($midasi, $api_json_data);
 		$mal_id = $hantyuu == 13 ? Hyouka::External::mal_manga_kensaku($midasi, $api_json_data) : Hyouka::External::mal_anime_kensaku($midasi, $api_json_data);
 		if($kansyouzumi == 1){
@@ -75,8 +74,12 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 			Hyouka::External::al_kousin($al_id, 0, $josuu, '未', 0, undef, 700000, $api_json_data) if defined $al_id && $al_id ne '';
 		}
 	}
+	if(grep{$_ eq $hantyuu} 9, 10, 17){
+		my $mode = $hantyuu == 10 ? 2 : 0;
+		$tmdb_id = Hyouka::External::tmdb_kensaku($midasi, $mode, $api_json_data);
+	}
 	
-	my $meirei = "insert into sakuhin set yotei = ?, mal_id = ?, al_id = ?, midasi = ?, fukumidasi = ?, time = ?, hantyuu = ?, sakka = ?, hajimari = ?, owari = ?, josuu = ?, part = ?, whole = ?, jyoukyou = ?, mikakutei = ? ${colle_turu_sitazi}";
+	my $meirei = "insert into sakuhin set yotei = ?, mal_id = ?, al_id = ?, tmdb_id = ?, midasi = ?, fukumidasi = ?, time = ?, hantyuu = ?, sakka = ?, hajimari = ?, owari = ?, josuu = ?, part = ?, whole = ?, jyoukyou = ?, mikakutei = ? ${colle_turu_sitazi}";
 	
 	my $hajimari = param('tosi_hajimari').param('tuki_hajimari').param('hi_hajimari').param('ji_hajimari').param('fun_hajimari') ne "" ? timestamp_syutoku(param('tosi_hajimari'), param('tuki_hajimari'), param('hi_hajimari'), param('ji_hajimari'), param('fun_hajimari')) : (param('unix_hajimari') ne '' ? param('unix_hajimari') : time());
 	my $owari = $hajimari;
@@ -84,7 +87,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $jyoukyou = ($kansyouzumi == 1) ? '終' : '';
 	
 	my $sakuhin_insert = $dbh->prepare($meirei);
-	$sakuhin_insert->execute($yotei, $mal_id, $al_id, $midasi, $fukumidasi, $genzai, $hantyuu, $sakka, $hajimari, $owari, $josuu, $part, $whole, $jyoukyou, $mikakutei, $colle_turu);
+	$sakuhin_insert->execute($yotei, $mal_id, $al_id, $tmdb_id, $midasi, $fukumidasi, $genzai, $hantyuu, $sakka, $hajimari, $owari, $josuu, $part, $whole, $jyoukyou, $mikakutei, $colle_turu);
 	my $id = $dbh->{mysql_insertid};
 	
 	if($kansyouzumi == 1){
