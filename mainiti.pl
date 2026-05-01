@@ -136,7 +136,7 @@ if(Kahifu::Template::tenmei()){
         $config->{hantyuu}{jyouhou}{anime}{$v->{anime}} = $v->{count} if looks_like_number($v->{anime});
         $config->{hantyuu}{jyouhou}{total}{anime} = $config->{hantyuu}{jyouhou}{total}{anime} + $v->{count} if looks_like_number($v->{anime});
 	}
-    my $eiga_nendai_query = "select replace(substr(substring_index(colle, 'movie',  -1), 1, 4), 's', '') as 'movie', count(*) as count from sakuhin where hantyuu = 9 and (yotei <> 1 or yotei is null) group by movie";
+    my $eiga_nendai_query = "select replace(replace(substr(substring_index(colle, 'movie',  -1), 1, 4), 's', ''), ',', '') as 'movie', count(*) as count from sakuhin where hantyuu = 9 and (yotei <> 1 or yotei is null) group by movie";
     $config->{hantyuu}{jyouhou}{total}{movie} = 0;
     my $eiga_nendai_syutoku = $dbh->prepare($eiga_nendai_query);
 	$eiga_nendai_syutoku->execute();
