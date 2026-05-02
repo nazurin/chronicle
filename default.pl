@@ -79,7 +79,7 @@ if (request_method eq 'POST'){
 	}
 
 	delete($url_get{siborikomu_form});
-	delete($url_get{kikan});
+	delete($url_get{yuukoukikan});
 	delete($url_get{hantyuu_form});
 	delete($url_get{kouhoran_hyouji});
 	delete($url_get{kaijyo_dendou});
@@ -108,8 +108,8 @@ if (request_method eq 'POST'){
 			delete($url_get{kouhoran_hihyouji});
 			delete($url_get{kouhoran});
 		}
-		if(defined param('kikan')){
-			$url_get{kikan} = param('kikan');
+		if(defined param('yuukoukikan')){
+			$url_get{kikan} = param('yuukoukikan') if param('yuukoukikan') ne '';
 		} 
 		if(defined param('kaijyo_dendou')){
 			delete($url_get{kikan});
@@ -1357,13 +1357,13 @@ if($paginate == 1){
 			print "<input type='hidden' name='siborikomu_form' value='1'>";
 			print "<div class='hajimari'>";
 				print "<span class='midasi'>対象時間帯</span>";
-				print "<span class='jikan'><input name='kikan' placeholder='${\(defined param('kikan') ? param('kikan') : 1980 )}' value='${\(defined param('kikan') ? param('kikan') : undef )}'><span>" . Kahifu::Template::dict('TOSI')."</span></span>";
+				print "<span class='jikan'><input name='yuukoukikan' placeholder='${\(defined param('kikan') ? param('kikan') : 1980 )}' value='${\(defined param('kikan') ? param('kikan') : undef )}'><span>" . Kahifu::Template::dict('TOSI')."</span></span>";
 			print "</div>";
 			print "<div class='hantyuu'>";
 				print "<span class='midasi'>対象範疇名</span>";
 				print "<input name='hantyuu_form' placeholder='";
 					my $hantyuu_hyouji;
-					if(!defined param('hantyuu')){
+					if(!defined param('hantyuu') || (defined param('hantyuu') && param('hantyuu') eq '')){
 						$dendou_hantyuu_sitazi .= '?';
 						push @hantyuu_list, 10;
 						$hantyuu_hyouji = Kahifu::Template::dict('HYOUKA_HANTYUU_' . 10);
@@ -1438,16 +1438,17 @@ if($paginate == 1){
 							if(defined $cour){
 								for my $l (0 .. scalar @$dendou_bumon - 1){
 									print "<div class='gyou type_$dendou_bumon_atukai->{$dendou_bumon->[$l]}'>";
-									print "<div class='bumon' data-cour='$i$j'>";
+									print "<div class='bumon' data-cour='$i$j$l'>";
 										print '★', Kahifu::Template::dict('DENDOU_'.uc($dendou_bumon->[$l]));
 									print "</div>";
 									print "<div class='jusyou'>";
 									print defined $cour->{$dendou_bumon->[$l]} && $cour->{$dendou_bumon->[$l]}? bumon_tekisetuka(\%url_get, $cour->{$dendou_bumon->[$l]}{sid}, midasi_tekisetuka($cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{midasi}, $cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{betumei}, $cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{colle}, $sitei_gengo), $cour->{$dendou_bumon->[$l]}{extra}, $waku->{$dendou_bumon->[$l]}, $dendou_bumon_atukai->{$dendou_bumon->[$l]}) : "<span class='mitei'>未定</span>";
 									print "</div>";
-									print "<div class='hoka' id='kouho_$i$j'>";
+									print "<div class='hoka' id='kouho_$i$j$l'>";
 										print "<div class='kuuhaku'></div>";
 										print "<div class='kouho'>";
-										print "<div class='text'><span>$cour->{$dendou_bumon->[$l]}{text}</span></div>";
+										print "<div class='text'><span>$cour->{$dendou_bumon->[$l]}{text}</span></div>" if defined $cour->{$dendou_bumon->[$l]}{text};
+										print "<div class='pt'><span>${\(Kahifu::Template::dict('SAIJYOUI'))}</span><span class='tensuu'>$cour->{$dendou_bumon->[$l]}{pt}${\(Kahifu::Template::dict('TEN'))}</span></div>" if defined $cour->{$dendou_bumon->[$l]}{pt};
 										my $n = 1;
 										for my $m ( sort { $cour_subete->{$dendou_bumon->[$l]}{$b}{pt} <=> $cour_subete->{$dendou_bumon->[$l]}{$a}{pt} } keys %{$cour_subete->{$dendou_bumon->[$l]}} ) {
 											if($n > 1){
