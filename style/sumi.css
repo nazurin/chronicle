@@ -1189,6 +1189,14 @@ div.dendou_siborikomi > div.hantyuu > input {
 	flex-grow: 1;
 }
 
+div.dendou_siborikomi > input {
+	margin-right: 0.25em;
+}
+
+div.dendou_siborikomi > input:last-child {
+	margin-right: 0em;
+}
+
 div.dendou a {
 	text-decoration: none;
 }
@@ -1282,9 +1290,18 @@ div.dendou > div.cour > div.gyou > div.jusyou > span.jusyou {
 	font-weight: bold;
 }
 
-div.dendou > div.cour > div.gyou.type_0 > div.hoka > div.kouho > div.text {
+div.dendou > div.cour > div.gyou > div.hoka > div.kouho > div.text {
 	font-size: 0.9em;
 	margin-right: 2em;
+}
+
+div.dendou > div.cour > div.gyou > div.hoka > div.kouho > div.pt {
+	font-size: 0.9em;
+	margin-right: 2em;
+}
+
+div.dendou > div.cour > div.gyou > div.hoka > div.kouho > div.pt > span:first-child {
+	margin-right: 1em;
 }
 
 div.dendou > div.cour > div.gyou.type_0 > div.jusyou > span.jusyou,

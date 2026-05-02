@@ -470,3 +470,11 @@ div.dendou_siborikomi.lang_ja > div > span.midasi {
 div.dendou_siborikomi.lang_ja > input[name^=kouhoran] {
 	writing-mode: vertical-rl;
 }
+
+div.dendou_siborikomi > input {
+	margin-right: 0em;
+}
+
+div.dendou > div.cour > div.gyou.type_3 > div.jusyou:not(:has(span.mitei)) {
+	margin-left: 1em;
+}
