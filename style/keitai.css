@@ -458,3 +458,15 @@ div.music_box > div.koumoku > div.artist:empty + div.album {
 	padding: 0px 0px 0px 45%;
 	width: 100%;
 }
+
+div.dendou_siborikomi > div {
+	align-items: stretch;
+}
+
+div.dendou_siborikomi.lang_ja > div > span.midasi {
+	width: 1em;
+}
+
+div.dendou_siborikomi.lang_ja > input[name^=kouhoran] {
+	writing-mode: vertical-rl;
+}

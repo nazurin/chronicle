@@ -1140,15 +1140,93 @@ div.collection_box div.koumoku:has(.kensuu_0) + div.koumoku:not(:has(.kensuu_0))
 	border-top: 1px solid black;
 }
 
+div.dendou_siborikomi {
+	border: 3px ridge white;
+	padding: 0.125em 0.5em;
+	display: flex;
+	align-items: stretch;
+}
+
+div.dendou_siborikomi > div {
+	margin-right: 0.5em;
+	display: flex;
+	align-items: center;
+}
+
+div.dendou_siborikomi > div > span.midasi {
+	font-weight: bold;
+	margin-right: 0.5em;
+}
+
+div.dendou_siborikomi > div.hajimari {
+	flex-shrink: 1;
+}
+
+div.dendou_siborikomi > div.hantyuu {
+	flex-grow: 1;
+}
+
+div.dendou_siborikomi > div.hajimari input {
+	width: 5em;
+}
+
+div.dendou_siborikomi > div.hantyuu input {
+	width: 8em;
+}
+
+div.dendou_siborikomi > div.hajimari > span.jikan {
+	text-align: center;
+	justify-content: center;
+	display: flex;
+}
+
+div.dendou_siborikomi > div.hajimari > span.jikan > span {
+	display: flex;
+	align-items: center;
+}
+
+div.dendou_siborikomi > div.hantyuu > input {
+	flex-grow: 1;
+}
+
+div.dendou a {
+	text-decoration: none;
+}
+
+div.dendou a:link,
+div.dendou a:visited {
+	color: inherit;
+}
+
+div.dendou a:hover {
+	color: red;
+}
+
+div.dendou a:active {
+	color: orange;
+}
+
 div.dendou > div.cour {
 	border: 3px ridge white;
+	background-color: black;
 }
 
 div.dendou > div.cour > div.midasi {
-	font-weight: bold;
 	padding: 0 0.5em;
 	line-height: 1;
+	color: white;
+}
+
+div.dendou > div.cour > div.midasi > span.cour {
+	font-weight: bold;
 	font-size: 1.2em;
+	text-shadow: 1px 1px black;
+	transform: scaleY(1.1) skewX(-10deg);
+}
+
+div.dendou > div.cour > div.midasi > span.date {
+	margin-left: 0.25em;
+	font-size:1em;
 }
 
 div.dendou > div.cour > div.gyou {
@@ -1156,18 +1234,101 @@ div.dendou > div.cour > div.gyou {
 	padding: 0 0.5em;
 	display: flex;
 	margin: 0 0.25em;
+	background-color: hsla(0, 0%, 100%, 0.9);
+	flex-wrap: wrap;
 }
 
+div.dendou > div.cour > div.gyou > div.hoka {
+	display: flex;
+}
 
-div.dendou > div.cour > div.gyou > div.bumon {
+div.dendou > div.cour > div.gyou > div.bumon,
+div.dendou > div.cour > div.gyou > div.hoka > div.kuuhaku {
 	flex-basis: 10em;
 	width: 10em;
+	font-weight: bold;
+	flex-shrink: 0;
+}
+
+div.dendou > div.cour > div.gyou > div.bumon:hover {
+	color: red;
+	cursor: pointer;
+}
+
+div.dendou > div.cour > div.gyou > div.bumon:active {
+	color: orange;
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou {
+	flex-grow: 1;
+}
+
+div.dendou > div.cour > div.gyou > div.hoka {
+	flex-basis: 100%;
+	flex-shrink: 0;
+	display: none;
+}
+
+div.dendou > div.cour > div.gyou > div.hoka.active {
+	display: flex;
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou > span.mitei {
+	color: hsl(0, 0%, 0%, 0.5);
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou > span.jusyou {
+	display: block;
+	font-weight: bold;
+}
+
+div.dendou > div.cour > div.gyou.type_0 > div.hoka > div.kouho > div.text {
+	font-size: 0.9em;
+	margin-right: 2em;
+}
+
+div.dendou > div.cour > div.gyou.type_0 > div.jusyou > span.jusyou,
+div.dendou > div.cour > div.gyou.type_0 > div.hoka > div.kouho > div > span.midasi > span.jusyou {
+	color: purple;
+}
+
+div.dendou > div.cour > div.gyou.type_1 > div.jusyou > span.jusyou,
+div.dendou > div.cour > div.gyou.type_1 > div.hoka > div.kouho > div > span.midasi > span.jusyou {
+	color: red;
+}
+
+div.dendou > div.cour > div.gyou.type_2 > div.jusyou > span.jusyou,
+div.dendou > div.cour > div.gyou.type_2 > div.hoka > div.kouho > div > span.midasi > span.jusyou {
+	color: orange;
+}
+
+div.dendou > div.cour > div.gyou.type_3 > div.jusyou > span.jusyou,
+div.dendou > div.cour > div.gyou.type_3 > div.hoka > div.kouho > div > span.midasi > span.jusyou {
+	color: green;
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou span.daimei::before {
+	content: "『";
+}
+
+div.dendou > div.cour > div.gyou:not(.type_3) > div.jusyou span.daimei::before {
+	/*position: absolute;
+	margin-left: -1em;*/
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou span.daimei::after {
+	content: "』";
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou span.fuku {
+	/*font-size: 0.8em;*/
 }
 
 div.dendou > div.cour > div.kouhoran {
 	margin: 0.25em 0.25em;
 	border: 3px ridge white;
 	padding: 0 0.25em;
+	background-color: white;
 }
 
 div.dendou > div.cour > div.kouhoran > span:first-child {

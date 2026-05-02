@@ -77,7 +77,52 @@ if (request_method eq 'POST'){
 		delete($url_get{kaijyo});
 		$uri = url_get_hazusi(\%url_get, 'kensaku');
 	}
-	print $query->redirect($uri);
+
+	delete($url_get{siborikomu_form});
+	delete($url_get{kikan});
+	delete($url_get{hantyuu_form});
+	delete($url_get{kouhoran_hyouji});
+	delete($url_get{kaijyo_dendou});
+	#delete($url_get{hantyuu});
+	if(defined param('siborikomu_form')){
+		if(defined param('hantyuu_form') && param('hantyuu_form') ne ''){
+			my @hantyuu_array = split /[:;,、；\s\/]+/, decode_utf8(param('hantyuu_form'));
+			my $hantyuu_sitazi;
+			for my $i (0 .. scalar(@hantyuu_array) - 1){
+				$hantyuu_sitazi .= ", " if $i > 0;
+				$hantyuu_sitazi .= "?";
+			}
+			my $hantyuu_get_query = "select hantyuu from hantyuu_alias where kotoba in (${hantyuu_sitazi})";
+			my $hantyuu_get = $dbh->prepare($hantyuu_get_query);
+			$hantyuu_get->execute(@hantyuu_array);
+			my @hantyuu_syori;
+			while(my $v = $hantyuu_get->fetchrow_arrayref){
+				push @hantyuu_syori, $v->[0];
+			}
+			my $hantyuu_syori_turu = join ',', @hantyuu_syori;
+			$url_get{hantyuu} = $hantyuu_syori_turu;
+		}
+		if(defined param('kouhoran_hyouji')){
+			$url_get{kouhoran} = undef;
+		} elsif (defined param('kouhoran_hihyouji')){
+			delete($url_get{kouhoran_hihyouji});
+			delete($url_get{kouhoran});
+		}
+		if(defined param('kikan')){
+			$url_get{kikan} = param('kikan');
+		} 
+		if(defined param('kaijyo_dendou')){
+			delete($url_get{kikan});
+			delete($url_get{hantyuu});
+		}
+		my $base_uri = $ENV{REQUEST_URI};
+		$base_uri =~ s/\?.*//;
+		my $uri_object = URI->new($base_uri);
+		$uri_object->query_form(%url_get);
+		print $query->redirect($uri_object);
+	} else {
+		print $query->redirect($uri);
+	}
 }
 our $ninsyou = (defined $cookie{kangeiroku_ninsyou} && unpack('H*', sha256($cookie{kangeiroku_ninsyou})) == Kahifu::Key::hyouka_sesame) || Kahifu::Template::tenmei;
 our $config = config_syutoku();
@@ -637,7 +682,7 @@ print "<div class='commander' style=\"background-image: url('${\(image_makase('f
 				$jyoukyou_list->execute();
 				while(my $v = $jyoukyou_list->fetchrow_hashref){
 					print "<div title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $v->{id}))}' class='jyoukyou${\( sub { return ' all' if $v->{id}==1})->()}' data-name='$v->{jyoukyou}'><span class='jyoukyou_type_$v->{id} $v->{class}'>${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . $v->{id}))}</span></div>" if $v->{jyoukyou} ne "葉" && $v->{jyoukyou} ne "飛";
-					print "<style>.jyoukyou_type_$v->{id} { color: hsla($v->{hsl}, 1); }</style>";
+					print "<style>.jyoukyou_type_$v->{id} { color: hsla($v->{hsl}, 1); }.jyoukyou_type_alt_$v->{id} { color: hsla(${\(substr($v->{hsl}, 0, -3))}30%, 1); }</style>";
 					$jyoukyou_type{$v->{jyoukyou}} = $v->{id};
 					$jyoukyou_class{$v->{jyoukyou}} = $v->{class};
 					push @jyoukyou_name, $v->{jyoukyou};
@@ -822,6 +867,7 @@ if($paginate == 1){
 			print "<div class='mint'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</span><input type='text' name='hantyuu' placeholder='${\(Kahifu::Template::dict('KIROKU_HANTYUU_PLACEHOLDER'))}'></div>";
 			print "<div class='strawberry'><span class='block'>${\(Kahifu::Template::dict('KIROKU_COLLECTION'))}</span><input type='text' name='colle' placeholder='${\(Kahifu::Template::dict('KIROKU_COLLECTION_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai'><span class='block'>${\(Kahifu::Template::dict('KIROKU_BIKOU'))}</span><input type='text' name='bikou' placeholder='${\(Kahifu::Template::dict('KIROKU_BIKOU_PLACEHOLDER'))}'></div>";
+			print "<div class='ajisai'><span class='block'>${\(Kahifu::Template::dict('KIROKU_COUR'))}</span><input type='text' name='cour' placeholder='${\(Kahifu::Template::dict('KIROKU_COUR_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_WHOLE'))}</span><input type='text' name='whole' placeholder='${\(Kahifu::Template::dict('KIROKU_WHOLE_PLACEHOLDER'))}'></div>";
 			print "<div class='meadow'><span>${\(Kahifu::Template::dict('KIROKU_JOSUU'))}</span>";
 				print "<select placeholder='${\(Kahifu::Template::dict('KIROKU_JOSUU_PLACEHOLDER'))}' name='josuu'>";
@@ -1228,6 +1274,60 @@ if($paginate == 1){
 	} elsif(defined param('directory') && param('directory') eq 'isbn'){
 
 	} elsif(defined param('directory') && param('directory') eq 'dendou'){
+		my $cour_junban = ['冬', '春', '夏', '秋', ''];
+		my $cour_date = ['.3.20', '.6.21', '.9.22', '.12.21', ''];
+		my $cour_iro = [[175, 60, 35], [75, 70, 35], [40, 22, 40], [15, 25, 33], [310, 0, 35]];
+		my $dendou_query = "select * from dendou";
+		my $dendou_syutoku = $dbh->prepare($dendou_query);
+		$dendou_syutoku->execute();
+		my $dendou_bumon;
+		my $dendou_bumon_atukai;
+		while(my $d = $dendou_syutoku->fetchrow_hashref){
+			push @$dendou_bumon, $d->{midasi_seisiki};
+			$dendou_bumon_atukai->{$d->{midasi_seisiki}} = $d->{extra};
+		}
+		my $waku_query = "select midasi_seisiki, sort1 from collection where tag in ('waku', 'wakeame', 'kyoku')";
+		my $waku_syutoku = $dbh->prepare($waku_query);
+		$waku_syutoku->execute();
+		my $waku;
+		while(my $d = $waku_syutoku->fetchrow_hashref){
+			if($d->{sort1} eq 'FUJI' || $d->{sort1} eq 'KTV'){
+				$waku->{$d->{midasi_seisiki}} = 'CX';
+			} elsif ($d->{sort1} eq 'ASAHI'){
+				$waku->{$d->{midasi_seisiki}} = 'EX';
+			} else {
+				$waku->{$d->{midasi_seisiki}} = $d->{sort1};
+			}
+		}
+		my @keys_waku = keys %$waku;
+
+		print "<div data-kakejiku='dendou' class='kakejiku dendou'>";
+			print "<span>${\(Kahifu::Template::dict('DENDOU_SINSYUKU'))}<span class='sinsyuku'>${\(Kahifu::Template::dict('SINSYUKU_PLUS'))}</span></span>";
+		print "</div>";
+		print "<div data-kakejiku='dendou' class='form dendou'>";
+			print "<form method='post' id='dendou_form' action='dendou.pl'>";
+			print "<div class='cream'><span class='fixed'>${\(Kahifu::Template::dict('DENDOU_KIROKU_SAKUHIN'))}</span><input type='text' name='bangou' placeholder='${\(Kahifu::Template::dict('DENDOU_KIROKU_SAKUHIN_PL'))}'></div>";
+			print "<div class='pumpkin'><span class='fixed'>${\(Kahifu::Template::dict('DENDOU_KIROKU_POINT'))}</span><input type='text' name='pt' placeholder=''></div>";
+			print "<div class='sea'><span class='fixed'>${\(Kahifu::Template::dict('DENDOU_KIROKU_EXTRA'))}</span><input type='text' name='extra' placeholder='${\(Kahifu::Template::dict('DENDOU_KIROKU_EXTRA_PL'))}'></div>";
+			print "<div class='fuji'><span class='fixed'>${\(Kahifu::Template::dict('DENDOU_KIROKU_BUMON'))}</span>";
+				print "<select name='midasi_seisiki'>";
+				for my $j (0 .. scalar @$dendou_bumon - 1){ print "<option value='$dendou_bumon->[$j]'>${\(Kahifu::Template::dict('DENDOU_'.uc($dendou_bumon->[$j])))}</option>"; }
+				print "</select>&nbsp;";
+			print "</div>";
+			print "<div class='meadow'>";
+				print "<div class='time_box'>";
+				print "<input type='text' name='tosi_hajimari' placeholder='${\(date_split($imagenzai, 0))}'>${\(Kahifu::Template::dict('TOSI'))}";
+				print "<input type='text' name='tuki_hajimari' placeholder='${\(date_split($imagenzai, 1))}'>${\(Kahifu::Template::dict('TUKI'))}";
+				print "<input type='text' name='hi_hajimari' placeholder='${\(date_split($imagenzai, 2))}'>${\(Kahifu::Template::dict('HI'))}";
+				print "<input type='text' name='ji_hajimari' placeholder='${\(date_split($imagenzai, 3))}'>${\(Kahifu::Template::dict('JI'))}";
+				print "<input type='text' name='fun_hajimari' placeholder='${\(sprintf(\"%02s\", date_split($imagenzai, 4)))}'>${\(Kahifu::Template::dict('FUN'))}";
+				print "<input type='text' name='unix_hajimari' placeholder='${imagenzai}'>";
+				print "</div>";
+			print "</div>";
+			print "<div class='strawberry'><span class='fixed'>${\(Kahifu::Template::dict('COLLE_DESCRIPTION'))}</span><textarea form='dendou_form' name='gaiyouran'></textarea></div>";
+			print "<div class='ajisai hazusi'><input type='submit' name='tuika' value='${\(Kahifu::Template::dict('KIROKU_SUBMIT'))}'></div>";
+			print "</form>";
+		print "</div>";
 		if(defined param('courset') && Kahifu::Template::tenmei()){
 			my $colle_query = "select * from collection where `tag` = 'period' and `sort1` <> 'comic'";
 			my $colle_query_syutoku = $dbh->prepare($colle_query);
@@ -1240,21 +1340,59 @@ if($paginate == 1){
 			while(my($k, $w) = each %$bikou) { 
 				my $sakuhin_query = "select id, whole, colle from sakuhin where id = ?";
 				my $sakuhin_syutoku = $dbh->prepare($sakuhin_query);
-				$sakuhin_syutoku->execute($w);
+				$sakuhin_syutoku->execute($k);
 				my $sakuhin_info = $sakuhin_syutoku->fetchall_hashref('id');
-				my $kaisuu = $sakuhin_info->{$w}{whole};
+				my $kaisuu = $sakuhin_info->{$k}{whole};
 
-				my $cour = cour($w, $kaisuu, $sakuhin_info->{$w}{colle});
+				my $cour = cour($w, $kaisuu, $sakuhin_info->{$k}{colle});
 				my $cour_kousin_query = "update sakuhin set cour = ? where id = ? and cour is null";
 				my $cour_kousin = $dbh->prepare($cour_kousin_query);
 				$cour_kousin->execute($cour, $k);
 			}
 		}
-		#my $cour_query = "select cour from sakuhin where hantyuu = 10 and cast(substring(cour, 1, 4) as int) >= 1980 group by cour order by cast(substring(cour, 1, 4) as int) asc, case when cour like '\%冬' then 1 when cour like '\%春' then 2 when cour like '\%夏' then 3 when cour like '\%秋' then 4 end";
-		my $hajimari_no_tosi = 1980;
-		my $cour_query = "select * from sakuhin where hantyuu = 10 and cast(substring(cour, 1, 4) as int) >= ?";
+
+		my ($hajimari_recall, $hantyuu_recall, @hantyuu_list, $dendou_hantyuu_sitazi);
+		print "<form method='post'>";
+		print "<div class='dendou_siborikomi lang_${Kahifu::Junbi::lang}'>";
+			print "<input type='hidden' name='siborikomu_form' value='1'>";
+			print "<div class='hajimari'>";
+				print "<span class='midasi'>対象時間帯</span>";
+				print "<span class='jikan'><input name='kikan' placeholder='${\(defined param('kikan') ? param('kikan') : 1980 )}' value='${\(defined param('kikan') ? param('kikan') : undef )}'><span>" . Kahifu::Template::dict('TOSI')."</span></span>";
+			print "</div>";
+			print "<div class='hantyuu'>";
+				print "<span class='midasi'>対象範疇名</span>";
+				print "<input name='hantyuu_form' placeholder='";
+					my $hantyuu_hyouji;
+					if(!defined param('hantyuu')){
+						$dendou_hantyuu_sitazi .= '?';
+						push @hantyuu_list, 10;
+						$hantyuu_hyouji = Kahifu::Template::dict('HYOUKA_HANTYUU_' . 10);
+					} else {
+						@hantyuu_list = split ',', param('hantyuu');
+						for(my $i=0; $i<scalar(@hantyuu_list); $i++){$dendou_hantyuu_sitazi .= '?,'}
+						$dendou_hantyuu_sitazi =~ s/,\s*$//; #　後端のコンマを削除す
+						for my $i (0 .. scalar @hantyuu_list - 1){
+							$hantyuu_hyouji .= Kahifu::Template::dict('DOKUTEN_COMMA') if $i > 0;
+							$hantyuu_hyouji .= Kahifu::Template::dict('HYOUKA_HANTYUU_' . $hantyuu_list[$i]);
+						}
+					}
+					print $hantyuu_hyouji;
+				print "' value='${\( defined param('hantyuu') ? $hantyuu_hyouji : '')}'>";
+			print "</div>";
+			print "<input type='submit' value='${\(Kahifu::Template::dict('SOUSIN'))}'>";
+			print defined param('kouhoran') ? "<input type='submit' name='kouhoran_hihyouji' value='${\(Kahifu::Template::dict('KOUHORAN_HIHYOUJI'))}'>" : "<input type='submit' name='kouhoran_hyouji' value='${\(Kahifu::Template::dict('KOUHORAN_HYOUJI'))}'>";
+			print "<input type='submit' name='kaijyo_dendou' value='${\(Kahifu::Template::dict('KAIJYO'))}'>" if defined param('kikan') || defined param('hantyuu');
+		print "</div>";
+		print "<input type='hidden' name='directory' value='dendou'>";
+		#while(my($p, $q) = each %url_get) { 
+		#	print "<input type='hidden' name='$p' value='$q'>";
+		#}
+		print "</form>";
+
+		my $hajimari_no_tosi = defined param('kikan') ? param('kikan') : 1980;
+		my $cour_query = "select * from sakuhin where hantyuu in (${dendou_hantyuu_sitazi}) and cast(substring(cour, 1, 4) as int) >= ?";
 		my $cour_syutoku = $dbh->prepare($cour_query);
-		$cour_syutoku->execute($hajimari_no_tosi);
+		$cour_syutoku->execute(@hantyuu_list, $hajimari_no_tosi);
 		my $cour_info;
 		while(my $c = $cour_syutoku->fetchrow_hashref){
 			$cour_info->{$c->{cour}}{$c->{id}}{midasi} = $c->{midasi};
@@ -1264,21 +1402,14 @@ if($paginate == 1){
 			$cour_info->{$c->{cour}}{$c->{id}}{fukubetumei} = $c->{fukubetumei};
 			$cour_info->{$c->{cour}}{$c->{id}}{sakkabetumei} = $c->{sakkabetumei};
 			$cour_info->{$c->{cour}}{$c->{id}}{colle} = $c->{colle};
+			$cour_info->{$c->{cour}}{$c->{id}}{jyoukyou} = $c->{jyoukyou};
 		}
 		#print dump $cour_info;
 		print "<div class='dendou'>";
-		my $cour_junban = ['冬', '春', '夏', '秋', ''];
-		my $dendou_query = "select * from dendou";
-		my $dendou_syutoku = $dbh->prepare($dendou_query);
-		$dendou_syutoku->execute();
-		my $dendou_bumon;
-		while(my $d = $dendou_syutoku->fetchrow_hashref){
-			push @$dendou_bumon, $d->{midasi_seisiki};
-		}
 		for my $i ($hajimari_no_tosi .. date_split($imagenzai, 0)){
 			for my $j (0 .. 4){
 				if(defined $cour_info->{$i.$cour_junban->[$j]}){
-					my ($cour, @cour_turu, $cour_turu_sitazi, $sitazi);
+					my ($cour, @cour_turu, $cour_turu_sitazi, $sitazi, $cour_subete);
 					for my $k (keys %{$cour_info->{$i.$cour_junban->[$j]}}){
 						push @cour_turu, $k;
 						$cour_turu_sitazi .= '?, ';
@@ -1289,35 +1420,59 @@ if($paginate == 1){
 					my $cour_jusyou_syutoku = $dbh->prepare($cour_jusyou_query);
 					$cour_jusyou_syutoku->execute(@cour_turu);
 					while(my $c = $cour_jusyou_syutoku->fetchrow_hashref){
-						if (!defined $cour->{$c->{midasi_seisiki}} || defined $c->{pt} > $cour->{$c->{midasi_seisiki}}{pt}) {
+						if (!defined $cour->{$c->{midasi_seisiki}} || defined $c->{pt} && $c->{pt} > $cour->{$c->{midasi_seisiki}}{pt}) {
 							$cour->{$c->{midasi_seisiki}}{sid} = $c->{sid};
 							$cour->{$c->{midasi_seisiki}}{pt} = $c->{pt};
 							$cour->{$c->{midasi_seisiki}}{extra} = $c->{extra};
 							$cour->{$c->{midasi_seisiki}}{text} = $c->{text};
 							$cour->{$c->{midasi_seisiki}}{jiten} = $c->{jiten};
 						}
+						$cour_subete->{$c->{midasi_seisiki}}{$c->{sid}}{pt} = $c->{pt};
+						$cour_subete->{$c->{midasi_seisiki}}{$c->{sid}}{extra} = $c->{extra};
+						$cour_subete->{$c->{midasi_seisiki}}{$c->{sid}}{text} = $c->{text};
+						$cour_subete->{$c->{midasi_seisiki}}{$c->{sid}}{jiten} = $c->{jiten};
 					}
 					if(defined $cour || (defined param('kouhoran') && Kahifu::Template::tenmei())){
-						print "<div class='cour'>";
-							print "<div class='midasi'>$i$cour_junban->[$j]</div>";
+						print "<div class='cour' style=\"background-color: hsl(${\($cour_iro->[$j][0] + color_makase($j+$i, $cour_iro->[$j][1]))}, 90%, $cour_iro->[$j][2]%)\">";
+							print "<div class='midasi'><span class='cour'>$i$cour_junban->[$j]</span><span class='date'>($i$cour_date->[$j])</span></div>";
 							if(defined $cour){
-								for my $l (0 .. scalar @$dendou_bumon){
-									print "<div class='gyou'>";
-									print "<div class='bumon'>";
-										print Kahifu::Template::dict('DENDOU_'.uc($dendou_bumon->[$l]));
+								for my $l (0 .. scalar @$dendou_bumon - 1){
+									print "<div class='gyou type_$dendou_bumon_atukai->{$dendou_bumon->[$l]}'>";
+									print "<div class='bumon' data-cour='$i$j'>";
+										print '★', Kahifu::Template::dict('DENDOU_'.uc($dendou_bumon->[$l]));
 									print "</div>";
-									print "<div>";
-									print defined $cour->{$dendou_bumon->[$l]} ? midasi_tekisetuka($cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{midasi}, $cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{betumei}, $cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{colle}, $sitei_gengo) : '未定';
+									print "<div class='jusyou'>";
+									print defined $cour->{$dendou_bumon->[$l]} && $cour->{$dendou_bumon->[$l]}? bumon_tekisetuka(\%url_get, $cour->{$dendou_bumon->[$l]}{sid}, midasi_tekisetuka($cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{midasi}, $cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{betumei}, $cour_info->{$i.$cour_junban->[$j]}{$cour->{$dendou_bumon->[$l]}{sid}}{colle}, $sitei_gengo), $cour->{$dendou_bumon->[$l]}{extra}, $waku->{$dendou_bumon->[$l]}, $dendou_bumon_atukai->{$dendou_bumon->[$l]}) : "<span class='mitei'>未定</span>";
+									print "</div>";
+									print "<div class='hoka' id='kouho_$i$j'>";
+										print "<div class='kuuhaku'></div>";
+										print "<div class='kouho'>";
+										print "<div class='text'><span>$cour->{$dendou_bumon->[$l]}{text}</span></div>";
+										my $n = 1;
+										for my $m ( sort { $cour_subete->{$dendou_bumon->[$l]}{$b}{pt} <=> $cour_subete->{$dendou_bumon->[$l]}{$a}{pt} } keys %{$cour_subete->{$dendou_bumon->[$l]}} ) {
+											if($n > 1){
+												print "<div>";
+												print "<span class='jun'>${\($Kahifu::Junbi::lang ne 'ja' ? Kahifu::Template::dict('KURAI').$n : $n.Kahifu::Template::dict('KURAI') )}</span>";
+												print "<span class='midasi'>";
+													print bumon_tekisetuka(\%url_get, $m, midasi_tekisetuka($cour_info->{$i.$cour_junban->[$j]}{$m}{midasi}, $cour_info->{$i.$cour_junban->[$j]}{$m}{betumei}, $cour_info->{$i.$cour_junban->[$j]}{$m}{colle}, $sitei_gengo), $cour_subete->{$dendou_bumon->[$l]}{$m}{extra}, $waku->{$dendou_bumon->[$l]}, $dendou_bumon_atukai->{$dendou_bumon->[$l]});
+												print "</span>";
+												print "<span class='tensuu'>$cour_subete->{$dendou_bumon->[$l]}{$m}{pt}${\(Kahifu::Template::dict('TEN'))}</span>";
+												print "</div>";
+											}
+											$n++;
+										}
+										print "</div>";
 									print "</div>";
 									print "</div>";
 								}
 							}
-							if(defined param('kouhoran')){
+							if(1 == 1 || defined param('kouhoran')){
 								print "<div class='kouhoran'>";
 								print "<span>${\(Kahifu::Template::dict('DENDOU_KOUHO'))}</span>";
 								for my $k (keys %{$cour_info->{$i.$cour_junban->[$j]}}){
-									print "<span>";
-									print "<sup>$k</sup>";
+									print "<span class='jyoukyou_type_alt_$jyoukyou_type{$cour_info->{$i.$cour_junban->[$j]}{$k}{jyoukyou}}'>";
+									print "<sup class='id'>$k</sup>";
+									print "<input type='hidden' name='bangou' value='$k'>";
 									print $cour_info->{$i.$cour_junban->[$j]}{$k}{midasi};
 									print "</span>";
 								}
@@ -1329,17 +1484,29 @@ if($paginate == 1){
 			}
 		}
 		print "</div>";
+		print "<script>
+		\$('sup.id').click(function(){
+			\$('.form.dendou').show();
+			\$('.form.dendou').get(0).scrollIntoView({behavior: 'smooth'});
+			\$('.form.dendou form input[name=bangou]').val(\$(this).siblings('input[name=bangou]').val());
+		});
+		\$('.bumon').on('click', function() {
+			\$('.hoka.active').add('#kouho_' + \$(this).attr('data-cour')).toggleClass('active');
+		});
+		</script>";
 	} else {
 		#　一覧コレクション外 （Collection listing）	
 		#my $meirei = "select id, midasi, hyouji, turu, color from collection";
-		my $meirei = ("select id, midasi, midasi_seisiki, tag, hyouji, turu, color, sort1, sort2 from collection order by field(`tag`, 'yotei', 'favorite', 'award', 'waku', 'wakuame', 'kyoku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
+		my $meirei = ("select id, midasi, midasi_seisiki, tag, hyouji, turu, color, sort1, sort2 from collection where tag <> 'favorite' order by field(`tag`, 'yotei', 'favorite', 'award', 'waku', 'wakuame', 'kyoku', 'misc', 'period', 'tag'), `sort1` asc, `sort2` asc");
 		my $colleran = $dbh->prepare($meirei);
 		$colleran->execute();
 		print "<div class='collection_container lang_${Kahifu::Junbi::lang}'>";
 		print "<div class='collection_box'>";
 		print "<div class='koumoku'><div class='midasi'><span><a href='${\(url_get_irekae(\%url_get, 'directory', 'isbn', 'collection'))}'>${\(Kahifu::Template::dict('ISBN_COLLECTION_HEADING'))}</a></span></div></div>";
+		print "<div class='koumoku'><div class='midasi'><span><a href='${\(url_get_irekae(\%url_get, 'directory', 'dendou', 'collection'))}'>${\(Kahifu::Template::dict('DENDOU_COLLECTION_HEADING'))}</a></span></div></div>";
 		my $colle_waku;
 		push @$colle_waku, ["isbn", "isbn"];
+		push @$colle_waku, ["favorite", "favorite"];
 		while(my $v = $colleran->fetchrow_hashref){
 			push @$colle_waku, [$v->{tag}, $v->{tag} . $v->{sort1}];
 			print "<div class='koumoku type_${\( sub { return $v->{color} if defined $v->{color} }->() )}'>";
