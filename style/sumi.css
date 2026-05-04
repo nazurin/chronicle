@@ -1079,6 +1079,11 @@ div.collection_box div.koumoku:has(.kensuu_0) + div.koumoku:not(:has(.kensuu_0))
 	border-top: 1px solid black;
 }
 
+div.collection_box div.koumoku > div.midasi > span.dendou {
+	color: #936900;
+	text-shadow: #fffadc 0px 0px 5px;
+}
+
 .collection_container {
 	display: flex;
 	flex-direction: row-reverse;

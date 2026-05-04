@@ -287,7 +287,11 @@ if(defined param('id') && param('id')){
 					print "<a href='${\(url_get_tuke(\%url_get, 'collection', $v->{id}))}'>";
 					print midasi_settei($v->{midasi});
 					print "</a>";
-					print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' && defined from_json($v->{bikou})->{param('id')} }->() )} if defined $v->{bikou} && $v->{bikou} ne '';
+					if($v->{tag} eq 'period'){
+						print "<div class='$v->{tag}'>" . date($sakuhin_info->{$passthrough_id}{kaisi}, 7, $sanjyuujikan_seido, 0) . "</div>" if defined $sakuhin_info->{$passthrough_id}{kaisi} && $sakuhin_info->{$passthrough_id}{kaisi} ne '';
+					} else {
+						print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' && defined from_json($v->{bikou})->{param('id')} }->() )} if defined $v->{bikou} && $v->{bikou} ne '';
+					}
 				print "</div>";
 			}
 			if((defined $sakuhin_info->{$passthrough_id}{isbn} || defined $sakuhin_info->{$passthrough_id}{isbn13}) && ($sakuhin_info->{$passthrough_id}{isbn} || $sakuhin_info->{$passthrough_id}{isbn13})){
@@ -1219,8 +1223,8 @@ if($paginate == 1){
 				print "<input type='hidden' name='junban' value='$w->{id}'>";
 				print "<div class='sakuhinmei bikou_$v->{bikouiti}'>";
 					print "<div class='omake id'><span>$w->{id}</span></div>" if defined param('hensyuu');
-					print "<div class='bikou ue'><span>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date_split($v->{kaisi}, 7))}</span></div>" if $v->{bikouiti} == 2;
-					print "<div class='bikou hidari'><span>$bikou->{$w->{id}}</span></div>" if $v->{bikouiti} == 1;
+					print "<div class='bikou ue'><span>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 2;
+					print "<div class='bikou hidari'><span>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 1;
 					print "<div>";
 						print "<p class='fuku_midasi $w->{id}'>" . midasi_tekisetuka($w->{fukumidasi}, $w->{fukubetumei}, $w->{colle}) . "</p>" if $w->{fukumidasi} ne '' && (defined $w->{sakifuku} && $w->{sakifuku} == 1);
 						print "<p id='$w->{id}' class='midasi $w->{id}' data-kansou='$w->{id}'>";
@@ -1251,9 +1255,9 @@ if($paginate == 1){
 				print "<div class='hantyuu'>";
 					print "${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $w->{hantyuu}))}";
 				print "</div>";
-				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )}</span></div>" if !defined param('hensyuu') && (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}} && $bikou->{$w->{id}} ne '';
+				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' && defined $bikou_recall; return date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) if !defined $bikou_recall; }->() )}</span></div>" if !defined param('hensyuu') && (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}} && $bikou->{$w->{id}} ne '';
 				print "<div class='bikou migi'><textarea rows=1 id='colle_box' name='test'>", ${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )},"</textarea></div>" if defined param('hensyuu');
-				print "<div class='bikou sita'>$bikou->{$w->{id}}</div>" if $v->{bikouiti} == 3 || $v->{bikouiti} == 4;
+				print "<div class='bikou sita'>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</div>" if $v->{bikouiti} == 3 || $v->{bikouiti} == 4;
 				print "<div class='kansou' data-kansou='$v->{id}'>";
 					print Kahifu::Infra::bunsyou($w->{kansou}) if defined $v->{kansou_hyouji} && $v->{kansou_hyouji} == 1;
 				print "</div>";
@@ -1350,11 +1354,11 @@ if($paginate == 1){
 		print "<div class='dendou_siborikomi lang_${Kahifu::Junbi::lang}'>";
 			print "<input type='hidden' name='siborikomu_form' value='1'>";
 			print "<div class='hajimari'>";
-				print "<span class='midasi'>対象時間帯</span>";
+				print "<span class='midasi'>${\(Kahifu::Template::dict('TAISYOUJIKANTAI'))}</span>";
 				print "<span class='jikan'><input name='yuukoukikan' placeholder='${\(defined param('kikan') ? param('kikan') : 1980 )}' value='${\(defined param('kikan') ? param('kikan') : undef )}'><span>" . Kahifu::Template::dict('TOSI')."</span></span>";
 			print "</div>";
 			print "<div class='hantyuu'>";
-				print "<span class='midasi'>対象範疇名</span>";
+				print "<span class='midasi'>${\(Kahifu::Template::dict('TAISYOUHANTYUUMEI'))}</span>";
 				print "<input name='hantyuu_form' placeholder='";
 					my $hantyuu_hyouji;
 					if(!defined param('hantyuu') || (defined param('hantyuu') && param('hantyuu') eq '')){
@@ -1498,7 +1502,7 @@ if($paginate == 1){
 		print "<div class='collection_container lang_${Kahifu::Junbi::lang}'>";
 		print "<div class='collection_box'>";
 		print "<div class='koumoku'><div class='midasi'><span><a href='${\(url_get_irekae(\%url_get, 'directory', 'isbn', 'collection'))}'>${\(Kahifu::Template::dict('ISBN_COLLECTION_HEADING'))}</a></span></div></div>";
-		print "<div class='koumoku'><div class='midasi'><span><a href='${\(url_get_irekae(\%url_get, 'directory', 'dendou', 'collection'))}'>${\(Kahifu::Template::dict('DENDOU_COLLECTION_HEADING'))}</a></span></div></div>";
+		print "<div class='koumoku'><div class='midasi'><span class='dendou'><a href='${\(url_get_irekae(\%url_get, 'directory', 'dendou', 'collection'))}'>${\(Kahifu::Template::dict('DENDOU_COLLECTION_HEADING'))}</a></span></div></div>";
 		my $colle_waku;
 		push @$colle_waku, ["isbn", "isbn"];
 		push @$colle_waku, ["favorite", "favorite"];
