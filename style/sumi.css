@@ -1539,6 +1539,21 @@ div.form.colle_info {
 	display: none;
 }
 
+div.form > form > div.kikan {
+	display: flex;
+}
+
+div.form > form > div.kikan > input[type="text"]:not([name="cour"]) {
+	flex-grow: 1;
+	width: initial;
+	margin-left: 0em;
+}
+
+div.form > form > div.kikan > input[type="text"] {
+	margin-left: 0.5em;
+	width: 5em;
+}
+
 /* 作品閲覧箱など　sakuhin eturann itirann　*/
 
 div.sakuhinbako {

@@ -867,7 +867,7 @@ if($paginate == 1){
 			print "<div class='mint'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</span><input type='text' name='hantyuu' placeholder='${\(Kahifu::Template::dict('KIROKU_HANTYUU_PLACEHOLDER'))}'></div>";
 			print "<div class='strawberry'><span class='block'>${\(Kahifu::Template::dict('KIROKU_COLLECTION'))}</span><input type='text' name='colle' placeholder='${\(Kahifu::Template::dict('KIROKU_COLLECTION_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai'><span class='block'>${\(Kahifu::Template::dict('KIROKU_BIKOU'))}</span><input type='text' name='bikou' placeholder='${\(Kahifu::Template::dict('KIROKU_BIKOU_PLACEHOLDER'))}'></div>";
-			print "<div class='ajisai'><span class='block'>${\(Kahifu::Template::dict('KIROKU_COUR'))}</span><input type='text' name='cour' placeholder='${\(Kahifu::Template::dict('KIROKU_COUR_PLACEHOLDER'))}'></div>";
+			print "<div class='ajisai kikan'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_COUR'))}</span><input type='text' name='kaisi' placeholder='20140806'><input type='text' name='syuuryou' placeholder='20231226'><input type='text' name='cour' placeholder='${\(Kahifu::Template::dict('KIROKU_COUR_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_WHOLE'))}</span><input type='text' name='whole' placeholder='${\(Kahifu::Template::dict('KIROKU_WHOLE_PLACEHOLDER'))}'></div>";
 			print "<div class='meadow'><span>${\(Kahifu::Template::dict('KIROKU_JOSUU'))}</span>";
 				print "<select placeholder='${\(Kahifu::Template::dict('KIROKU_JOSUU_PLACEHOLDER'))}' name='josuu'>";
@@ -1126,13 +1126,15 @@ if($paginate == 1){
 			$turu_recall = $v->{turu};
 			$tag_recall = $v->{tag};
 			$gaiyouran_recall = $v->{gaiyouran};
-			my $bikou_get = $v->{bikou};
-			my $bikou_unserialized = from_json($bikou_get);
-			if(ref($bikou_unserialized) ne "ARRAY"){
-				foreach my $key ( keys %$bikou_unserialized ) { 
-			   	$bikou_recall .= $key . "::" . $bikou_unserialized->{$key} . "++\n";
-				}
-			} else { $bikou_recall = ""; }
+			if(!($v->{tag} eq 'period' && $v->{sort1} ne 'comic')){
+				my $bikou_get = $v->{bikou};
+				my $bikou_unserialized = from_json($bikou_get);
+				if(ref($bikou_unserialized) ne "ARRAY"){
+					foreach my $key ( keys %$bikou_unserialized ) { 
+					$bikou_recall .= $key . "::" . $bikou_unserialized->{$key} . "++\n";
+					}
+				} else { $bikou_recall = ""; }
+			}
 			$bikouiti_recall = $v->{bikouiti};
 			$hide_recall = $v->{hide};
 			$kansou_hyouji_recall = $v->{kansou_hyouji};
@@ -1194,9 +1196,10 @@ if($paginate == 1){
 		#　備考を決まる
 		my $bikou = from_json($v->{bikou});
 		#　第二次命令　→作品欄から抽出す
-		my $dainiji_meirei = ("select * from sakuhin where `id` in (${turu_sitazi}) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by field (id, ${turu_sitazi})");
+		my $dainiji_sitazi = defined $bikou_recall ? "field (id, ${turu_sitazi})" : "kaisi asc";
+		my $dainiji_meirei = ("select * from sakuhin where `id` in (${turu_sitazi}) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${dainiji_sitazi}");
 		my $sakuhinran = $dbh->prepare($dainiji_meirei);
-		$sakuhinran->execute(@turu, @sitazi_bind, @turu);
+		defined $bikou_recall ? $sakuhinran->execute(@turu, @sitazi_bind, @turu) : $sakuhinran->execute(@turu, @sitazi_bind);
 		print "<div class='colle navi'>";
 		print "</div>";
 		print "<div class='colle heading'>";
@@ -1216,7 +1219,7 @@ if($paginate == 1){
 				print "<input type='hidden' name='junban' value='$w->{id}'>";
 				print "<div class='sakuhinmei bikou_$v->{bikouiti}'>";
 					print "<div class='omake id'><span>$w->{id}</span></div>" if defined param('hensyuu');
-					print "<div class='bikou ue'><span>$bikou->{$w->{id}}</span></div>" if $v->{bikouiti} == 2;
+					print "<div class='bikou ue'><span>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date_split($v->{kaisi}, 7))}</span></div>" if $v->{bikouiti} == 2;
 					print "<div class='bikou hidari'><span>$bikou->{$w->{id}}</span></div>" if $v->{bikouiti} == 1;
 					print "<div>";
 						print "<p class='fuku_midasi $w->{id}'>" . midasi_tekisetuka($w->{fukumidasi}, $w->{fukubetumei}, $w->{colle}) . "</p>" if $w->{fukumidasi} ne '' && (defined $w->{sakifuku} && $w->{sakifuku} == 1);
@@ -1275,7 +1278,7 @@ if($paginate == 1){
 
 	} elsif(defined param('directory') && param('directory') eq 'dendou'){
 		my $cour_junban = ['冬', '春', '夏', '秋', ''];
-		my $cour_date = ['.3.20', '.6.21', '.9.22', '.12.21', ''];
+		my $cour_date = ['.12.21', '.3.20', '.6.21', '.9.22', ''];
 		my $cour_iro = [[175, 60, 35], [75, 70, 35], [40, 22, 40], [15, 25, 33], [310, 0, 35]];
 		my $dendou_query = "select * from dendou";
 		my $dendou_syutoku = $dbh->prepare($dendou_query);
@@ -1329,25 +1332,16 @@ if($paginate == 1){
 			print "</form>";
 		print "</div>";
 		if(defined param('courset') && Kahifu::Template::tenmei()){
-			my $colle_query = "select * from collection where `tag` = 'period' and `sort1` <> 'comic'";
-			my $colle_query_syutoku = $dbh->prepare($colle_query);
-			$colle_query_syutoku->execute();
-			my ($bikou, $konobikou);
-			while(my $v = $colle_query_syutoku->fetchrow_hashref){
-				$konobikou = from_json($v->{bikou});
-    			$bikou = !defined $bikou ? $konobikou : { %$bikou, %$konobikou };
-			}
-			while(my($k, $w) = each %$bikou) { 
-				my $sakuhin_query = "select id, whole, colle from sakuhin where id = ?";
-				my $sakuhin_syutoku = $dbh->prepare($sakuhin_query);
-				$sakuhin_syutoku->execute($k);
-				my $sakuhin_info = $sakuhin_syutoku->fetchall_hashref('id');
-				my $kaisuu = $sakuhin_info->{$k}{whole};
-
-				my $cour = cour($w, $kaisuu, $sakuhin_info->{$k}{colle});
-				my $cour_kousin_query = "update sakuhin set cour = ? where id = ? and cour is null";
+			my $sakuhin_query = "select id, syuuryou, hantyuu from sakuhin where hantyuu <> 13";
+			my $sakuhin_syutoku = $dbh->prepare($sakuhin_query);
+			$sakuhin_syutoku->execute();			
+			while(my $v = $sakuhin_syutoku->fetchrow_hashref){
+				my $syuuryou = $v->{syuuryou};
+				my $syoriyou_hantyuu = $v->{hantyuu};
+				my $cour = cour($syuuryou, $syoriyou_hantyuu);
+				my $cour_kousin_query = "update sakuhin set cour = ? where id = ? and syuuryou is not null and cour is null";
 				my $cour_kousin = $dbh->prepare($cour_kousin_query);
-				$cour_kousin->execute($cour, $k);
+				$cour_kousin->execute($cour, $v->{id});
 			}
 		}
 
@@ -1474,7 +1468,7 @@ if($paginate == 1){
 									print "<span class='jyoukyou_type_alt_$jyoukyou_type{$cour_info->{$i.$cour_junban->[$j]}{$k}{jyoukyou}}'>";
 									print "<sup class='id'>$k</sup>";
 									print "<input type='hidden' name='bangou' value='$k'>";
-									print $cour_info->{$i.$cour_junban->[$j]}{$k}{midasi};
+									print midasi_tekisetuka($cour_info->{$i.$cour_junban->[$j]}{$k}{midasi}, $cour_info->{$i.$cour_junban->[$j]}{$k}{betumei}, $cour_info->{$i.$cour_junban->[$j]}{$k}{colle}, $sitei_gengo);
 									print "</span>";
 								}
 								print "</div>";
