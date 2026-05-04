@@ -49,13 +49,45 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	$cour_season = "夏" if index(lc($cour), "夏") != -1 ||index(lc($cour), "su") != -1;
 	$cour_season = "秋" if index(lc($cour), "秋") != -1 ||index(lc($cour), "f") != -1 || index(lc($cour), "a") != -1;
 	$cour = $cour_year.$cour_season ne "" ? $cour_year.$cour_season : undef;
-	
+
 	my $hantyuu_get_query = "select hantyuu from hantyuu_alias where kotoba = ?";
 	my $hantyuu_get = $dbh->prepare($hantyuu_get_query);
 	$hantyuu_get->execute($hantyuu_raw);
 	my $hantyuu;
 	while(my $v = $hantyuu_get->fetchrow_arrayref){
 		$hantyuu = $v->[0];
+	}
+
+	$cour = cour($syuuryou, $hantyuu) if defined $syuuryou && !defined $cour;
+	my $cour_bikou = substr($cour, 0, 4) . '年' . substr($cour, 4);
+	my $period_jiten = {
+		'10' => 'drama',
+		'14' => 'anime',
+		'17' => 'anime',
+		'13' => 'comic',
+		'9' => 'movie'
+	};
+	if(index($colle, $period_jiten->{$hantyuu}) == -1){
+		my $tosi = substr($kaisi, 0, 4);
+		$tosi = $tosi + 0;
+		my $period = $tosi < 1930 || ($hantyuu == 9 && $tosi >= 2030) ? substr($tosi, 0, 3) . '0s' : substr($tosi, 2, 1) . '0s';
+
+		my $kugiri_hituyou = $colle =~ tr/,//;
+		$kugiri_hituyou = 2 + (2 * $kugiri_hituyou);
+		my $bikou_kugiri_count = $bikou =~ tr/+//;
+		my $bikou_kugiri_hituyou = $kugiri_hituyou - $bikou_kugiri_count;
+		$bikou .= '+' x $bikou_kugiri_hituyou;
+
+		$colle .= "," if substr($colle, -1) ne ',' && $colle ne '';
+
+		$colle .= $period_jiten->{$hantyuu} . $period;
+		my $wafuu_tosi = substr($kaisi, 0, 4);
+		my $wafuu_tuki = substr($kaisi, 4, 2);
+		my $wafuu_hi = substr($kaisi, 6, 2);
+		$wafuu_tuki = substr($wafuu_tuki, 0) eq '0' && $wafuu_tuki ne '' ? substr($wafuu_tuki, 1, 1) . '月' : $wafuu_tuki . '月';
+		$wafuu_hi = substr($wafuu_hi, 0) eq '0' && $wafuu_hi ne '' ? substr($wafuu_hi, 1, 1) . '日' : $wafuu_hi . '日';
+		my $wafuu_hiduke = $wafuu_tosi . '年' . $wafuu_tuki . $wafuu_hi;
+		$bikou .= $wafuu_hiduke . "++";
 	}
 	
 	my @colle_list_get = $dbh->selectall_array("select midasi_seisiki from collection");
@@ -109,18 +141,20 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $key = 0;
 	for my $i (@colle_try){
 		my $read_bikou;
+		my $read_tag;
 		my $bikou_sitazi;
 		my @sitazi_bind;
 		my $unserial_bikou;
 		if($bikou){
-			my $bikou_get_query = "select bikou from collection where midasi_seisiki = ?";
+			my $bikou_get_query = "select bikou, tag from collection where midasi_seisiki = ?";
 			my $bikou_get = $dbh->prepare($bikou_get_query);
 			$bikou_get->execute($i);
 			while(my $v = $bikou_get->fetchrow_arrayref){
 				$read_bikou = $v->[0];
+				$read_tag = $v->[1]; 
 			}
 			$unserial_bikou = from_json($read_bikou);
-			$unserial_bikou->{$id} = $bikou_split[$key];
+			$unserial_bikou->{$id} = $read_tag eq 'waku' && $bikou_split[$key] eq '' ? $cour_bikou : $bikou_split[$key];
 		}	
 		
 		if($bikou){
