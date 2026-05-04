@@ -717,6 +717,7 @@ div.koumoku > div.kansou_kousin {
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div,
+div.koumoku > div.kansou_kousin > form > div.cour > div,
 div.koumoku > div.kansou_kousin > form > div.ext > div,
 div.koumoku > div.kansou_kousin > form > div.colle > div {
 	display: inline-block;
@@ -731,15 +732,25 @@ div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div,
 div.koumoku > div.kansou_kousin > form > div.betumei > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div > div,
+div.koumoku > div.kansou_kousin > form > div.cour > div > div,
 div.koumoku > div.kansou_kousin > form > div.ext > div > div,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div {
 	display: inline-block;
+}
+
+div.koumoku > div.kansou_kousin > form > div.cour > div > div:nth-child(2) {
+	margin-right: 1.5em;
+}
+
+div.koumoku > div.kansou_kousin > form > div.cour > div > div:nth-child(2) > input {
+	margin-right: 0.5em;
 }
 
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.betumei > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.extra > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div > div:first-child,
+div.koumoku > div.kansou_kousin > form > div.cour > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.ext > div > div:first-child,
 div.koumoku > div.kansou_kousin > form > div.colle > div > div:first-child {
 	width: 5em;

@@ -68,6 +68,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	my $isbn13 = defined param('isbn13') && param('isbn13') ? decode_utf8(param('isbn13')) : undef;	
 	my $ddc = defined param('ddc') && param('ddc') ? decode_utf8(param('ddc')) : undef;		
 	my $ndc = defined param('ndc') && param('ndc') ? decode_utf8(param('ndc')) : undef;	
+	my $kaisi = defined param('kaisi') && param('kaisi') ? decode_utf8(param('kaisi')) : undef;
+	my $syuuryou = defined param('syuuryou') && param('syuuryou') ? decode_utf8(param('syuuryou')) : undef;
+	my $cour = defined param('cour') && param('cour') ? decode_utf8(param('cour')) : undef;
 
 	my $genzai = time();
 	
@@ -169,10 +172,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 		$sounyuu_jikkou->execute($id, $genzai, $char, $kansou);
 	}
 		
-	my $meirei = "update sakuhin set yotei = ?, sakifuku = ?, ${sitazi_ext} midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, isbn = ?, isbn13 = ?, ndc = ?, ddc = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
+	my $meirei = "update sakuhin set yotei = ?, sakifuku = ?, ${sitazi_ext} midasi = ?, fukumidasi = ?, hantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, isbn = ?, isbn13 = ?, ndc = ?, ddc = ?, kaisi = ?, syuuryou = ?, cour = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
 	
 	my $sakuhin_kousin = $dbh->prepare($meirei);
-	$sakuhin_kousin->execute($yotei, $sakifuku, @sitazi_bind_ext, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $isbn, $isbn13, $ndc, $ddc, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
+	$sakuhin_kousin->execute($yotei, $sakifuku, @sitazi_bind_ext, $midasi, $fukumidasi, $hantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $isbn, $isbn13, $ndc, $ddc, $kaisi, $syuuryou, $cour, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
 } elsif(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kanri') && param('kanri') eq 'del') {
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
 	
