@@ -404,6 +404,15 @@ div.sakuhinbako > div.migi > div.kansyourirekisyo {
 	max-width: initial;
 }
 
+div.sakuhinbako > div.migi > div.colle {
+	display: flex;
+}
+
+div.sakuhinbako > div.migi > div.colle > div {
+	flex-grow: 1;
+	text-align: right;
+}
+
 div.sakuhinbako > div.hidari > form > div[data-kakejiku="kansou_long"]:not(.kakejiku) textarea {
 	font-size: 1em;
 }
@@ -489,6 +498,10 @@ div.dendou_siborikomi.lang_ja > div > span.midasi {
 
 div.dendou_siborikomi.lang_ja > input[name^=kouhoran] {
 	writing-mode: vertical-rl;
+}
+
+div.dendou_siborikomi:not(.lang_ja) > div > input[name^=hantyuu_form] {
+	width: 2em;
 }
 
 div.dendou_siborikomi > input {
