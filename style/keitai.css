@@ -46,6 +46,26 @@ div.commander > div.migi > div.open {
 	display: block;
 }
 
+div.form > form > div.kikan {
+	display: flex;
+}
+
+div.form > form > div.kikan > span.fixed {
+	width: 100%;
+}
+
+div.form > form > div.kikan > input[type="text"]:not([name="cour"]) {
+	flex-grow: 1;
+	width: initial;
+	margin-left: 0em;
+	width: 30%;
+}
+
+div.form > form > div.kikan > input[type="text"] {
+	margin-left: 0.5em;
+	width: 5em;
+}
+
 div.koumoku {
 	padding: 0.125em 1em 0.25em 0.5em;
 }
