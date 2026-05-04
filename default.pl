@@ -1431,7 +1431,7 @@ if($paginate == 1){
 						$cour_subete->{$c->{midasi_seisiki}}{$c->{sid}}{text} = $c->{text};
 						$cour_subete->{$c->{midasi_seisiki}}{$c->{sid}}{jiten} = $c->{jiten};
 					}
-					if(defined $cour || (defined param('kouhoran') && Kahifu::Template::tenmei())){
+					if(defined $cour || (defined param('kouhoran') && Kahifu::Template::tenmei()) || (defined param('kouhoran') && param('kouhoran') eq 'zen')){
 						print "<div class='cour' style=\"background-color: hsl(${\($cour_iro->[$j][0] + color_makase($j+$i, $cour_iro->[$j][1]))}, 90%, $cour_iro->[$j][2]%)\">";
 							print "<div class='midasi'><span class='cour'>$i$cour_junban->[$j]</span><span class='date'>($i$cour_date->[$j])</span></div>";
 							if(defined $cour){
