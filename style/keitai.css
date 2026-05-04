@@ -511,3 +511,33 @@ div.dendou_siborikomi > input {
 div.dendou > div.cour > div.gyou.type_3 > div.jusyou:not(:has(span.mitei)) {
 	margin-left: 1em;
 }
+
+div.dendou > div.cour > div.gyou > div.jusyou span.daimei::before {
+	content: initial;
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou span.daimei a::before {
+	content: "『";
+}
+
+div.dendou > div.cour > div.gyou:not(.type_3) > div.jusyou span.daimei a::before {
+	position: absolute;
+	margin-left: -1em;
+}
+
+div.dendou > div.cour > div.gyou:not(.type_3) > div.jusyou {
+	width: 2em;
+}
+
+div.dendou > div.cour > div.gyou:not(.type_3) > div.jusyou span.daimei {
+	margin-left: 1em;
+	display: inline-block;
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou span.daimei::after {
+	content: initial;
+}
+
+div.dendou > div.cour > div.gyou > div.jusyou span.daimei a::after {
+	content: "』";
+}
