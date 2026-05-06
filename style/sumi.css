@@ -1514,6 +1514,7 @@ div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei.ditto {
 }
 
 div.rireki_box > div.koumoku.type_700 > div.sakuhinmei,
+div.rireki_box > div.koumoku.type_700 > div.sakuhinmei.ditto,
 div.rireki_box > div.koumoku.type_700.lang_ja > div.sakuhinmei {
 	width: 75%;
 }
@@ -1540,6 +1541,20 @@ div.rireki_box > div.koumoku > div.bikou {
 
 div.rireki_box > div.koumoku > div.bikou:empty {
 	display: none;
+}
+
+div.rireki_box > div.koumoku > div.sakuhinmei:has(+div.bikou:empty) {
+	display: inline-flex;
+	flex-direction: row-reverse;
+	justify-content: left;
+}
+
+div.rireki_box > div.koumoku > div.sakuhinmei:has(+div.bikou:empty) > p.midasi {
+	width: 17.125em;
+}
+
+div.rireki_box > div.koumoku.lang_ja > div.sakuhinmei:has(+div.bikou:empty) > p.midasi {
+	width: 16em;
 }
 
 div.rireki_box > div.koumoku > div.bikou > span.with {
