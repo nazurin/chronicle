@@ -1570,6 +1570,19 @@ div.form.colle_info {
 	display: none;
 }
 
+div.form > form > div.colle {
+	display: flex;
+}
+
+div.form > form > div.colle > input[name=genkan] {
+	width: 5em;
+}
+
+div.form > form > div.colle > input[name=colle] {
+	width: 12em;
+	flex-grow: 1;
+}
+
 div.form > form > div.kikan {
 	display: flex;
 }
@@ -1583,6 +1596,122 @@ div.form > form > div.kikan > input[type="text"]:not([name="cour"]) {
 div.form > form > div.kikan > input[type="text"] {
 	margin-left: 0.5em;
 	width: 5em;
+}
+
+div.podium:has(div.form.tau div.gyou) > div.kakejiku.tau {
+	background-color: red;
+	color: yellow;
+}
+
+div.podium:not(:has(div.form.tau div.gyou)) > div.kakejiku.tau {
+	display: none;
+}
+
+div.form.tau > form > div,
+div.form.tau > form > div > div.hidari {
+	display: flex;
+	align-items: stretch;
+}
+
+div.form.tau > form > div > div.hidari {
+	flex-grow: 1;
+	flex-basis: 50%;
+	flex-wrap: wrap;
+}
+
+div.form.tau > form > div > div.hidari > div {
+	padding: 0 0.25em;
+	display: flex;
+	align-items: center;
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou {
+	width: 100%;
+	flex-grow: 1;
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou > div {
+	display: flex;
+	padding: 0 0.25em;
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou > div.with {
+	width: 5em;
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou > div.with > input {
+	background-color: hsl(60, 100%, 88%);
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou > div.memo {
+	flex-grow: 1;
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou > div.memo > input {
+	background-color: hsl(120, 100%, 88%);
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou input {
+	flex-grow: 1;
+	margin-left: 0.125em;
+}
+
+div.form.tau > form > div > div.meirei {
+	flex-shrink: 0;
+	flex-basis: 7em;
+	display: flex;
+}
+
+div.form.tau input[type='text'] {
+	background-color: transparent;
+	font-family: inherit;
+	width: 2em;
+	border: none;
+	font-size: inherit;
+	line-height: inherit;
+	color: maroon;
+	text-align: right;
+	border-radius: 0;
+}
+
+div.form.tau input[type="radio"] {
+	display: none;
+}
+
+div.form.tau input[type="radio"]+label {
+	flex-grow: 1;
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+div.form.tau input.musi[type="radio"]+label {
+	color: blue;
+}
+
+div.form.tau input.musi[type="radio"]:checked+label {
+	background-color: hsl(180, 80%, 90%);
+}
+
+div.form.tau input.kyakka[type="radio"]+label {
+	color: red;
+}
+
+div.form.tau input.kyakka[type="radio"]:checked+label {
+	background-color: hsl(0, 80%, 90%);
+}
+
+div.form.tau input.juri[type="radio"]+label {
+	color: green;
+}
+
+div.form.tau input.juri[type="radio"]:checked+label {
+	background-color: hsl(90, 80%, 90%);
+}
+
+div.form.tau input[type="radio"]:checked+label {
+	font-weight: bold;
 }
 
 /* 作品閲覧箱など　sakuhin eturann itirann　*/

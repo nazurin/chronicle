@@ -30,6 +30,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $fukumidasi = defined param('fukumidasi') && param('fukumidasi') ? decode_utf8(param('fukumidasi')) : "";
 	my $hantyuu_raw = defined param('hantyuu') && param('hantyuu') ? decode_utf8(param('hantyuu')) : "";
 	my $sakka = defined param('sakka') && param('sakka') ? decode_utf8(param('sakka')) : "";
+	my $genkan = defined param('genkan') && param('genkan') ? decode_utf8(param('genkan')) : undef;	
 	my $colle = defined param('colle') && param('colle') ? decode_utf8(param('colle')) : "";	
 	my $bikou = defined param('bikou') && param('bikou') ? decode_utf8(param('bikou')) : "";	
 	my $cour = defined param('cour') && param('cour') ? decode_utf8(param('cour')) : undef;		
@@ -67,6 +68,33 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		'13' => 'comic',
 		'9' => 'movie'
 	};
+
+	if((index($colle, 'kansyou') == -1 || index($colle, 'gengo') == -1) && defined $genkan){
+		my $kugiri_hituyou = $colle =~ tr/,//;
+		$kugiri_hituyou = 2 + (2 * $kugiri_hituyou);
+		my $bikou_kugiri_count = $bikou =~ tr/+//;
+		my $bikou_kugiri_hituyou = $kugiri_hituyou - $bikou_kugiri_count;
+		$bikou .= '+' x $bikou_kugiri_hituyou;
+
+		$colle .= "," if substr($colle, -1) ne ',' && $colle ne '';
+
+		my @genkan_turu = split '/', $genkan;
+		my $double;
+		if(defined $genkan_turu[0] && $genkan_turu[0] ne ''){
+			$colle .= "gengo_" . $genkan_turu[0];
+			$bikou .= "++";
+			$double = 1;
+		}
+		$colle .= "," if $double;
+		if(defined $genkan_turu[1] && $genkan_turu[1] ne ''){
+			$colle .= "kansyou_" . $genkan_turu[1];
+			$bikou .= "++";
+		} elsif (defined $genkan_turu[0] && $genkan_turu[0] ne '' && index($genkan, '/') == -1){
+			$colle .= "kansyou_" . $genkan_turu[0];
+			$bikou .= "++";
+		}
+	}
+
 	if(index($colle, $period_jiten->{$hantyuu}) == -1){
 		my $tosi = substr($kaisi, 0, 4);
 		$tosi = $tosi + 0;

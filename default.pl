@@ -403,14 +403,14 @@ if(defined param('id') && param('id')){
 					print "<div class='gyou hensyuu' data-rireki='", $v->{id}, "'>";
 						print "<input type='hidden' name='reference' value='", $v->{id}, "'>";
 						print "<div class='jiten_hi'>";
-							print "<div class='jiten_y'><input type='text' name='jiten_y'  placeholder='${\( sub { return date_split($v->{jiten}, 0) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 0) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('TOSI'))}</div>";
-							print "<div class='jiten_m'><input type='text' name='jiten_m'  placeholder='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('TUKI'))}</div>";
-							print "<div class='jiten_d'><input type='text' name='jiten_d'  placeholder='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('HI'))}</div>";
+							print "<div class='jiten_y'><input type='text' name='jiten_y'  placeholder='${\( sub { return date_split($v->{jiten}, 0) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 0) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('TOSI') or 0)}</div>";
+							print "<div class='jiten_m'><input type='text' name='jiten_m'  placeholder='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 1) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('TUKI') or 0)}</div>";
+							print "<div class='jiten_d'><input type='text' name='jiten_d'  placeholder='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 2) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('HI') or 0)}</div>";
 						print "</div>";
 						print "<div class='jiten_jikan'>";
-							print "<div class='jiten_h'><input type='text' name='jiten_h' placeholder='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('JI'))}</div>";
-							print "<div class='jiten_i'><input type='text' name='jiten_i'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}'>${\(Kahifu::Template::dict('FUN'))}</div>";
-							print "<div class='jiten_s'><input type='text' name='jiten_s'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}'>${\(Kahifu::Template::dict('BYOU'))}</div>";
+							print "<div class='jiten_h'><input type='text' name='jiten_h' placeholder='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}' value='${\( sub { return date_split($v->{jiten}, 3) if defined $v->{jiten} }->() )}'>${\(Kahifu::Template::dict('JI') or 0)}</div>";
+							print "<div class='jiten_i'><input type='text' name='jiten_i'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 4)))}'>${\(Kahifu::Template::dict('FUN') or 0)}</div>";
+							print "<div class='jiten_s'><input type='text' name='jiten_s'  placeholder='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}' value='${\(sprintf(\"%02s\", date_split($v->{jiten}, 10)))}'>${\(Kahifu::Template::dict('BYOU') or 0)}</div>";
 							print "<div class='jiten_unix'><input type='text'  name='jiten_unix' placeholder='", $v->{jiten}, "'></div>";
 						print "</div>";
 						print "<div class='sintyoku'>";
@@ -860,6 +860,47 @@ print "</div>";
 if($paginate == 1){
 	# 管理人　→記録ツール
 	if(Kahifu::Template::tenmei()){
+		print "<div data-kakejiku='tau' class='kakejiku tau'>";
+			print "<span>${\(Kahifu::Template::dict('RIREKI_SINSYUKU'))}<span class='sinsyuku'>${\(Kahifu::Template::dict('SINSYUKU_PLUS'))}</span></span>";
+		print "</div>";
+		print "<div data-kakejiku='tau' class='form tau'>";
+			print "<form method='post' action='tausyori.pl'>";
+				my $soutei_rireki = $dbh->prepare("select `tautulli`.*, `sakuhin`.`midasi`, `sakuhin`.`whole`, `sakuhin`.`josuu`, `c`.`with` from `tautulli` left join `sakuhin` on `sakuhin`.`id` = `tautulli`.`sid` left join (select a.* from `rireki` a left outer join `rireki` b on a.sid = b.sid and a.jiten < b.jiten where b.sid is null) c on `c`.`sid` = `tautulli`.`sid` where `status` = 0");
+				$soutei_rireki->execute();
+				while(my $v = $soutei_rireki->fetchrow_hashref){
+					print "<div class='gyou'>";
+						print "<input type='hidden' name='id' value='$v->{id}'>";
+						print "<input type='hidden' name='pid' value='$v->{pid}'>";
+						print "<div class='hidari'>";
+						print "<div class='sinkou'>";
+							print "<input type='hidden' name='genpart' value='$v->{part}'>";
+							print "<span><input type='text' name='part' value='$v->{part}' placeholder='$v->{part}'></span>";
+							print "<span>${\(Kahifu::Template::dict('SLASH'))}</span>";
+						print "</div>";
+						print "<div class='jiten'>";
+							print "<input type='hidden' name='jiten' value='$v->{jiten}'>";
+							print "<span>${\(date_split($v->{jiten}, 7, $sanjyuujikan_seido) . '&nbsp;' . date_split($v->{jiten}, 11, $sanjyuujikan_seido) . ':' . date_split($v->{jiten}, 4, $sanjyuujikan_seido))}</span>";
+						print "</div>";
+						print "<div class='midasi'>";
+							print "<sup><input type='text' name='sid' value='${\(defined $v->{sid} ? $v->{sid} : undef)}'></sup><span>${\(defined $v->{midasi} ? $v->{midasi} : undef)}</span>";
+						print "</div>";
+						print "<div class='dainigyou'>";
+							print "<div class='with'><span>with</span><input type='text' value='${\(defined $v->{with} ? $v->{with} : undef)}' placeholder='${\(defined $v->{with} ? $v->{with} : undef)}'></div>";
+							print "<div class='mode'><select placeholder='${\(Kahifu::Template::dict('HEADING_JYOUKYOU'))}' name='mode'><option value='0'>${\(Kahifu::Template::dict('KOUSIN_MAKASE'))}</option><option value='1'>${\(Kahifu::Template::dict('KOUSIN_TUMU'))}</option><option value='2'>${\(Kahifu::Template::dict('KOUSIN_OTOSU'))}</option><option value='3'>${\(Kahifu::Template::dict('KOUSIN_SAI'))}</option><option value='7' disabled>${\(Kahifu::Template::dict('KOUSIN_MOTO'))}</option><option value='4'>${\(Kahifu::Template::dict('KOUSIN_TOBU'))}</option><option value='5'>${\(Kahifu::Template::dict('KOUSIN_HAPPA'))}</option></select></div>";
+							print "<div class='memo'><span>memo</span><input type='text' value='' placeholder='${\(defined $v->{memo} ? $v->{memo} : undef)}'></div>";
+							print "</div>";
+						print "</div>";
+						print "<div class='meirei'>";
+							print "<input class='musi' id='$v->{sid}_$v->{jiten}0' name='meirei_$v->{sid}_$v->{jiten}' type='radio' value='0' checked='checked'><label for='$v->{sid}_$v->{jiten}0'>無視</label>";
+							print "<input class='kyakka'  id='$v->{sid}_$v->{jiten}1' name='meirei_$v->{sid}_$v->{jiten}' type='radio' value='1'><label for='$v->{sid}_$v->{jiten}1'>却下</label>";
+							print "<input class='juri'  id='$v->{sid}_$v->{jiten}2' name='meirei_$v->{sid}_$v->{jiten}' type='radio' value='2'><label for='$v->{sid}_$v->{jiten}2'>受理</label>";
+						print "</div>";
+					print "</div>";
+				}
+				print "<div class='hazusi'><input type='submit' name='tausousin' value='${\(Kahifu::Template::dict('SOUSIN'))}'></div>";
+			print "</form>";
+		print "</div>";
+
 		print "<div data-kakejiku='kiroku' class='kakejiku kiroku'>";
 			print "<span>${\(Kahifu::Template::dict('KIROKU_SINSYUKU'))}<span class='sinsyuku'>${\(Kahifu::Template::dict('SINSYUKU_PLUS'))}</span></span>";
 		print "</div>";
@@ -869,7 +910,7 @@ if($paginate == 1){
 			print "<div class='cream'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_SUBTITLE'))}</span><input type='text' name='fukumidasi' placeholder='${\(Kahifu::Template::dict('KIROKU_SUBTITLE_PLACEHOLDER'))}'></div>";
 			print "<div class='sky'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</span><input type='text' name='sakka' placeholder='${\(Kahifu::Template::dict('KIROKU_SAKKA_PLACEHOLDER'))}'></div>";
 			print "<div class='mint'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</span><input type='text' name='hantyuu' placeholder='${\(Kahifu::Template::dict('KIROKU_HANTYUU_PLACEHOLDER'))}'></div>";
-			print "<div class='strawberry'><span class='block'>${\(Kahifu::Template::dict('KIROKU_COLLECTION'))}</span><input type='text' name='colle' placeholder='${\(Kahifu::Template::dict('KIROKU_COLLECTION_PLACEHOLDER'))}'></div>";
+			print "<div class='strawberry colle'><span class='block'>${\(Kahifu::Template::dict('KIROKU_COLLECTION'))}</span><input type='text' name='genkan' placeholder='ge/ka'><input type='text' name='colle' placeholder='${\(Kahifu::Template::dict('KIROKU_COLLECTION_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai'><span class='block'>${\(Kahifu::Template::dict('KIROKU_BIKOU'))}</span><input type='text' name='bikou' placeholder='${\(Kahifu::Template::dict('KIROKU_BIKOU_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai kikan'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_COUR'))}</span><input type='text' name='kaisi' placeholder='20140806'><input type='text' name='syuuryou' placeholder='20231226'><input type='text' name='cour' placeholder='${\(Kahifu::Template::dict('KIROKU_COUR_PLACEHOLDER'))}'></div>";
 			print "<div class='ajisai'><span class='fixed'>${\(Kahifu::Template::dict('KIROKU_WHOLE'))}</span><input type='text' name='whole' placeholder='${\(Kahifu::Template::dict('KIROKU_WHOLE_PLACEHOLDER'))}'></div>";

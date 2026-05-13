@@ -275,7 +275,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	}
 
 	#audioscrobblerを組み込む
-	Hyouka::External::audioscrobbler_kousin($dbh);
+	if(!defined param('ikkatu')){
+		Hyouka::External::audioscrobbler_kousin($dbh);
+	}
 }
 
 my $query=new CGI;
