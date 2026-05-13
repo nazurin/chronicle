@@ -66,6 +66,18 @@ div.form > form > div.kikan > input[type="text"] {
 	width: 5em;
 }
 
+div.form.tau > form > div > div.hidari > div.dainigyou {
+	flex-wrap: wrap;
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou > div.with {
+	flex-grow: 1;
+}
+
+div.form.tau > form > div > div.hidari > div.dainigyou > div.memo {
+	width: 100%;
+}
+
 div.koumoku {
 	padding: 0.125em 1em 0.25em 0.5em;
 }
