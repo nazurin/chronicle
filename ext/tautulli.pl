@@ -26,18 +26,11 @@ use Hyouka::External;
 # 　Notification Agents>Webhook>Webhook URLはここ
 # 　Webhook Method = POST
 # Triggers
-# 　Watchedを有効にする
+# 　WatchedとPlayback Stopを有効にする
 # Data>Watched
-# {
-#"start": "{started_unixtime}",
-#"end": "{unixtime}",
-#"part": "{episode_num}",
-#"tmdb": "{themoviedb_id}",
-#"show": "{season_num}x{episode_num00}",
-#"title": "{title}",
-#"syurui": "{media_type}",
-#"id": "{parent_rating_key}"
-#}
+# {"start": "{started_unixtime}", "end": "{unixtime}", "part": "{episode_num}","tmdb": "{themoviedb_id}", "show": "{season_num}x{episode_num00}", "title": "{title}", "syurui": "{media_type}", "id": "{parent_rating_key}","stream": "{session_id}", "mid": "{rating_key}","tuuti": "kansyouzumi"}
+# Data>Playback Stop
+#{"start": "{started_unixtime}", "end": "{unixtime}", "part": "{episode_num}", "tmdb": "{themoviedb_id}", "show": "{season_num}x{episode_num00}", "title": "{title}", "syurui": "{media_type}", "id": "{parent_rating_key}", "mid": "{rating_key}", "stream": "{session_id}","tuuti": "stop"}
 
 
 if(request_method eq 'POST'){
@@ -53,22 +46,31 @@ if(request_method eq 'POST'){
     my $show = $data->{show};
     my $title = $data->{title};
     my $syurui = $data->{syurui};
-    my $pid = $data->{id};
+    my $tuuti = $data->{tuuti};
+    my $stream = $data->{stream};
+    my $pid = !defined $data->{id} || $data->{id} eq '' ? $data->{mid} : $data->{id};
 	
     my $memo = $title . "→" . $show . "($syurui)";
+    $part = $syurui eq "movie" && $part + 0 == 0 ? 1 : $part;
 
     my $sid = undef;
     my $soutei_rireki = $dbh->prepare("select sid from `tautulli_match` where pid = ? limit 1");
-    $soutei_rireki->execute();
+    $soutei_rireki->execute($pid);
     while(my $v = $soutei_rireki->fetchrow_hashref){
         $sid = $v->{sid};
     }
 
     my $sousin = $query->param('POSTDATA');
 
-    my $meirei = "insert into tautulli set sid = ?, pid = ?, start = ?, jiten = ?, part = ?, status = 0, memo = ?";
-    my $sakuhin_insert = $dbh->prepare($meirei);
-	$sakuhin_insert->execute($sid, $pid, $start_jiten, $end_jiten, $part, $memo);
+    if($tuuti eq 'stop'){
+        my $meirei = "update tautulli set jiten = ?, stop = 1 where stream = ? and pid = ? and status = 0";
+        my $sakuhin_insert = $dbh->prepare($meirei);
+	    $sakuhin_insert->execute($end_jiten, $stream, $pid);
+    } else {
+        my $meirei = "insert into tautulli set sid = ?, pid = ?, start = ?, jiten = ?, part = ?, status = 0, memo = ?, stream = ?, stop = 0";
+        my $sakuhin_insert = $dbh->prepare($meirei);
+	    $sakuhin_insert->execute($sid, $pid, $start_jiten, $end_jiten, $part, $memo, $stream);
+    }
 }
 
 my $query=new CGI;

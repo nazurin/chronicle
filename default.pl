@@ -865,16 +865,17 @@ if($paginate == 1){
 		print "</div>";
 		print "<div data-kakejiku='tau' class='form tau'>";
 			print "<form method='post' action='tausyori.pl'>";
-				my $soutei_rireki = $dbh->prepare("select `tautulli`.*, `sakuhin`.`midasi`, `sakuhin`.`whole`, `sakuhin`.`josuu`, `c`.`with` from `tautulli` left join `sakuhin` on `sakuhin`.`id` = `tautulli`.`sid` left join (select a.* from `rireki` a left outer join `rireki` b on a.sid = b.sid and a.jiten < b.jiten where b.sid is null) c on `c`.`sid` = `tautulli`.`sid` where `status` = 0");
+				my $soutei_rireki = $dbh->prepare("select `tautulli`.*, `sakuhin`.`midasi`, `sakuhin`.`whole`, `sakuhin`.`josuu`, `c`.`with`, `c`.`part` as `zenpart` from `tautulli` left join `sakuhin` on `sakuhin`.`id` = `tautulli`.`sid` left join (select a.* from `rireki` a left outer join `rireki` b on a.sid = b.sid and a.jiten < b.jiten where b.sid is null) c on `c`.`sid` = `tautulli`.`sid` where `status` = 0");
 				$soutei_rireki->execute();
 				while(my $v = $soutei_rireki->fetchrow_hashref){
-					print "<div class='gyou'>";
+					print "<div class='gyou type_$v->{stop}'>";
 						print "<input type='hidden' name='id' value='$v->{id}'>";
 						print "<input type='hidden' name='pid' value='$v->{pid}'>";
 						print "<div class='hidari'>";
 						print "<div class='sinkou'>";
+							print "<input type='hidden' name='zenpart' value='${\(defined $v->{zenpart} ? $v->{zenpart} : undef)}'>";
 							print "<input type='hidden' name='genpart' value='$v->{part}'>";
-							print "<span><input type='text' name='part' value='$v->{part}' placeholder='$v->{part}'></span>";
+							print "<span><input type='text' name='part' value='${\(defined $v->{zenpart} && $v->{part} + 0 == 0 ? $v->{zenpart} : $v->{part})}' placeholder='$v->{part}'></span>";
 							print "<span>${\(Kahifu::Template::dict('SLASH'))}</span>";
 						print "</div>";
 						print "<div class='jiten'>";

@@ -1607,10 +1607,22 @@ div.podium:not(:has(div.form.tau div.gyou)) > div.kakejiku.tau {
 	display: none;
 }
 
+div.form.tau > form > div {
+	padding: 0;
+}
+
 div.form.tau > form > div,
 div.form.tau > form > div > div.hidari {
 	display: flex;
 	align-items: stretch;
+}
+
+div.form.tau > form > div.gyou.type_0 {
+	background-color: hsl(194, 100%, 95%);
+}
+
+div.form.tau > form > div.gyou.type_1 {
+	background-color: hsl(344, 100%, 95%);
 }
 
 div.form.tau > form > div > div.hidari {
@@ -1660,6 +1672,7 @@ div.form.tau > form > div > div.meirei {
 	flex-shrink: 0;
 	flex-basis: 7em;
 	display: flex;
+	background-color: white;
 }
 
 div.form.tau input[type='text'] {
