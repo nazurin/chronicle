@@ -14,6 +14,7 @@ use open qw( :std :encoding(utf8) );
 use utf8;
 use Encode qw( decode_utf8 );
 use POSIX;
+use Scalar::Util qw( looks_like_number );
 
 use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
@@ -95,7 +96,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		}
 	}
 
-	if(index($colle, $period_jiten->{$hantyuu}) == -1){
+	if(index($colle, $period_jiten->{$hantyuu}) == -1 || (index($colle, $period_jiten->{$hantyuu}) != -1 && looks_like_number(substr($colle, index($colle, $period_jiten->{$hantyuu})+5, 2)) != 1)){
 		my $tosi = substr($kaisi, 0, 4);
 		$tosi = $tosi + 0;
 		my $period = $tosi < 1930 || ($hantyuu == 9 && $tosi >= 2030) ? substr($tosi, 0, 3) . '0s' : substr($tosi, 2, 1) . '0s';
@@ -128,7 +129,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $colle_turu_sitazi = scalar @colle_try > 0 ? ", colle = ?" : "";
 	
 	#print dump @colle_try;
-	
+
 	my @bikou_split = split('\+\+', $bikou) if $bikou;
 
 	my ($al_id, $mal_id, $tmdb_id);
