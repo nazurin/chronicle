@@ -62,9 +62,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		    $tau_kousin->execute($meirei->[$j], $id->[$j]);
         }
         if($meirei->[$j] == 2 && defined $sid->[$j] && $sid->[$j] ne ''){
-            my $tau_kousin_query = "insert into `tautulli_match` (sid, pid) values (?, ?)";
+            my $tau_kousin_query = "insert into `tautulli_match` (sid, pid) select * from (select ?, ?) as t where not exists (select pid from `tautulli_match` where sid = ? and pid = ?) limit 1";
             my $tau_kousin = $dbh->prepare($tau_kousin_query);
-            $tau_kousin->execute($sid->[$j], $pid->[$j]);
+            $tau_kousin->execute($sid->[$j], $pid->[$j], $sid->[$j], $pid->[$j]);
 
             my $sakuhin_syutoku_query = ("select whole from sakuhin where `id` = ?");
 			my $sakuhin_syutoku = $dbh->prepare($sakuhin_syutoku_query);
