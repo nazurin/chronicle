@@ -149,13 +149,13 @@ my $josuu_tati_tekilang;
 for my $j (@josuu_tati){ $josuu_tati_tekilang->{$j->[0]}{ja} = defined $j->[1] ? $j->[1] : undef; $josuu_tati_tekilang->{$j->[0]}{en} = defined $j->[2] ? ' '.$j->[2] : undef; }
 
 print "Content-type: text/html; charset=utf-8\n\n";
-
 print Kahifu::Template::html_header($ami);
 print "<link rel=\"stylesheet\" href=\"/chronicle/style/sumi.css\" />";
 print "<link rel=\"stylesheet\" href=\"/chronicle/style/";
 print $style;
 print ".css\" />";
 print "<link rel=\"stylesheet\" href=\"/chronicle/style/keitai.css\" />" if Kahifu::Infra::mobile();
+print "<script src='/heart/js/nijyuurefresh.js'></script>";
 print "<script src='/heart/js/Sortable.min.js'></script>" if defined param('hensyuu') && $paginate == 2;
 print "<script src='/heart/js/jquery-sortable.js'></script>" if defined param('hensyuu') && $paginate == 2;
 print Kahifu::Template::html_saki("${\(Kahifu::Template::dict('HYOUKA_TITLE'))}<span>${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(Kahifu::Template::dict('HYOUKA_SUBTITLE'))}</span>", undef, "Hyouka");
@@ -880,7 +880,7 @@ if($paginate == 1){
 						print "</div>";
 						print "<div class='jiten'>";
 							print "<input type='hidden' name='jiten' value='$v->{jiten}'>";
-							print "<span>${\(date_split($v->{jiten}, 7, $sanjyuujikan_seido) . '&nbsp;' . date_split($v->{jiten}, 11, $sanjyuujikan_seido) . ':' . date_split($v->{jiten}, 4, $sanjyuujikan_seido))}</span>";
+							print "<span>${\(date_split($v->{jiten}, 7, $sanjyuujikan_seido) . '&nbsp;' . date_split($v->{jiten}, 11, $sanjyuujikan_seido) . ':' . sprintf(\"%02s\", date_split($v->{jiten}, 4, $sanjyuujikan_seido)))}</span>";
 						print "</div>";
 						print "<div class='midasi'>";
 							print "<sup><input type='text' name='sid' value='${\(defined $v->{sid} ? $v->{sid} : undef)}'></sup><span>${\(defined $v->{midasi} ? $v->{midasi} : undef)}</span>";
@@ -1173,7 +1173,7 @@ if($paginate == 1){
 			$turu_recall = $v->{turu};
 			$tag_recall = $v->{tag};
 			$gaiyouran_recall = $v->{gaiyouran};
-			if(!($v->{tag} eq 'period' && $v->{sort1} ne 'comic')){
+			if(!($v->{tag} eq 'period' && $v->{sort1} ne 'COMIC')){
 				my $bikou_get = $v->{bikou};
 				my $bikou_unserialized = from_json($bikou_get);
 				if(ref($bikou_unserialized) ne "ARRAY"){
