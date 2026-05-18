@@ -63,9 +63,9 @@ if(request_method eq 'POST'){
     my $sousin = $query->param('POSTDATA');
 
     if($tuuti eq 'stop'){
-        my $meirei = "update tautulli set jiten = ?, stop = 1 where stream = ? and pid = ? and status = 0";
+        my $meirei = "update tautulli set jiten = ?, stop = 1 where stream = ? and pid = ? and status = 0 and part = ?";
         my $sakuhin_insert = $dbh->prepare($meirei);
-	    $sakuhin_insert->execute($end_jiten, $stream, $pid);
+	    $sakuhin_insert->execute($end_jiten, $stream, $pid, $part);
     } else {
         my $meirei = "insert into tautulli set sid = ?, pid = ?, start = ?, jiten = ?, part = ?, status = 0, memo = ?, stream = ?, stop = 0";
         my $sakuhin_insert = $dbh->prepare($meirei);
