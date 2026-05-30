@@ -52,7 +52,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		};
 		my @kisetu_keys = keys %$kisetu;
 		for my $i (0 .. scalar @array_junban - 1){
-			my ($tosi) = index($bikou_naiyou[$i], '年') != -1 ? $bikou_naiyou[$i] =~ /([0-9]{1,4})年/ : $bikou_naiyou[$i] =~ /([0-9]{1,4})/;
+			my ($tosi) = index($bikou_naiyou[$i], '年') != -1 ? $bikou_naiyou[$i] =~ /([0-9]{1,4})年/ : (index($bikou_naiyou[$i], '冬') != -1 || index($bikou_naiyou[$i], '春') != -1 || index($bikou_naiyou[$i], '夏') != -1 || index($bikou_naiyou[$i], '秋') != -1 ? $bikou_naiyou[$i] =~ /([0-9]{1,4})[冬春夏秋]/ : $bikou_naiyou[$i] =~ /([0-9]{1,4})/);
 			my $tuki = index($bikou_naiyou[$i], '月') != -1 && (index($bikou_naiyou[$i], '月') - index($bikou_naiyou[$i], '年') == 2) ? 0 . substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-1, 1) : 
 			(index($bikou_naiyou[$i], '月') != -1 && (index($bikou_naiyou[$i], '月') - index($bikou_naiyou[$i], '年') == 3) ?
 				substr($bikou_naiyou[$i], index($bikou_naiyou[$i], '月')-2, 2) : 
@@ -64,7 +64,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 			#$tuki = substr($tuki, 1) if substr($tuki, 0, 1) eq '0';
 			#$bikou_naiyou[$i] = $tosi . '年' . $tuki . '月' . $hi . '日';
 		}
-		#die dump @leading_bikou_naiyou;
+#		die dump @leading_bikou_naiyou;
 		my @sort_arrange = sort { $leading_bikou_naiyou[$a] cmp $leading_bikou_naiyou[$b] } 0 .. $#leading_bikou_naiyou;
 		@array_junban = @array_junban[@sort_arrange];
 		@bikou_naiyou = @bikou_naiyou[@sort_arrange];
