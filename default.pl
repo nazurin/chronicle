@@ -879,6 +879,7 @@ if($paginate == 1){
 							print "<span>${\(Kahifu::Template::dict('SLASH'))}</span>";
 						print "</div>";
 						print "<div class='jiten'>";
+							print "<input type='hidden' name='hajimari' value='$v->{start}'>";
 							print "<input type='hidden' name='jiten' value='$v->{jiten}'>";
 							print "<span>${\(date_split($v->{jiten}, 7, $sanjyuujikan_seido) . '&nbsp;' . date_split($v->{jiten}, 11, $sanjyuujikan_seido) . ':' . sprintf(\"%02s\", date_split($v->{jiten}, 4, $sanjyuujikan_seido)))}</span>";
 						print "</div>";
