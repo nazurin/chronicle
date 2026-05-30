@@ -520,7 +520,12 @@ div.dendou_siborikomi > input {
 	margin-right: 0em;
 }
 
-div.dendou > div.cour > div.gyou.type_3 > div.jusyou:not(:has(span.mitei)) {
+div.dendou > div.cour > div.gyou.type_3 > div.bumon {
+	width: 9em;
+	flex-basis: 9em;
+}
+
+div.dendou > div.cour > div.gyou.type_3 > div.jusyou {
 	margin-left: 1em;
 }
 
