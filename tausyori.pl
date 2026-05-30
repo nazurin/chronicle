@@ -37,6 +37,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
     my $part = defined $params{'part'} && $params{'part'} ne '' ? (ref $params{'part'} eq 'ARRAY' ? $params{'part'} : [$params{'part'}]) : undef;
     my $whole = defined $params{'whole'} && $params{'whole'} ne '' ? (ref $params{'whole'} eq 'ARRAY' ? $params{'whole'} : [$params{'whole'}]) : undef;
     my $josuu = defined $params{'josuu'} && $params{'josuu'} ne '' ? (ref $params{'josuu'} eq 'ARRAY' ? $params{'josuu'} : [$params{'josuu'}]) : undef;
+    my $hajimari = defined $params{'hajimari'} && $params{'hajimari'} ne '' ? (ref $params{'hajimari'} eq 'ARRAY' ? $params{'hajimari'} : [$params{'hajimari'}]) : undef;
     my $jiten = defined $params{'jiten'} && $params{'jiten'} ne '' ? (ref $params{'jiten'} eq 'ARRAY' ? $params{'jiten'} : [$params{'jiten'}]) : undef;
     my $memo = defined $params{'memo'} && $params{'memo'} ne '' ? (ref $params{'memo'} eq 'ARRAY' ? $params{'memo'} : [$params{'memo'}]) : undef;
     my $with = defined $params{'with'} && $params{'with'} ne '' ? (ref $params{'with'} eq 'ARRAY' ? $params{'with'} : [$params{'with'}]) : undef;
@@ -66,28 +67,48 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
             my $tau_kousin = $dbh->prepare($tau_kousin_query);
             $tau_kousin->execute($sid->[$j], $pid->[$j], $sid->[$j], $pid->[$j]);
 
-            my $sakuhin_syutoku_query = ("select whole from sakuhin where `id` = ?");
+            my $sakuhin_syutoku_query = ("select whole, yotei from sakuhin where `id` = ?");
 			my $sakuhin_syutoku = $dbh->prepare($sakuhin_syutoku_query);
 			$sakuhin_syutoku->execute($sid->[$j]);
 			my $v = $sakuhin_syutoku->fetchrow_hashref;
 			my $whole = $v->{whole};
+            my $yotei = $v->{yotei};
 
             my $ua = LWP::UserAgent->new();
             $ua->agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:143.0) Gecko/20100101 Firefox/143.0");
-            my $response = $ua->post($abs_url,
-            "Cookie" => $ENV{HTTP_COOKIE},
-            Content => {
-                'reference' => $sid->[$j],
-                'part' => $part->[$j],
-                'whole' => $whole,
-                'josuu' => '儘',
-                'title' => $memo->[$j],
-                'with' => $with->[$j],
-                'unix_owari' => $jiten->[$j],
-                'mode' => $mode->[$j],
-                'jikoku_mikakutei' => 0,
-                'ikkatu' => 1
-            });
+            my $response;
+            if($yotei == 1){
+                $response = $ua->post($abs_url,
+                "Cookie" => $ENV{HTTP_COOKIE},
+                Content => {
+                    'reference' => $sid->[$j],
+                    'part' => $part->[$j],
+                    'whole' => $whole,
+                    'josuu' => '儘',
+                    'title' => $memo->[$j],
+                    'with' => $with->[$j],
+                    'unix_owari' => $jiten->[$j],
+                    'unix_hajimari' => $hajimari->[$j],
+                    'mode' => $mode->[$j],
+                    'jikoku_mikakutei' => 0,
+                    'ikkatu' => 1
+                });
+            } else {
+                $response = $ua->post($abs_url,
+                "Cookie" => $ENV{HTTP_COOKIE},
+                Content => {
+                    'reference' => $sid->[$j],
+                    'part' => $part->[$j],
+                    'whole' => $whole,
+                    'josuu' => '儘',
+                    'title' => $memo->[$j],
+                    'with' => $with->[$j],
+                    'unix_owari' => $jiten->[$j],
+                    'mode' => $mode->[$j],
+                    'jikoku_mikakutei' => 0,
+                    'ikkatu' => 1
+                });
+            }
             my $content = $response->as_string();
             #die dump $content;
         }
