@@ -193,7 +193,7 @@ sub with_sengen {
 #
 
 if(defined param('id') && param('id')){
-	my $sakuhin_query = "select * from sakuhin where id = ?";
+	my $sakuhin_query = "select * from sakuhin s left join img_sansyou i on s.id = i.sid where s.id = ?";
 	my $sakuhin_syutoku = $dbh->prepare($sakuhin_query);
 	my $passthrough_id = param('id');
 	$sakuhin_syutoku->execute($passthrough_id);
@@ -201,8 +201,12 @@ if(defined param('id') && param('id')){
 	my @sakuhin_colle = split ',', $sakuhin_info->{$passthrough_id}{colle};
 	my $colle_placeholders = join ", ", ("?") x @sakuhin_colle;
 	my $seed = $sakuhin_info->{$passthrough_id}{time};
-	print "<div class='sakuhinbako' style=\"background-image: url('${\(image_makase('flower/png', $seed+1))}')\">";
-		print "<div class='hidari' style=\"background-image: url('${\(image_makase('flower/png', $seed))}')\">";
+	my $haikei = defined $sakuhin_info->{$passthrough_id}{haikei} ? ", linear-gradient(to left, transparent 0%, #fff 80%), linear-gradient(to bottom, transparent 0%, #fff 400px), url('https://image.tmdb.org/t/p/w400" . $sakuhin_info->{$passthrough_id}{haikei} . "')" : '';
+	my $haikei_size = defined $sakuhin_info->{$passthrough_id}{haikei} ? ", contain" : "";
+	my $haikei_blend = defined $sakuhin_info->{$passthrough_id}{haikei} ? "normal, multiply, normal, normal" : "normal";
+	my $haikei_position = defined $sakuhin_info->{$passthrough_id}{haikei} ? "top left, top right, bottom right" : "top left, bottom right";
+	print "<div class='sakuhinbako' style=\"background-size: auto, auto, auto, auto${haikei_size}; background-image: url('${\(image_makase('flower/png', $seed))}'), url('${\(image_makase('flower/png', $seed+1))}')${haikei}; background-blend-mode: ${haikei_blend}; background-position: ${haikei_position}\">";
+		print "<div class='hidari' style=\"\">";
 			print "<a class='modoru' href='${\(url_get_hazusi(\%url_get, 'id'))}'>${\(Kahifu::Template::dict('MODORU'))}</a>";
 			#my $betudai;
 			#$betudai->{midasi} = from_json($sakuhin_info->{$passthrough_id}{betumei}) if defined $sakuhin_info->{$passthrough_id}{betumei} && $sakuhin_info->{$passthrough_id}{betumei};
@@ -211,12 +215,7 @@ if(defined param('id') && param('id')){
 			print "<div class='heading' style='text-shadow: 0px -1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), 0px 1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), -1px 0px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), 1px 0px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), 1px 1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), -1px 1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), -1px -1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), 1px -1px 0.5px hsl(${\(color_makase($seed, 360))}, 59%, 55%), 2px 2px 1px hsl(${\(color_makase($seed, 360))}, 100%, 25%); color: hsl(${\(color_makase($seed, 360)+10)}, 100%, 88%);'>";
 				my $sakuhin_midasi = midasi_settei(midasi_tekisetuka($sakuhin_info->{$passthrough_id}{midasi}, $sakuhin_info->{$passthrough_id}{betumei}, $sakuhin_info->{$passthrough_id}{colle}, $sitei_gengo));
 				if($sakuhin_midasi =~ /[\p{Han}\p{Hiragana}\p{Katakana}]/){
-					my @sakuhin_midasi_char = split //, $sakuhin_midasi;
-					print "<span class='fuji'>";
-					for my $i (0 .. scalar @sakuhin_midasi_char - 1){
-						print "<span>$sakuhin_midasi_char[$i]</span>";
-					}
-					print "</span>";
+					print Kahifu::Infra::fuji($sakuhin_midasi);
 				} else {
 					print "<span class='hiwabun'>$sakuhin_midasi</span>";
 				}
