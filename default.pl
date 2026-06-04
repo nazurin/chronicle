@@ -892,9 +892,9 @@ if($paginate == 1){
 							print "</div>";
 						print "</div>";
 						print "<div class='meirei'>";
-							print "<input class='musi' id='$v->{sid}_$v->{jiten}0' name='meirei_$v->{sid}_$v->{jiten}' type='radio' value='0' checked='checked'><label for='$v->{sid}_$v->{jiten}0'>無視</label>";
-							print "<input class='kyakka'  id='$v->{sid}_$v->{jiten}1' name='meirei_$v->{sid}_$v->{jiten}' type='radio' value='1'><label for='$v->{sid}_$v->{jiten}1'>却下</label>";
-							print "<input class='juri'  id='$v->{sid}_$v->{jiten}2' name='meirei_$v->{sid}_$v->{jiten}' type='radio' value='2'><label for='$v->{sid}_$v->{jiten}2'>受理</label>";
+							print "<input class='musi' id='$v->{sid}_$v->{jiten}0' name='meirei_$v->{id}' type='radio' value='0' checked='checked'><label for='$v->{sid}_$v->{jiten}0'>無視</label>";
+							print "<input class='kyakka'  id='$v->{sid}_$v->{jiten}1' name='meirei_$v->{id}' type='radio' value='1'><label for='$v->{sid}_$v->{jiten}1'>却下</label>";
+							print "<input class='juri'  id='$v->{sid}_$v->{jiten}2' name='meirei_$v->{id}' type='radio' value='2'><label for='$v->{sid}_$v->{jiten}2'>受理</label>";
 						print "</div>";
 					print "</div>";
 				}

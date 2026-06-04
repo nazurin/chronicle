@@ -43,20 +43,16 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
     my $with = defined $params{'with'} && $params{'with'} ne '' ? (ref $params{'with'} eq 'ARRAY' ? $params{'with'} : [$params{'with'}]) : undef;
     my $mode = defined $params{'mode'} && $params{'mode'} ne '' ? (ref $params{'mode'} eq 'ARRAY' ? $params{'mode'} : [$params{'mode'}]) : undef;
 
-    #die dump %params;
     my $meirei;
-    my @param_keys = keys %params;
-    for my $i (0 .. scalar @param_keys - 1){
-        if(index($param_keys[$i], 'meirei') != -1){
-            push @{$meirei}, $params{$param_keys[$i]};
-        }
+    for my $i (0 .. scalar @$id - 1){
+        push @{$meirei}, $params{'meirei_' . $id->[$i]};
     }
 
     my $abs_url = URI->new( CGI::url(-full => 1) ) . '';
     my $page_url = URI->new( CGI::url(-relative => 1) ) . '';
     $abs_url =~ s/$page_url/kousin.pl/;
 
-    for my $j (reverse 0 .. scalar @{$meirei} - 1){
+    for my $j (0 .. scalar @{$meirei} - 1){
         if($meirei->[$j] != 0){
             my $tau_kousin_query = "update `tautulli` set status = ? where id = ?";
 		    my $tau_kousin = $dbh->prepare($tau_kousin_query);
