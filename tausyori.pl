@@ -56,7 +56,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
     my $page_url = URI->new( CGI::url(-relative => 1) ) . '';
     $abs_url =~ s/$page_url/kousin.pl/;
 
-    for my $j (0 .. scalar @{$meirei} - 1){
+    for my $j (reverse 0 .. scalar @{$meirei} - 1){
         if($meirei->[$j] != 0){
             my $tau_kousin_query = "update `tautulli` set status = ? where id = ?";
 		    my $tau_kousin = $dbh->prepare($tau_kousin_query);
