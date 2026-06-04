@@ -1789,6 +1789,7 @@ div.sakuhinbako > div.hidari > div.subheading {
 div.sakuhinbako > div.hidari > div.sakka {
 	text-align: right;
 	margin-right: 0.5em;
+	text-shadow: 1px 1px white;
 }
 
 div.sakuhinbako > div.hidari > div.bunsyou {
