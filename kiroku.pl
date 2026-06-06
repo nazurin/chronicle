@@ -96,7 +96,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 		}
 	}
 
-	if(index($colle, $period_jiten->{$hantyuu}) == -1 || (index($colle, $period_jiten->{$hantyuu}) != -1 && looks_like_number(substr($colle, index($colle, $period_jiten->{$hantyuu})+5, 2)) != 1) && substr($colle, index($colle, $period_jiten->{$hantyuu})+7, 1) eq 's'){
+	if(!($colle =~ /$period_jiten->{$hantyuu}\d{2,4}s/)){
 		my $tosi = substr($kaisi, 0, 4);
 		$tosi = $tosi + 0;
 		my $period = $tosi < 1930 || ($hantyuu == 9 && $tosi >= 2030) ? substr($tosi, 0, 3) . '0s' : substr($tosi, 2, 1) . '0s';
