@@ -987,7 +987,7 @@ if($paginate == 1){
 				print "</div>";
 				print "<div class='hantyuu'>";
 					print "<a href='${\(url_get_tuke(\%url_get, 'id', $v->{id}))}'>";
-					print "${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}";
+					print "${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu} . (defined $v->{fukuhantyuu} && $v->{fukuhantyuu} > 0 ? '_' . $v->{fukuhantyuu} : '' ) ))}";
 					print "</a>";
 				print "</div>";
 				print "<div class='ten'>", $v->{point}, "</div>" if $narabi == 4;
@@ -1102,7 +1102,7 @@ if($paginate == 1){
 					print "<input type='hidden' name='reference' value='$v->{id}'>";
 					print "<div class='midasi_kousin'>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_TITLE'))}</div><div><input type='text' size='30' placeholder='$v->{midasi}' name='midasi' value=\"", $v->{midasi}//'',"\"></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='", ${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}//'', "'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='", ${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu} . (defined $v->{fukuhantyuu} && $v->{fukuhantyuu} > 0 ? '_' . $v->{fukuhantyuu} : '' ) ))}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SUBTITLE'))}</div><div><input type='text' size='30' placeholder='", $v->{fukumidasi}//'', "' name='fukumidasi' value='", $v->{fukumidasi}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</div><div><input type='text' size='20' placeholder='", $v->{sakka}//'', "' name='sakka' value='", $v->{sakka}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div><div><input type='text' size='20' name='kanri' value=''></div></div>";
@@ -1296,7 +1296,7 @@ if($paginate == 1){
 					print "</span>";
 				print "</div>";
 				print "<div class='hantyuu'>";
-					print "${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $w->{hantyuu}))}";
+					print "${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $w->{hantyuu} . (defined $w->{fukuhantyuu} && $w->{fukuhantyuu} > 0 ? '_' . $w->{fukuhantyuu} : '' ) ))}";
 				print "</div>";
 				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' && defined $bikou_recall; return date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) if !defined $bikou_recall; }->() )}</span></div>" if !defined param('hensyuu') && (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}} && $bikou->{$w->{id}} ne '';
 				print "<div class='bikou migi'><textarea rows=1 id='colle_box' name='test'>", ${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )},"</textarea></div>" if defined param('hensyuu');
