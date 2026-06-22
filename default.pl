@@ -1102,7 +1102,7 @@ if($paginate == 1){
 					print "<input type='hidden' name='reference' value='$v->{id}'>";
 					print "<div class='midasi_kousin'>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_TITLE'))}</div><div><input type='text' size='30' placeholder='$v->{midasi}' name='midasi' value=\"", $v->{midasi}//'',"\"></div></div>";
-						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='", ${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu} . (defined $v->{fukuhantyuu} && $v->{fukuhantyuu} > 0 ? '_' . $v->{fukuhantyuu} : '' ) ))}//'', "'></div></div>";
+						print "<div><div>${\(Kahifu::Template::dict('KIROKU_HANTYUU'))}</div><div><input type='text' size='15' placeholder='$v->{hantyuu}' name='hantyuu' value='", ${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu} . (defined $v->{fukuhantyuu} && $v->{fukuhantyuu} > 0 ? (defined Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu} . '_N' . $v->{fukuhantyuu} ) ? '_N' . $v->{fukuhantyuu} : '_' . $v->{fukuhantyuu} ) : '' ) ))}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SUBTITLE'))}</div><div><input type='text' size='30' placeholder='", $v->{fukumidasi}//'', "' name='fukumidasi' value='", $v->{fukumidasi}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_SAKKA'))}</div><div><input type='text' size='20' placeholder='", $v->{sakka}//'', "' name='sakka' value='", $v->{sakka}//'', "'></div></div>";
 						print "<div><div>${\(Kahifu::Template::dict('KIROKU_BETUMEI'))}</div><div><input type='text' size='20' name='kanri' value=''></div></div>";
