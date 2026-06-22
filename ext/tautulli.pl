@@ -48,9 +48,10 @@ if(request_method eq 'POST'){
     my $syurui = $data->{syurui};
     my $tuuti = $data->{tuuti};
     my $stream = $data->{stream};
+    my $player = $data->{player};
     my $pid = !defined $data->{id} || $data->{id} eq '' ? $data->{mid} : $data->{id};
 	
-    my $memo = $title . "→" . $show . "($syurui)";
+    my $memo = $title . "→" . $show . "($syurui)" . "@${player}";
     $part = $syurui eq "movie" && $part + 0 == 0 ? 1 : $part;
 
     my $sid = undef;
