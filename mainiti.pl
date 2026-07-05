@@ -168,9 +168,11 @@ if(Kahifu::Template::tenmei()){
         my $turu_sitazi;
         for(my $i=0; $i<scalar(@turu); $i++){ $turu_sitazi .= '?, ' }
         $turu_sitazi =~ s/,\s*$//; #　後端のコンマを削除す
-        my $yotei_kakunin_query = "select id from sakuhin where (yotei <> 1 or yotei is null) and `id` in ($turu_sitazi) and colle like '%$v->{midasi_seisiki}%'";
+        $turu_sitazi = 0 if !defined $turu_sitazi;
+        my $yotei_kakunin_query = "select id from sakuhin where (yotei <> 1 or yotei is null) and `id` in ($turu_sitazi) and colle like ?";
+        #die dump $yotei_kakunin_query;
         my $yotei_kakunin_syutoku = $dbh->prepare($yotei_kakunin_query);
-        $yotei_kakunin_syutoku->execute(@turu);
+        $yotei_kakunin_syutoku->execute(@turu, "%$v->{midasi_seisiki}%");
         $waku_id->{$v->{sort1}} = defined $waku_id->{$v->{sort1}} ? $waku_id->{$v->{sort1}} : ($waku_id ? (scalar keys %{$waku_id}) : 0);
         my $turu_syorizumi = $yotei_kakunin_syutoku->fetchall_arrayref();
         $config->{hantyuu}{jyouhou}{total}{waku}[$waku_id->{$v->{sort1}}] = {
