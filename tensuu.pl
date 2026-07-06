@@ -54,11 +54,11 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 
 	my $param_tensuu_kojin = param('tensuu_kojin') ne '' ? decode_utf8(param('tensuu_kojin')) : undef;
 	my @param_tensuu_mal_pt_turu = split /:/, param('tensuu_mal_pt');
-	my $param_tensuu_mal_pt = $param_tensuu_mal_pt_turu[0] ne '' ? decode_utf8($param_tensuu_mal_pt_turu[0]) : undef;
+	my $param_tensuu_mal_pt = defined $param_tensuu_mal_pt_turu[0] && $param_tensuu_mal_pt_turu[0] ne '' ? decode_utf8($param_tensuu_mal_pt_turu[0]) : undef;
 	my @param_tensuu_al_pt_turu = split /:/, param('tensuu_al_pt');
-	my $param_tensuu_al_pt = $param_tensuu_al_pt_turu[0] ne '' ? decode_utf8($param_tensuu_al_pt_turu[0]) : undef;
-	my $hard_kousin_mal = $param_tensuu_mal_pt_turu[1] eq 'hard' ? 1 : 0;
-	my $hard_kousin_al = $param_tensuu_al_pt_turu[1] eq 'hard' ? 1 : 0;
+	my $param_tensuu_al_pt = defined $param_tensuu_mal_pt_turu[0] && $param_tensuu_al_pt_turu[0] ne '' ? decode_utf8($param_tensuu_al_pt_turu[0]) : undef;
+	my $hard_kousin_mal = defined $param_tensuu_mal_pt_turu[1] && $param_tensuu_mal_pt_turu[1] eq 'hard' ? 1 : 0;
+	my $hard_kousin_al = defined $param_tensuu_mal_pt_turu[1] && $param_tensuu_al_pt_turu[1] eq 'hard' ? 1 : 0;
 	my $param_tensuu_bl_pt = param('tensuu_bl_pt') ne '' ? decode_utf8(param('tensuu_bl_pt')) : undef;
 
 	my (@sitazi_bind, $tensuu_sitazi);
