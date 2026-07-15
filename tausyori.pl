@@ -67,7 +67,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 			my $sakuhin_syutoku = $dbh->prepare($sakuhin_syutoku_query);
 			$sakuhin_syutoku->execute($sid->[$j]);
 			my $v = $sakuhin_syutoku->fetchrow_hashref;
-			my $whole = $v->{whole};
+            my $tou_whole = defined $whole->[$j] && $whole->[$j] ne '' ? $whole->[$j] : $v->{whole};
             my $yotei = $v->{yotei};
 
             my $ua = LWP::UserAgent->new();
@@ -79,7 +79,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
                 Content => {
                     'reference' => $sid->[$j],
                     'part' => $part->[$j],
-                    'whole' => $whole,
+                    'whole' => $tou_whole,
                     'josuu' => '儘',
                     'title' => $memo->[$j],
                     'with' => $with->[$j],
@@ -95,7 +95,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
                 Content => {
                     'reference' => $sid->[$j],
                     'part' => $part->[$j],
-                    'whole' => $whole,
+                    'whole' => $tou_whole,
                     'josuu' => '儘',
                     'title' => $memo->[$j],
                     'with' => $with->[$j],

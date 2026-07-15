@@ -396,7 +396,7 @@ if(defined param('id') && param('id')){
 							print "<span style='color: hsl(${\( sub { return $with_color{$with[$p]} if defined $with_color{$with[$p]}; }->() )}, 1)'>${\( sub { return $with_kigou{$with[$p]} if defined $with_kigou{$with[$p]}; }->() )}</span>" if defined $p;
 						}
 						print "</div>";
-						print "<div class='sintyoku'>", $v->{part}, '／', $v->{whole}, $josuu_tati_tekilang->{$v->{josuu}}{"$Kahifu::Junbi::lang"}, "</div>";
+						print "<div class='sintyoku'>$v->{part}／$v->{whole}${\($josuu_tati_tekilang->{$v->{josuu}}{$Kahifu::Junbi::lang} or '')}</div>";
 						print "<div class='memo'>${\(midasi_settei($v->{text}))}</div>" if defined $v->{text};
 					print "</div>";
 					print "<div class='gyou hensyuu' data-rireki='", $v->{id}, "'>";
@@ -876,6 +876,7 @@ if($paginate == 1){
 							print "<input type='hidden' name='genpart' value='$v->{part}'>";
 							print "<span><input type='text' name='part' value='${\(defined $v->{zenpart} && $v->{part} + 0 == 0 ? $v->{zenpart} : $v->{part})}' placeholder='$v->{part}'></span>";
 							print "<span>${\(Kahifu::Template::dict('SLASH'))}</span>";
+							print "<span><input type='text' name='whole' value='' placeholder='${\(defined $v->{whole} ? $v->{whole} : undef)}'></span>";
 						print "</div>";
 						print "<div class='jiten'>";
 							print "<input type='hidden' name='hajimari' value='$v->{start}'>";
@@ -888,7 +889,7 @@ if($paginate == 1){
 						print "<div class='dainigyou'>";
 							print "<div class='with'><span>with</span><input type='text' name='with' value='${\(defined $v->{with} ? $v->{with} : undef)}' placeholder='${\(defined $v->{with} ? $v->{with} : undef)}'></div>";
 							print "<div class='mode'><select placeholder='${\(Kahifu::Template::dict('HEADING_JYOUKYOU'))}' name='mode'><option value='0'>${\(Kahifu::Template::dict('KOUSIN_MAKASE'))}</option><option value='1'>${\(Kahifu::Template::dict('KOUSIN_TUMU'))}</option><option value='2'>${\(Kahifu::Template::dict('KOUSIN_OTOSU'))}</option><option value='3'>${\(Kahifu::Template::dict('KOUSIN_SAI'))}</option><option value='7' disabled>${\(Kahifu::Template::dict('KOUSIN_MOTO'))}</option><option value='4'>${\(Kahifu::Template::dict('KOUSIN_TOBU'))}</option><option value='5'>${\(Kahifu::Template::dict('KOUSIN_HAPPA'))}</option></select></div>";
-							print "<div class='memo'><span>memo</span><input type='text' value='' placeholder='${\(defined $v->{memo} ? $v->{memo} : undef)}'></div>";
+							print "<div class='memo'><span>memo</span><input type='text' name='memo' value='' placeholder='${\(defined $v->{memo} ? $v->{memo} : undef)}'></div>";
 							print "</div>";
 						print "</div>";
 						print "<div class='meirei'>";
