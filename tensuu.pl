@@ -27,9 +27,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
 	my $id = defined param('reference') && param('reference') ? decode_utf8(param('reference')) : "";	
 	my $jiten = time();
+	my $reference = param('reference');
 	my $info_sitami_query = "select id, hantyuu, part, josuu, jyoukyou, hajimari, owari, kakusu, point, mal_id, al_id, mal_pt, al_pt, bl_pt from sakuhin where id = ?";
 	my $info_sitami_syutoku = $dbh->prepare($info_sitami_query);
-	$info_sitami_syutoku->execute(param('reference'));
+	$info_sitami_syutoku->execute($reference);
 	my $info_sitami = $info_sitami_syutoku->fetchall_hashref('id');
 	my $tensuu_kojin = $info_sitami->{param('reference')}{point};
 	my $tensuu_mal_pt = $info_sitami->{param('reference')}{mal_pt};
@@ -56,9 +57,9 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei()){
 	my @param_tensuu_mal_pt_turu = split /:/, param('tensuu_mal_pt');
 	my $param_tensuu_mal_pt = defined $param_tensuu_mal_pt_turu[0] && $param_tensuu_mal_pt_turu[0] ne '' ? decode_utf8($param_tensuu_mal_pt_turu[0]) : undef;
 	my @param_tensuu_al_pt_turu = split /:/, param('tensuu_al_pt');
-	my $param_tensuu_al_pt = defined $param_tensuu_mal_pt_turu[0] && $param_tensuu_al_pt_turu[0] ne '' ? decode_utf8($param_tensuu_al_pt_turu[0]) : undef;
+	my $param_tensuu_al_pt = defined $param_tensuu_al_pt_turu[0] && $param_tensuu_al_pt_turu[0] ne '' ? decode_utf8($param_tensuu_al_pt_turu[0]) : undef;
 	my $hard_kousin_mal = defined $param_tensuu_mal_pt_turu[1] && $param_tensuu_mal_pt_turu[1] eq 'hard' ? 1 : 0;
-	my $hard_kousin_al = defined $param_tensuu_mal_pt_turu[1] && $param_tensuu_al_pt_turu[1] eq 'hard' ? 1 : 0;
+	my $hard_kousin_al = defined $param_tensuu_al_pt_turu[1] && $param_tensuu_al_pt_turu[1] eq 'hard' ? 1 : 0;
 	my $param_tensuu_bl_pt = param('tensuu_bl_pt') ne '' ? decode_utf8(param('tensuu_bl_pt')) : undef;
 
 	my (@sitazi_bind, $tensuu_sitazi);
