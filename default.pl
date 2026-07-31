@@ -158,7 +158,7 @@ print "<link rel=\"stylesheet\" href=\"/chronicle/style/keitai.css\" />" if Kahi
 print "<script src='/heart/js/nijyuurefresh.js'></script>";
 print "<script src='/heart/js/Sortable.min.js'></script>" if defined param('hensyuu') && $paginate == 2;
 print "<script src='/heart/js/jquery-sortable.js'></script>" if defined param('hensyuu') && $paginate == 2;
-print Kahifu::Template::html_saki("${\(Kahifu::Template::dict('HYOUKA_TITLE'))}<span>${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(Kahifu::Template::dict('HYOUKA_SUBTITLE'))}</span>", undef, "Hyouka");
+print Kahifu::Template::html_saki("${\(Kahifu::Template::dict('HYOUKA_TITLE'))}<span>${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(Kahifu::Template::dict('HYOUKA_SUBTITLE'))}</span>", undef, "Hyouka", 0);
 
 #withの準備をする
 my ($with_list, @with_party, %with_kigou, %with_color);
