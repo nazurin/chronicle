@@ -1565,6 +1565,13 @@ div.rireki_box > div.koumoku.lang_ja > div.bikou {
 	margin-left: 6.25em;
 }
 
+div.rireki_box > div.koumoku.type_700 > div.bikou:not(:has(span.syurui.type_7)) {
+	background-color: hsla(0, 0%, 100%, 0.88);
+	color: hsla(0, 0%, 0%, 0.8);
+	padding: 0.25em;
+	margin-top: 0.25em;
+}
+
 div.form.kiroku,
 div.form.colle_info {
 	display: none;
@@ -1849,7 +1856,7 @@ div.sakuhinbako > div.hidari > div.kutikomi a:link,
 div.koumoku.type_700 a:link,
 div.sakuhinbako > div.hidari > div.kutikomi a:visited,
 div.koumoku.type_700 a:visited {
-	color: azure;
+	color: blue;
 }
 
 div.sakuhinbako > div.hidari > div.kutikomi > div.header {
@@ -1907,7 +1914,7 @@ div.sakuhinbako > div.hidari > div.kutikomi > div.naiyou > p.empty {
 	display: none;
 }
 
-div.sakuhinbako > div.hidari > div.kutikomi.type_7 > div.naiyou > span {
+div.sakuhinbako > div.hidari > div.kutikomi.type_7 > div.naiyou > span:not(.kyoutyou) {
 	font-weight: bold;
 }
 
