@@ -388,7 +388,7 @@ if(defined param('id') && param('id')){
 				while(my $v = $rireki_syutoku->fetchrow_hashref){
 					print "<div class='gyou' data-rireki='${\( sub { return $v->{id} if defined $v->{id} }->() )}'>";
 						print "<div class='jiten${\( sub { return ' mikakutei' if defined $v->{mkt} && $v->{mkt}==1 }->() )}'>", date($v->{jiten}, $v->{mkt}, 1), "</div>";
-						print "<div class='jyou'>", jyoukyou_settei($v->{jyoukyou}, $sakuhin_info->{$passthrough_id}{hajimari}, $v->{owari}, 609, $sakuhin_info->{$passthrough_id}{eternal}), "</div>";
+						print "<div class='jyou'>", jyoukyou_settei($v->{jyoukyou}, $sakuhin_info->{$passthrough_id}{hajimari}, $v->{owari}, 609, $sakuhin_info->{$passthrough_id}{eternal}, $sakuhin_info->{$passthrough_id}{syuuryou}), "</div>";
 						print "<div class='with'>";
 						my @with;
 						@with = split /,/,$v->{with} if defined $v->{with};
@@ -589,7 +589,7 @@ if($paginate == 1){
 		}
 	}
 
-	@meirei = ("select reki.*, saku.midasi, saku.betumei, saku.colle, saku.hantyuu, saku.kakusu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, saku.hantyuu as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 as `with`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, saku.betumei as betumei, saku.colle as colle, 700 as hantyuu, kutikomi.kakusu from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
+	@meirei = ("select reki.*, saku.midasi, saku.betumei, saku.colle, saku.hantyuu, saku.kakusu, saku.syuuryou from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status and reki.jiten >= ? and reki.jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} union all select 0 as unchanged_status, 0 as id, sid, jiten, saku.hantyuu as part, 0 as whole, syurui as jyoukyou, 0 as josuu, 0 as mkt, `text`, 0 as `with`, 0 `\@partpre := part`, 0 as `\@sidpre=sid`, saku.midasi as midasi, saku.betumei as betumei, saku.colle as colle, 700 as hantyuu, kutikomi.kakusu, saku.syuuryou as syuuryou from kutikomi left join sakuhin saku on kutikomi.sid = saku.id where jiten >= ? and jiten <= ? ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by jiten desc;", "select reki.jiten, saku.hantyuu from (select (\@partpre = part and \@sidpre=sid and `jyoukyou` not in ('終','葉','中')) as unchanged_status, rireki.*, \@partpre := part, \@sidpre := sid from rireki, (select \@partpre:=NULL, \@sidpre:=NULL) as x order by sid, jiten) as reki left join sakuhin saku on reki.sid = saku.id where not unchanged_status ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} and reki.jiten >= ? and reki.jiten <= ? order by jiten desc;");
 } elsif ($paginate == 4){
 	# 音楽室の準備…
 	if(!defined $config->{kousinji} || date_split(time(), 50) ne date_split($config->{kousinji}, 50)){
@@ -974,7 +974,7 @@ if($paginate == 1){
 					print "<span class='sakka'>" . sakka_settei(midasi_tekisetuka($v->{sakka}, $v->{sakkabetumei}, $v->{colle}, $sitei_gengo), $kensaku) . "</span>" if defined $v->{sakka};				
 				print "</div>";
 				print "<div class='jyou'>";
-					my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, $v->{hajimari}, $v->{owari}, $v->{current}, $v->{eternal});
+					my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, $v->{hajimari}, $v->{owari}, $v->{current}, $v->{eternal}, $v->{syuuryou});
 					print "<div title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $jyoukyou_type{$jyoukyou_syori}))}' class='jyoukyou' data-jyoutype='$v->{jyoukyou}' data-jyoukyou='$v->{id}'>";
 						print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 						print $jyoukyou_syori;
@@ -1060,7 +1060,7 @@ if($paginate == 1){
 						print "<div class='rireki_kakera'>";
 							print "<div class='rirekinai_jyoukyou'>";
 								print "<div title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $jyoukyou_type{$jyoukyou_syori}))}' class='jyoukyou'>";
-								my $jyoukyou_syori = jyoukyou_settei($_->[5], $_->[2], $_->[2], 609, 609);
+								my $jyoukyou_syori = jyoukyou_settei($_->[5], $_->[2], $_->[2], 609, 609, $v->{syuuryou});
 								print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 								print $jyoukyou_syori;
 								print "</div>";
@@ -1284,7 +1284,7 @@ if($paginate == 1){
 				print "</div>";
 				print "<div class='jyou'>";
 					print "<div class='jyoukyou' data-jyoutype='$w->{jyoukyou}' data-jyoukyou='$w->{id}'>";
-						my $jyoukyou_syori = jyoukyou_settei($w->{jyoukyou}, $w->{hajimari}, $w->{owari}, 90, $w->{eternal});
+						my $jyoukyou_syori = jyoukyou_settei($w->{jyoukyou}, $w->{hajimari}, $w->{owari}, 90, $w->{eternal}, $w->{syuuryou});
 						print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 						print $jyoukyou_syori;
 						$jyoukyou_colle{$jyoukyou_syori}++;
@@ -1693,7 +1693,7 @@ if($paginate == 1){
 				if($v->{hantyuu} != 700){
 				print "<div class='jyou'>";
 					print "<div class='jyoukyou' data-jyoutype='$v->{jyoukyou}' data-jyoukyou='$v->{id}'>";
-						my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, 0, $v->{jiten}, 609, 609);
+						my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, 0, $v->{jiten}, 609, 609, $v->{syuuryou});
 						print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 						print $jyoukyou_syori;
 						print "</span>";
