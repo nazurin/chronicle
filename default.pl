@@ -1399,7 +1399,7 @@ if($paginate == 1){
 			print "<input type='hidden' name='siborikomu_form' value='1'>";
 			print "<div class='hajimari'>";
 				print "<span class='midasi'>${\(Kahifu::Template::dict('TAISYOUJIKANTAI'))}</span>";
-				print "<span class='jikan'><input name='yuukoukikan' placeholder='${\(defined param('kikan') ? param('kikan') : 1980 )}' value='${\(defined param('kikan') ? param('kikan') : undef )}'><span>" . Kahifu::Template::dict('TOSI')."</span></span>";
+				print "<span class='jikan'><input name='yuukoukikan' placeholder='${\(defined param('kikan') ? param('kikan') : 1980 )}' value='${\(defined param('kikan') ? param('kikan') : '' )}'><span>" . Kahifu::Template::dict('TOSI')."</span></span>";
 			print "</div>";
 			print "<div class='hantyuu'>";
 				print "<span class='midasi'>${\(Kahifu::Template::dict('TAISYOUHANTYUUMEI'))}</span>";
@@ -1513,7 +1513,7 @@ if($paginate == 1){
 								print "<div class='kouhoran'>";
 								print "<span>${\(Kahifu::Template::dict('DENDOU_KOUHO'))}</span>";
 								for my $k (keys %{$cour_info->{$i.$cour_junban->[$j]}}){
-									print "<span class='jyoukyou_type_alt_$jyoukyou_type{$cour_info->{$i.$cour_junban->[$j]}{$k}{jyoukyou}}'>";
+									print "<span class='jyoukyou_type_alt_${\(defined $jyoukyou_type{$cour_info->{$i.$cour_junban->[$j]}{$k}{jyoukyou}} ? $jyoukyou_type{$cour_info->{$i.$cour_junban->[$j]}{$k}{jyoukyou}} : 'x')}'>";
 									print "<sup class='id'>$k</sup>";
 									print "<input type='hidden' name='bangou' value='$k'>";
 									print midasi_tekisetuka($cour_info->{$i.$cour_junban->[$j]}{$k}{midasi}, $cour_info->{$i.$cour_junban->[$j]}{$k}{betumei}, $cour_info->{$i.$cour_junban->[$j]}{$k}{colle}, $sitei_gengo);
