@@ -9,7 +9,7 @@ use Data::Dump qw(dump);
 use DateTime;
 use DBI;
 use URI;
-use List::Util 'sum';
+use List::Util qw( sum max );
 use JSON;
 use open qw( :std :encoding(utf8) );
 use utf8;
@@ -548,6 +548,13 @@ if($paginate == 1){
 	$koyomi_hantyuu->execute(@sitazi_bind, ${\(week($dst_musi_week_limit_lower))[0]}, @sitazi_bind);
 	sub collapse_hantyuu {
 		my $hantyuu = shift;
+		my $mode = shift//0;
+		if($mode == 1){
+			return 51 if grep{$_ eq $hantyuu} 6,7,16,24,68,67,103,11,25,26,18,13;
+			return 52 if grep{$_ eq $hantyuu} 14,17,9,10,8;
+			return 53 if grep{$_ eq $hantyuu} 12,15,102;
+			return 54;
+		}
 		return 7 if $hantyuu == 16 || $hantyuu == 24;
 		return 68 if $hantyuu == 67;
 		return 6 if $hantyuu == 25 || $hantyuu == 26 || $hantyuu == 18;
@@ -555,14 +562,17 @@ if($paginate == 1){
 		return 12 if $hantyuu == 15 || $hantyuu == 102;
 		return $hantyuu;
 	}
-	my ($hantyuu_atumari, $last_week_hantyuu, $hantyuu_syori);
+	my ($hantyuu_atumari, $last_week_hantyuu, $hantyuu_syori, $hantyuukei_syori, $hantyuukei_atumari);
 	while(my $v = $koyomi_hantyuu->fetchrow_hashref){
 		undef %{$hantyuu_atumari} if defined $last_week_hantyuu && $v->{week} != $last_week_hantyuu;
+		undef %{$hantyuukei_atumari} if defined $last_week_hantyuu && $v->{week} != $last_week_hantyuu;
 		$last_week_hantyuu = $v->{week};
 		$hantyuu_syori = collapse_hantyuu($v->{hantyuu});
 		$hantyuu_atumari->{"$hantyuu_syori"} += $v->{count} if $hantyuu_syori ne '';
-		my @hantyuu_inner_array = ($v->{week}, $hantyuu_syori, $hantyuu_atumari->{$hantyuu_syori});		
-		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori} || not defined $koyomi_hantyuu_winner{$v->{week}});
+		$hantyuukei_syori = collapse_hantyuu($v->{hantyuu}, 1);
+		$hantyuukei_atumari->{"$hantyuukei_syori"} += $v->{count} if $hantyuukei_syori ne '';
+		my @hantyuu_inner_array = ($v->{week}, $hantyuu_syori, $hantyuu_atumari->{$hantyuu_syori}, $hantyuukei_atumari->{$hantyuukei_syori});		
+		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori} && $hantyuukei_atumari->{$hantyuukei_syori} >= max($hantyuukei_atumari->{51}, $hantyuukei_atumari->{52}, $hantyuukei_atumari->{53}, $hantyuukei_atumari->{54}) || not defined $koyomi_hantyuu_winner{$v->{week}});
 	}
 
 	#audioscrobbler/listen組み込み
