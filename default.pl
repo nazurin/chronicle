@@ -567,12 +567,20 @@ if($paginate == 1){
 		undef %{$hantyuu_atumari} if defined $last_week_hantyuu && $v->{week} != $last_week_hantyuu;
 		undef %{$hantyuukei_atumari} if defined $last_week_hantyuu && $v->{week} != $last_week_hantyuu;
 		$last_week_hantyuu = $v->{week};
+
 		$hantyuu_syori = collapse_hantyuu($v->{hantyuu});
 		$hantyuu_atumari->{"$hantyuu_syori"} += $v->{count} if $hantyuu_syori ne '';
+
 		$hantyuukei_syori = collapse_hantyuu($v->{hantyuu}, 1);
-		$hantyuukei_atumari->{"$hantyuukei_syori"} += $v->{count} if $hantyuukei_syori ne '';
-		my @hantyuu_inner_array = ($v->{week}, $hantyuu_syori, $hantyuu_atumari->{$hantyuu_syori}, $hantyuukei_atumari->{$hantyuukei_syori});		
-		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori} && $hantyuukei_atumari->{$hantyuukei_syori} >= max($hantyuukei_atumari->{51}, $hantyuukei_atumari->{52}, $hantyuukei_atumari->{53}, $hantyuukei_atumari->{54}) || not defined $koyomi_hantyuu_winner{$v->{week}});
+		$hantyuukei_atumari->{"$hantyuukei_syori"}{total} += $v->{count} if $hantyuukei_syori ne '';
+		if($hantyuukei_syori ne '' && $hantyuu_syori ne '' && $hantyuu_atumari->{"$hantyuu_syori"} > $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count} || !defined $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count}){
+			$hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{hantyuu} = $hantyuu_syori;
+			$hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count} = $hantyuu_atumari->{"$hantyuu_syori"}
+		}
+
+		my @hantyuu_inner_array = ($v->{week}, $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{hantyuu}, $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count}, $hantyuukei_syori, $hantyuukei_atumari->{$hantyuukei_syori}, $hantyuukei_atumari->{"$hantyuukei_syori"}{total});
+
+		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && $hantyuukei_atumari->{"$hantyuukei_syori"}{total} >= max($hantyuukei_atumari->{51}{total}, $hantyuukei_atumari->{52}{total}, $hantyuukei_atumari->{53}{total}, $hantyuukei_atumari->{54}{total}) || not defined $koyomi_hantyuu_winner{$v->{week}});
 	}
 
 	#audioscrobbler/listen組み込み
