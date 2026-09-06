@@ -582,7 +582,7 @@ if($paginate == 1){
 		($v->{week}, $hantyuu_syori, $hantyuu_atumari->{$hantyuu_syori});
 
 
-		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && ($hantyuukei_atumari->{"$hantyuukei_syori"}{total} >= max($hantyuukei_atumari->{51}{total}, $hantyuukei_atumari->{52}{total}, $hantyuukei_atumari->{53}{total}, $hantyuukei_atumari->{54}{total}) || (defined $kensaku && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori}) ) || not defined $koyomi_hantyuu_winner{$v->{week}} );
+		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && defined $hantyuu_atumari->{$hantyuu_syori} && ($hantyuukei_atumari->{"$hantyuukei_syori"}{total} >= max($hantyuukei_atumari->{51}{total}, $hantyuukei_atumari->{52}{total}, $hantyuukei_atumari->{53}{total}, $hantyuukei_atumari->{54}{total}) || (defined $kensaku && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori}) ) || not defined $koyomi_hantyuu_winner{$v->{week}} );
 	}
 
 	#audioscrobbler/listen組み込み
