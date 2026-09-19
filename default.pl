@@ -369,6 +369,39 @@ if(defined param('id') && param('id')){
 				}
 				print "</div>";
 			}
+			if(defined $sakuhin_info->{$passthrough_id}{ndc}){
+				print "<div class='ndc'>";
+				my @sitazi_bind;
+				my $collection = [sprintf('%03s', (floor($sakuhin_info->{$passthrough_id}{ndc}/100) * 100)), sprintf('%03s', (floor($sakuhin_info->{$passthrough_id}{ndc}/10))*10), sprintf('%03s', floor($sakuhin_info->{$passthrough_id}{ndc})), substr($sakuhin_info->{$passthrough_id}{ndc}, 0, 5), $sakuhin_info->{$passthrough_id}{ndc}];
+				my $ndc_query = "select * from ndc where ndc in (?, ?, ?, ?, ?)";
+				my $ndc_syutoku = $dbh->prepare($ndc_query);
+				push @sitazi_bind, @$collection;
+				$ndc_syutoku->execute(@sitazi_bind);
+				my $i = 0;
+				my $last_category;
+				while(my $v = $ndc_syutoku->fetchrow_hashref){
+					my $category = $v->{category};
+					my $keta = $i < 3 ? substr($v->{ndc}, $i, 1) : substr($v->{ndc}, $i+1, 1);
+					(my $category_hyouji = $category) =~ s/^$last_category// if defined $last_category;
+					$category_hyouji =~ s/^\s+|\s+$//g;
+					my @category_hyouji_array = split(' ', $category_hyouji);
+					print "<div class='category' style='background-color: hsla(${\($i < 3 ? color_makase($v->{ndc}, 2880)%360 : color_makase($keta, 2600)%360)}, 100%, 35%, 0.5)'>";
+						print "<span class='namae'>";
+						if(defined $category_hyouji){
+							for my $i (0 .. scalar @category_hyouji_array - 1){
+								print "<span>$category_hyouji_array[$i]</span>";
+							}
+						} else {
+							print $category;
+						}
+						print "</span>";
+						print "<span class='keta'>$keta</span>";
+					print "</div>";
+					$last_category = $category;
+					$i = $i+1;
+				}
+				print "</div>";
+			}
 			print "<div class='kansyourirekisyo'>";
 			print "<form action='sakunai.pl' method='post'>";
 			# 鑑賞履歴（作品ページ内）

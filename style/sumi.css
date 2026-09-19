@@ -1999,38 +1999,21 @@ div.sakuhinbako > div.migi {
 	flex-shrink: 0;
 }
 
-div.sakuhinbako > div.migi > div.colle {
+div.sakuhinbako > div.migi > div {
 	max-width: 16em;
 	border: black 1px solid;
 	padding: 0.125em 0.5em;
-	color: black;
-	font-weight: bold;
 	margin-bottom: 0.25em;
+	color: black;
+}
+
+div.sakuhinbako > div.migi > div.colle {
+	font-weight: bold;
 }
 
 div.sakuhinbako > div.migi > div.tensuu {
-	max-width: 16em;
-	border: black 1px solid;
-	padding: 0.125em 0.5em;
 	color: white;
-	margin-bottom: 0.25em;
 	background-color: rgba(0, 0, 0, 0.85);
-}
-
-div.sakuhinbako > div.migi > div.isbn {
-	max-width: 16em;
-	border: black 1px solid;
-	padding: 0.125em 0.5em;
-	color: black;
-	margin-bottom: 0.25em;
-}
-
-div.sakuhinbako > div.migi > div.kansyourirekisyo {
-	max-width: 16em;
-	border: black 1px solid;
-	padding: 0.125em 0.5em;
-	color: black;
-	margin-bottom: 0.25em;
 }
 
 div.sakuhinbako > div.migi > div.colle > div {
@@ -2132,6 +2115,37 @@ div.sakuhinbako > div.migi > div.isbn > :not(span) + span.isbn13,
 div.sakuhinbako > div.migi > div.isbn > :not(div) + div.syuppan,
 div.sakuhinbako > div.migi > div.isbn > :not(div) + div.group {
 	margin-top: 0.125rem;
+}
+
+div.sakuhinbako > div.migi > div.ndc > div.category {
+	position: relative;
+	padding: 0 0.5em;
+}
+
+div.sakuhinbako > div.migi > div.ndc > div.category > span.namae {
+	color: white;
+	text-shadow: 1px 1px black;
+}
+
+div.sakuhinbako > div.migi > div.ndc > div.category > span.namae > span {
+	display: inline-block;
+	margin-left: 0.25em;
+}
+
+div.sakuhinbako > div.migi > div.ndc > div.category > span.keta {
+	position: absolute;
+	right: 0;
+	transform: skewY(-40deg) skewX(-5deg) scaleX(1.5) scaleY(2) translateY(-25%);
+	top: 50%;
+	opacity: 0.3;
+	text-shadow: white 1px 1px;
+	margin-right: 0.25em;
+}
+
+div.sakuhinbako > div.migi > div.ndc > div.category:nth-child(4) > span.keta,
+div.sakuhinbako > div.migi > div.ndc > div.category:nth-child(5) > span.keta {
+	color: white;
+	text-shadow: black 1px 1px;
 }
 
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.midasi {
