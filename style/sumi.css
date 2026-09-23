@@ -714,6 +714,19 @@ div.koumoku > div.kansou_kousin {
 	margin: 0px 4em 0px 1em;
 }
 
+div.koumoku > div.kansou_kousin > form > span.index {
+	font-weight: bold;
+	margin-bottom: 0.5em;
+	margin-right: 2em;
+	border: 2px dotted;
+	padding: 0 0.25em;
+	display: inline-block;
+}
+
+div.koumoku > div.kansou_kousin > form > input[name=sousin_jisyo] {
+	float: right;
+}
+
 div.koumoku > div.kansou_kousin > form > div.midasi_kousin > div,
 div.koumoku > div.kansou_kousin > form > div.extra > div,
 div.koumoku > div.kansou_kousin > form > div.super_extra > div,
