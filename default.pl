@@ -33,13 +33,17 @@ my @title_post = $query->param;
 my %url_get = $query->Vars();
 
 if (request_method eq 'POST'){
-	my $cookie_siborikomi_hantyuu = Kahifu::Infra::cookie_seisei('hyouka_siborikomi_hantyuu', param('page_siborikomi_hantyuu'));
+	my $param_siborikomi_hantyuu = param('page_siborikomi_hantyuu');
+	my $param_page_siborikomi_jyoukyou = param('page_siborikomi_jyoukyou');
+	my $param_narabi = param('narabi');
+	my $param_jun = param('jun');
+	my $cookie_siborikomi_hantyuu = Kahifu::Infra::cookie_seisei('hyouka_siborikomi_hantyuu', $param_siborikomi_hantyuu);
 	print "Set-Cookie: $cookie_siborikomi_hantyuu\n" if defined param('page_siborikomi_hantyuu');
-	my $cookie_siborikomi_jyoukyou = Kahifu::Infra::cookie_seisei('hyouka_siborikomi_jyoukyou', param('page_siborikomi_jyoukyou'));
+	my $cookie_siborikomi_jyoukyou = Kahifu::Infra::cookie_seisei('hyouka_siborikomi_jyoukyou', $param_page_siborikomi_jyoukyou);
 	print "Set-Cookie: $cookie_siborikomi_jyoukyou\n" if defined param('page_siborikomi_jyoukyou');
-	my $cookie_narabi = Kahifu::Infra::cookie_seisei('hyouka_narabi', param('narabi'));
+	my $cookie_narabi = Kahifu::Infra::cookie_seisei('hyouka_narabi', $param_narabi);
 	print "Set-Cookie: $cookie_narabi\n" if defined param('narabi');
-	my $cookie_jun = Kahifu::Infra::cookie_seisei('hyouka_jun', param('jun'));
+	my $cookie_jun = Kahifu::Infra::cookie_seisei('hyouka_jun', $param_jun);
 	print "Set-Cookie: $cookie_jun\n" if defined param('jun');
 	my $query=new CGI;
 	
@@ -1733,7 +1737,7 @@ if($paginate == 1){
 				$last_sakuhin = 0;
 			}
 		}
-		return defined $last_sakuhin && ($last_sakuhin eq "" || $last_sakuhin == 0) ? '' : $last_sakuhin;
+		return $last_sakuhin;
 	}
 
 	print "<div class='rireki_box'>";
@@ -1779,8 +1783,8 @@ if($paginate == 1){
 			$last_sakuhin = $v->{sid};
 			$last_timestamp = $v->{jiten};
 		}
-		$last_sakuhin = '';
-		print !defined $rireki_row_count ? ongaku_sounyuu($last_sakuhin, $week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ongaku_sounyuu($last_sakuhin, $last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
+		$last_sakuhin = 0;
+		print !defined $rireki_row_count ? ongaku_sounyuu($last_sakuhin, $week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ($last_sakuhin == 0 ? '' : ongaku_sounyuu($last_sakuhin, $last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track));
 		print "<div class='week'>";
 		print "</div>";
 	print "</div>";
