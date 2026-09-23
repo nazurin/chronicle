@@ -1777,7 +1777,7 @@ if($paginate == 1){
 				print "<div class='bikou${\( sub { return ' ari' if defined $v->{text} && $v->{text} }->() )}'>";
 					print with_sengen($v->{with}, \%with_color, \%with_kigou) if defined $v->{with} && $v->{with} ne '' && $v->{hantyuu} != 700 && !Kahifu::Infra::mobile();
 					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && Kahifu::Infra::mobile();
-					print defined $v->{text} && $v->{text} && defined $v->{jyoukyou} != 7 ? title_settei(Kahifu::Infra::bunsyou($v->{text})) : "";
+					print defined $v->{text} && $v->{text} && $v->{jyoukyou} != 7 ? title_settei(Kahifu::Infra::bunsyou($v->{text})) : "";
 				print "</div>";
 			print "</div>";
 			$last_sakuhin = $v->{sid};
