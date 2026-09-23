@@ -378,13 +378,15 @@ if(defined param('id') && param('id')){
 				push @sitazi_bind, @$collection;
 				$ndc_syutoku->execute(@sitazi_bind);
 				my $i = 0;
-				my $last_category;
+				my ($last_category, $category_hyouji, @category_hyouji_array);
 				while(my $v = $ndc_syutoku->fetchrow_hashref){
 					my $category = $v->{category};
 					my $keta = $i < 3 ? substr($v->{ndc}, $i, 1) : substr($v->{ndc}, $i+1, 1);
-					(my $category_hyouji = $category) =~ s/^$last_category// if defined $last_category;
-					$category_hyouji =~ s/^\s+|\s+$//g;
-					my @category_hyouji_array = split(' ', $category_hyouji);
+					if(defined $last_category){
+						($category_hyouji = $category) =~ s/^$last_category//;
+						$category_hyouji =~ s/^\s+|\s+$//g;
+						@category_hyouji_array = split(' ', $category_hyouji);
+					}
 					print "<div class='category' style='background-color: hsla(${\($i < 3 ? color_makase($v->{ndc}, 2880)%360 : color_makase($keta, 2600)%360)}, 100%, 35%, 0.5)'>";
 						print "<span class='namae'>";
 						if(defined $category_hyouji){
@@ -606,7 +608,7 @@ if($paginate == 1){
 
 		$hantyuukei_syori = collapse_hantyuu($v->{hantyuu}, 1);
 		$hantyuukei_atumari->{"$hantyuukei_syori"}{total} += $v->{count} if $hantyuukei_syori ne '';
-		if($hantyuukei_syori ne '' && $hantyuu_syori ne '' && $hantyuu_atumari->{"$hantyuu_syori"} > $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count} || !defined $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count}){
+		if($hantyuukei_syori ne '' && $hantyuu_syori ne '' && (defined $hantyuu_atumari->{"$hantyuu_syori"} && defined $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count} && $hantyuu_atumari->{"$hantyuu_syori"} > $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count}) || !defined $hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count}){
 			$hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{hantyuu} = $hantyuu_syori;
 			$hantyuukei_atumari->{"$hantyuukei_syori"}{winner}{count} = $hantyuu_atumari->{"$hantyuu_syori"}
 		}
@@ -615,7 +617,11 @@ if($paginate == 1){
 		($v->{week}, $hantyuu_syori, $hantyuu_atumari->{$hantyuu_syori});
 
 
-		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if(defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] && defined $hantyuu_atumari->{$hantyuu_syori} && ($hantyuukei_atumari->{"$hantyuukei_syori"}{total} >= max($hantyuukei_atumari->{51}{total}, $hantyuukei_atumari->{52}{total}, $hantyuukei_atumari->{53}{total}, $hantyuukei_atumari->{54}{total}) || (defined $kensaku && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori}) ) || not defined $koyomi_hantyuu_winner{$v->{week}} );
+		$koyomi_hantyuu_winner{$v->{week}} = \@hantyuu_inner_array if( 
+			defined $koyomi_hantyuu_winner{$v->{week}} && $v->{week} eq $koyomi_hantyuu_winner{$v->{week}}[0] &&
+			defined $hantyuu_atumari->{$hantyuu_syori} && 
+			(defined $hantyuukei_atumari->{"$hantyuukei_syori"}{total} && $hantyuukei_atumari->{"$hantyuukei_syori"}{total} >= max((defined $hantyuukei_atumari->{51}{total} ? $hantyuukei_atumari->{51}{total} : 0), (defined $hantyuukei_atumari->{52}{total} ? $hantyuukei_atumari->{52}{total} : 0), (defined $hantyuukei_atumari->{53}{total} ? $hantyuukei_atumari->{53}{total} : 0), (defined $hantyuukei_atumari->{54}{total} ? $hantyuukei_atumari->{54}{total} : 0)) || (defined $kensaku && $koyomi_hantyuu_winner{$v->{week}}[2] < $hantyuu_atumari->{$hantyuu_syori})
+			) || not defined $koyomi_hantyuu_winner{$v->{week}} );
 	}
 
 	#audioscrobbler/listen組み込み
@@ -1152,6 +1158,11 @@ if($paginate == 1){
 				print "</div>";
 				# 作品編集箱（kansou_kousin）を初期化
 				print "<div id='kk_$v->{id}' class='kansou_kousin'>";
+					print "<form id='jisyo_$v->{id}' method='post' action='jisyokousin.pl'>";
+						print "<span class='index'>$v->{id}</span>";
+						print "<input type='hidden' name='reference' value='$v->{id}'>";
+						print "<input type='submit' name='sousin_jisyo' value='${\(Kahifu::Template::dict('KOUMOKU_JISYO_SOUSIN'))}'>";
+					print "</form>";
 					print "<form id='kansou_$v->{id}' method='post' action='kansou.pl' >";
 					print "<input type='hidden' name='reference' value='$v->{id}'>";
 					print "<div class='midasi_kousin'>";
@@ -1722,7 +1733,7 @@ if($paginate == 1){
 				$last_sakuhin = 0;
 			}
 		}
-		return defined $last_sakuhin && $last_sakuhin == 0 ? undef : $last_sakuhin;
+		return defined $last_sakuhin && ($last_sakuhin eq "" || $last_sakuhin == 0) ? '' : $last_sakuhin;
 	}
 
 	print "<div class='rireki_box'>";
@@ -1762,14 +1773,14 @@ if($paginate == 1){
 				print "<div class='bikou${\( sub { return ' ari' if defined $v->{text} && $v->{text} }->() )}'>";
 					print with_sengen($v->{with}, \%with_color, \%with_kigou) if defined $v->{with} && $v->{with} ne '' && $v->{hantyuu} != 700 && !Kahifu::Infra::mobile();
 					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && Kahifu::Infra::mobile();
-					print defined $v->{text} && $v->{text} && $v->{jyoukyou} != 7 ? title_settei(Kahifu::Infra::bunsyou($v->{text})) : undef;
+					print defined $v->{text} && $v->{text} && defined $v->{jyoukyou} != 7 ? title_settei(Kahifu::Infra::bunsyou($v->{text})) : "";
 				print "</div>";
 			print "</div>";
 			$last_sakuhin = $v->{sid};
 			$last_timestamp = $v->{jiten};
 		}
 		$last_sakuhin = '';
-		print !$rireki_row_count ? ongaku_sounyuu($last_sakuhin, $week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ongaku_sounyuu($last_sakuhin, $last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
+		print !defined $rireki_row_count ? ongaku_sounyuu($last_sakuhin, $week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ongaku_sounyuu($last_sakuhin, $last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track);
 		print "<div class='week'>";
 		print "</div>";
 	print "</div>";
