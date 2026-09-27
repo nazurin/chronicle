@@ -558,3 +558,18 @@ div.dendou > div.cour > div.gyou > div.jusyou span.daimei::after {
 div.dendou > div.cour > div.gyou > div.jusyou span.daimei a::after {
 	content: "』";
 }
+
+body > div.body > div.frame > div.podium > div.keitai_last {
+	background-image: url('/img/websozai/somephoto/ityou.jpg');
+	background-size: cover;
+	background-position: center;
+	display: flex;
+}
+
+body > div.body > div.frame > div.podium > div.keitai_last > div.sengen {
+	/*background-color: rgba(180, 255, 180, 0.3);*/
+	/*backdrop-filter: invert(1);
+	-webkit-backdrop-filter: invert(1);*/
+	flex-basis: 100%;
+	padding-bottom: 3em;
+}

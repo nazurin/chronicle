@@ -62,32 +62,39 @@ div.commander > div.hidari {
 	flex-direction: column;
 }
 
-div.commander > div.hidari > div.navi {
+div.commander > div.hidari > div.navi,
+div.keitai_last div.navi {
 	border: 3px white ridge;
 	padding: 0 0.25em;
 	margin-bottom: 0.175em;
 	background-color: lavender;
 }
 
-div.commander > div.hidari > div.navi > a.migi {
+div.commander > div.hidari > div.navi > a.migi,
+div.keitai_last div.navi > a.migi {
 	float: right;
 }
 
 div.commander > div.hidari > div.navi a:link,
-div.commander > div.hidari > div.navi a:visited {
+div.commander > div.hidari > div.navi a:visited,
+div.keitai_last div.navi a:link,
+div.keitai_last div.navi a:visited {
 	text-decoration: none;	
 	color: black;
 }
 
-div.commander > div.hidari > div.navi a:hover {
+div.commander > div.hidari > div.navi a:hover,
+div.keitai_last div.navi a:hover {
 	color: orange;
 }
 
-div.commander > div.hidari > div.navi a:active {
+div.commander > div.hidari > div.navi a:active,
+div.keitai_last div.navi a:active {
 	color: red;
 }
 
-div.commander > div.hidari > div.navi > span:hover {
+div.commander > div.hidari > div.navi > span:hover,
+div.keitai_last div.navi span:hover {
 	cursor: pointer;
 	background-color: #fffc9e;
 	border: 1px solid orange;
@@ -95,7 +102,8 @@ div.commander > div.hidari > div.navi > span:hover {
 	color: orangered;
 }
 
-div.commander > div.hidari > div.navi > span:active {
+div.commander > div.hidari > div.navi > span:active,
+div.keitai_last div.navi span:active {
 	cursor: pointer;
 	background-color: orange;
 	border: 1px solid orange;
