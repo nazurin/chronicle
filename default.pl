@@ -523,7 +523,7 @@ if (defined $siborikomi_jyoukyou && $siborikomi_jyoukyou && $siborikomi_jyoukyou
 	push @sitazi_bind, ("${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . ${\($siborikomi_jyoukyou)}))}");
 	push @sitazi_bind_2, ("${\(Kahifu::Template::dict('HYOUKA_JYOUKYOU_' . ${\($siborikomi_jyoukyou)}))}") if $page == 1;
 } else { $jyoukyou_sibori_sitazi = ""; }
-my @narabi_henkan = ('`owari`', '`hajimari`', '`time`', '`point`');
+my @narabi_henkan = ('`owari`', '`hajimari`', '`time`', '`point`', 'rpad(if(kaisi>1000, kaisi, lpad(kaisi, 4, 0)), 8, 0)');
 my @jun_henkan = ('desc', 'asc');
 my $narabi_tuuka = (defined $narabi_henkan[$narabi-1]) ? $narabi_henkan[$narabi-1] : $narabi_henkan[0];
 my $jun_tuuka = (defined $jun_henkan[$jun]) ? $jun_henkan[$jun] : $jun_henkan[0];
@@ -553,7 +553,7 @@ if($paginate == 1){
 	#　idたちを集める
 	# 旧meirei: select `id` from `sakuhin` where ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2))||(((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) order by `owari` desc limit ${row_count} offset ?
 	$meirei_sitami = ($page == 1) ? $dbh->prepare("select * from 
-		(select `id`, `owari`, `hajimari`, `time`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}) a union select * from (select `id`, `owari`, `hajimari`, `time`, `point`, `junni` from `sakuhin` where ${gyaku_kensaku_sitazi} (!(`jyoukyou` = '中' or `jyoukyou` = '再') and ((`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ? ) b order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka}") : $dbh->prepare("select `id`, `midasi` from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ?");
+		(select `id`, `owari`, `hajimari`, `time`, `point`, `junni`, `kaisi` from `sakuhin` where ${gyaku_kensaku_sitazi} (((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) and (`current` is null or `current` != 2))) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi}) a union select * from (select `id`, `owari`, `hajimari`, `time`, `point`, `junni`, `kaisi` from `sakuhin` where ${gyaku_kensaku_sitazi} (!(`jyoukyou` = '中' or `jyoukyou` = '再') and ((`current` is null or `current` != 1)) or ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ? ) b order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka}") : $dbh->prepare("select `id`, `midasi` from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit ${row_count} offset ?");
 		# 修正→`id`だけでmeireiと不一致になります。一体どうして？？？
 	$page != 1 ? $meirei_sitami->execute(@sitazi_bind, $page_offset) : 	$meirei_sitami->execute(@sitazi_bind, @sitazi_bind_2, $page_offset);
 	while(my $v = $meirei_sitami->fetchrow_hashref){
@@ -568,7 +568,7 @@ if($paginate == 1){
 	$kansyou_all_rows = $count_sitami->rows();
 	$page_subete = ceil((($kansyou_all_rows - $kansyou_current_rows - 20) / 20) + 1);
 	
-	@meirei = ("select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) ${kensaku_sitazi} and (`current` is null or `current` != 2)) ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by `owari` desc", "select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit 20 offset ?");
+	@meirei = ("select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((`jyoukyou` = '中' or `jyoukyou` = '再' or (`current` = 1)) ${kensaku_sitazi} and (`current` is null or `current` != 2)) ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka}", "select * from `sakuhin` where ${gyaku_kensaku_sitazi} ((!(`jyoukyou` = '中' or `jyoukyou` = '再') and (`current` is null or `current` != 1)) || ((`jyoukyou` = '中' or `jyoukyou` = '再') and `current` = 2)) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${narabi_tuuka} ${jun_tuuka}, `junni` ${junni_tuuka} limit 20 offset ?");
 	@daimei = ("${\(Kahifu::Template::dict('TITLE_KANSYOUTYUU'))}", "${\(Kahifu::Template::dict('TITLE_KANSYOUZUMI'))}");
 } elsif($paginate == 2){
 	# コレクション検索機能など
@@ -685,36 +685,42 @@ print "<div class='commander' style=\"background-image: url('${\(image_makase('f
 #background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' version='1.1' font-style='italic' font-family='Times New Roman' height='24px' width='150px'><text x='0' y='20' fill='white' stroke='black' font-size='24'>No.65: Daisy</text></svg>"), url('/img/websozai/himawari_no_kobeya/png/2bigflo65.png');
 #background-position: bottom right, center;
 #background-repeat: no-repeat, repeat;
+sub navi {
+	my $paginate = shift//1;
+	my $echo;
+	$echo .= "<div class='navi'>";
+		if($paginate == 1 || $paginate == 4){
+			$echo .= "<a href='${\(url_get_tuke(\%url_get, 'page', ${\($page-1)}))}'>←</a>" if $page != 1;
+			$echo .= "<span>";
+			$echo .= "page ";
+			$echo .= my $page = (defined param('page')) ? param('page') : 1;
+			$echo .= "${\(Kahifu::Template::dict('SLASH'))}";
+			$echo .= $page_subete;
+			$echo .= "</span>";
+			$echo .= "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
+		} elsif ($paginate == 2){
+			$echo .= "<a href='${\(url_get_hazusi(\%url_get, 'collection'))}'>${\(Kahifu::Template::dict('MODORUZEYO'))}</a>" if defined param('collection');
+			$echo .= "<a href='${\(url_get_hazusi(\%url_get, 'directory'))}'>${\(Kahifu::Template::dict('MODORUZEYO'))}</a>" if defined param('directory');
+			$echo .= "<span>${\(Kahifu::Template::dict('COLLECTION_HEADING'))}</span>" if !(defined param('collection') || defined param('directory'));
+		} elsif ($paginate == 3){
+			$echo .= "<a href='${\(url_get_tuke(\%url_get, 'week', ${\($week-1)}))}'>←</a>" if $week != 0;
+			$echo .= "<span>${\(sub { return $week>0 ? \"第${week}週\" : \"${\(Kahifu::Template::dict('WEEK_TITLE_FIRST'))}\" }->())}${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(Kahifu::Template::dict('NYORO'))}${\(week($dst_musi_week_limit_lower))[0]}${\(Kahifu::Template::dict('SUFFIX_TOSI'))}${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(map { s/###/${\(week($dst_musi_week_limit_lower))[1]}/; $_ } do { ${\(Kahifu::Template::dict('WEEK_TITLE'))} }) }${\(Kahifu::Template::dict('NYORO'))}</span>";
+			$echo .= "<a class='migi' href='${\(url_get_tuke(\%url_get, 'week', ${\($week+1)}))}'>→</a>" if $week + 1;
+		} elsif ($paginate == 4){
+			$echo .= "<a href='${\(url_get_tuke(\%url_get, 'page', ${\($page-1)}))}'>←</a>" if $page != 1;
+			$echo .= "<span>";
+			$echo .= "page ";
+			$echo .= my $page = (defined param('page')) ? param('page') : 1;
+			$echo .= "${\(Kahifu::Template::dict('SLASH'))}";
+			$echo .= $page_subete;
+			$echo .= "</span>";
+			$echo .= "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
+		}
+	$echo .= "</div>";
+	return $echo;
+}
 	print "<div class='hidari'>";
-		print "<div class='navi'>";
-			if($paginate == 1){
-				print "<a href='${\(url_get_tuke(\%url_get, 'page', ${\($page-1)}))}'>←</a>" if $page != 1;
-				print "<span>";
-				print "page ";
-				print my $page = (defined param('page')) ? param('page') : 1;
-				print "${\(Kahifu::Template::dict('SLASH'))}";
-				print $page_subete;
-				print "</span>";
-				print "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
-			} elsif ($paginate == 2){
-				print "<a href='${\(url_get_hazusi(\%url_get, 'collection'))}'>${\(Kahifu::Template::dict('MODORUZEYO'))}</a>" if defined param('collection');
-				print "<a href='${\(url_get_hazusi(\%url_get, 'directory'))}'>${\(Kahifu::Template::dict('MODORUZEYO'))}</a>" if defined param('directory');
-				print "<span>${\(Kahifu::Template::dict('COLLECTION_HEADING'))}</span>" if !(defined param('collection') || defined param('directory'));
-			} elsif ($paginate == 3){
-				print "<a href='${\(url_get_tuke(\%url_get, 'week', ${\($week-1)}))}'>←</a>" if $week != 0;
-				print "<span>${\(sub { return $week>0 ? \"第${week}週\" : \"${\(Kahifu::Template::dict('WEEK_TITLE_FIRST'))}\" }->())}${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(Kahifu::Template::dict('NYORO'))}${\(week($dst_musi_week_limit_lower))[0]}${\(Kahifu::Template::dict('SUFFIX_TOSI'))}${\(Kahifu::Template::dict('EIGOYOU_KUUHAKU'))}${\(map { s/###/${\(week($dst_musi_week_limit_lower))[1]}/; $_ } do { ${\(Kahifu::Template::dict('WEEK_TITLE'))} }) }${\(Kahifu::Template::dict('NYORO'))}</span>";
-				print "<a class='migi' href='${\(url_get_tuke(\%url_get, 'week', ${\($week+1)}))}'>→</a>" if $week + 1;
-			} elsif ($paginate == 4){
-				print "<a href='${\(url_get_tuke(\%url_get, 'page', ${\($page-1)}))}'>←</a>" if $page != 1;
-				print "<span>";
-				print "page ";
-				print my $page = (defined param('page')) ? param('page') : 1;
-				print "${\(Kahifu::Template::dict('SLASH'))}";
-				print $page_subete;
-				print "</span>";
-				print "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
-			}
-		print "</div>";
+		print navi($paginate);
 		if($paginate < 3){
 			print "<div class='hanrei'>";
 				print "<span>${\(Kahifu::Template::dict('HYOUKA_STYLE'))}</span>";
@@ -897,6 +903,7 @@ print "<div class='commander' style=\"background-image: url('${\(image_makase('f
 						print "<option value='2'${\( sub { return 'selected=selected' if $narabi==2 }->() )}>${\(Kahifu::Template::dict('NARABIKAE_2'))}</option>";
 						print "<option value='3'${\( sub { return 'selected=selected' if $narabi==3 }->() )}>${\(Kahifu::Template::dict('NARABIKAE_3'))}</option>";
 						print "<option value='4'${\( sub { return 'selected=selected' if $narabi==4 }->() )}>${\(Kahifu::Template::dict('NARABIKAE_4'))}</option>";
+						print "<option value='5'${\( sub { return 'selected=selected' if $narabi==5 }->() )}>${\(Kahifu::Template::dict('NARABIKAE_5'))}</option>";
 					print "</select>";
 					print "<select name='jun'>";
 						print "<option value='0'${\( sub { return 'selected=selected' if $jun==0 }->() )}>↓</option>"; #降順
@@ -1855,6 +1862,8 @@ if($paginate == 1){
 			});	
 		</script>";
 }
+
+print "<div class='keitai_last'><div class='sengen'>${\(navi($paginate))}</div></div>" if Kahifu::Infra::mobile() && $paginate != 2;
 
 #他に
 # 手引書
