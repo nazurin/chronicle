@@ -1791,7 +1791,7 @@ if($paginate == 1){
 			$last_timestamp = $v->{jiten};
 		}
 		$last_sakuhin = 0;
-		print !defined $rireki_row_count ? ongaku_sounyuu($last_sakuhin, $week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ($last_sakuhin == 0 ? '' : ongaku_sounyuu($last_sakuhin, $last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track));
+		!defined $rireki_row_count ? ongaku_sounyuu($last_sakuhin, $week_limit_upper, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track) : ($last_sakuhin == 0 ? '' : ongaku_sounyuu($last_sakuhin, $last_timestamp, $week_limit_lower, \@listen_time, \@listen_info_artist, \@listen_info_album, \@listen_info_track));
 		print "<div class='week'>";
 		print "</div>";
 	print "</div>";
