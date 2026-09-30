@@ -13,6 +13,10 @@ div.podium {
 	hsla(43, 83%, 75%, 1);
 }
 
+div.podium > div.commander {
+	background: linear-gradient(180deg, azure 0%, azure 50%, transparent 100%);
+}
+
 div.hidari {
     /* background: */
     /*    linear-gradient(0deg, transparent 0%, red 100%), */
