@@ -365,14 +365,18 @@
 .koumoku.ongaku,
 .hannyou.type_900,
 .koumoku.ongaku:nth-child(2n) {
-	background-color: hsl(348, 48.4%, 90%);
-  	color: hsl(340.4, 76.2%, 36.3%);
+	background: linear-gradient(90deg, white 10%, hsl(303.4, 68.6%, 80%));
+	color: hsl(306.4, 76.2%, 36.3%);
+}
+
+.syuu.type_900 {
+	background: hsl(303.4, 88.6%, 90%);
 }
 
 .koumoku.ongaku,
 .koumoku.ongaku:nth-child(2n+1) {
-	background-color: hsl(348, 48.4%, 96%);
-  	color: hsl(340.4, 76.2%, 36.3%);
+  	background: linear-gradient(90deg, white 10%, hsl(303.4, 68.6%, 85%));
+	color: hsl(306.4, 76.2%, 36.3%);
 }
 
 .koumoku.type_700 {
