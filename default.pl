@@ -37,6 +37,7 @@ if (request_method eq 'POST'){
 	my $param_page_siborikomi_jyoukyou = param('page_siborikomi_jyoukyou');
 	my $param_narabi = param('narabi');
 	my $param_jun = param('jun');
+	my $param_seido = param('jikansei');
 	my $cookie_siborikomi_hantyuu = Kahifu::Infra::cookie_seisei('hyouka_siborikomi_hantyuu', $param_siborikomi_hantyuu);
 	print "Set-Cookie: $cookie_siborikomi_hantyuu\n" if defined param('page_siborikomi_hantyuu');
 	my $cookie_siborikomi_jyoukyou = Kahifu::Infra::cookie_seisei('hyouka_siborikomi_jyoukyou', $param_page_siborikomi_jyoukyou);
@@ -45,6 +46,8 @@ if (request_method eq 'POST'){
 	print "Set-Cookie: $cookie_narabi\n" if defined param('narabi');
 	my $cookie_jun = Kahifu::Infra::cookie_seisei('hyouka_jun', $param_jun);
 	print "Set-Cookie: $cookie_jun\n" if defined param('jun');
+	my $cookie_jikanseido = Kahifu::Infra::cookie_seisei('jikansei', $param_seido);
+	print "Set-Cookie: $cookie_jikanseido\n" if defined param('jikansei');
 	my $query=new CGI;
 	
 	delete($url_get{narabikae_kettei});
@@ -52,6 +55,7 @@ if (request_method eq 'POST'){
 	delete($url_get{page_siborikomi_jyoukyou});
 	delete($url_get{narabi});
 	delete($url_get{jun});
+	delete($url_get{jikansei});
 	
 	if(defined param('paginate')){
 		my $cookie_paginate_colle = Kahifu::Infra::cookie_seisei('hyouka_paginate', 1);
@@ -138,14 +142,13 @@ our $sitei_gengo = (defined $cookie{hyouka_gengo}) ? $cookie{hyouka_gengo}->valu
 our $siborikomi_hantyuu = (defined $cookie{hyouka_siborikomi_hantyuu}) ? $cookie{hyouka_siborikomi_hantyuu}->value : $config->{siborikomi_hantyuu};
 our $siborikomi_jyoukyou = (defined $cookie{hyouka_siborikomi_jyoukyou}) ? $cookie{hyouka_siborikomi_jyoukyou}->value : $config->{siborikomi_jyoukyou};
 our $paginate = (defined $cookie{hyouka_paginate}) ? $cookie{hyouka_paginate}->value : $config->{paginate};
+our $sanjyuujikan_seido = (defined $cookie{jikansei}) ? $cookie{jikansei}->value : $config->{sanjyuujikan_seido}; # 0 = 24h, 1 = 30h #あとは条件をもっと厳しくする
 our $page = (defined param('page') && param('page') != 1 && $ninsyou) ? param('page') : 1;
 our $page_offset = ($page != 1) ? 20 * (param('page')-1) : 0;
 our $ongaku_page_offset = ($page != 1) ? 100 * (param('page')-1) : 0;
 our $week = (defined param('week') && param('week') != 0 && $ninsyou) ? param('week') : 0;
 
 my $imagenzai = time();
-my $sanjyuujikan_seido = $config->{sanjyuujikan_seido}; # 0 = 24h, 1 = 30h
-
 my $sanjyuujikansei_offset = $sanjyuujikan_seido * 21600;
 
 my @josuu_tati = $dbh->selectall_array("select `josuu`, `ja`, `en` from `josuu` order by `sort` asc, `id` asc");
@@ -417,16 +420,16 @@ if(defined param('id') && param('id')){
 				print "<div class='midasi'><span>${\(Kahifu::Template::dict('KANSYOURIREKISYO'))}</span></div>";
 				print "<div class='rireki'>";
 				print "<div class='gyou touroku'>";
-					print "<div class='jiten${\( sub { return ' mikakutei' if $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{time}, $sakuhin_info->{$passthrough_id}{mikakutei}, 1), "</div>";
+					print "<div class='jiten${\( sub { return ' mikakutei' if $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{time}, $sakuhin_info->{$passthrough_id}{mikakutei}, $sanjyuujikan_seido), "</div>";
 					print "<div class='jyou'>${\(Kahifu::Template::dict('TOUROKU_JYOU'))}</div>";
 				print "</div>";
 				print "<div class='gyou'>";
-					print "<div class='jiten${\( sub { return ' mikakutei' if defined $sakuhin_info->{$passthrough_id}{mikakutei} && $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{hajimari}, $sakuhin_info->{$passthrough_id}{mikakutei}, 1), "</div>";
+					print "<div class='jiten${\( sub { return ' mikakutei' if defined $sakuhin_info->{$passthrough_id}{mikakutei} && $sakuhin_info->{$passthrough_id}{mikakutei}==1 }->() )}'>", date($sakuhin_info->{$passthrough_id}{hajimari}, $sakuhin_info->{$passthrough_id}{mikakutei}, $sanjyuujikan_seido), "</div>";
 					print "<div class='jyou'>${\(Kahifu::Template::dict('HAJIMARI_JYOU'))}</div>";
 				print "</div>";
 				while(my $v = $rireki_syutoku->fetchrow_hashref){
 					print "<div class='gyou' data-rireki='${\( sub { return $v->{id} if defined $v->{id} }->() )}'>";
-						print "<div class='jiten${\( sub { return ' mikakutei' if defined $v->{mkt} && $v->{mkt}==1 }->() )}'>", date($v->{jiten}, $v->{mkt}, 1), "</div>";
+						print "<div class='jiten${\( sub { return ' mikakutei' if defined $v->{mkt} && $v->{mkt}==1 }->() )}'>", date($v->{jiten}, $v->{mkt}, $sanjyuujikan_seido), "</div>";
 						print "<div class='jyou'>", jyoukyou_settei($v->{jyoukyou}, $sakuhin_info->{$passthrough_id}{hajimari}, $v->{owari}, 609, $sakuhin_info->{$passthrough_id}{eternal}, $sakuhin_info->{$passthrough_id}{syuuryou}), "</div>";
 						print "<div class='with'>";
 						my @with;
@@ -791,7 +794,7 @@ sub navi {
 			print "<div class='syuu_mekuri'>";
 				print "<div class='tosituki'>";
 					print "<div class='year'>";
-					print ${\(date_split($week_limit_lower, 0))} eq ${\(date_split($week_limit_upper, 0))} ? "<span class='hito'>${\(date_split($dst_musi_week_limit_lower, 0))}</span>" : "<span class='futa'>${\(date_split($week_limit_lower, 0))}<br>${\(date_split($week_limit_upper, 0, 1))}</span>";
+					print ${\(date_split($week_limit_lower, 0))} eq ${\(date_split($week_limit_upper, 0))} ? "<span class='hito'>${\(date_split($dst_musi_week_limit_lower, 0))}</span>" : "<span class='futa'>${\(date_split($week_limit_lower, 0))}<br>${\(date_split($week_limit_upper, 0, $sanjyuujikan_seido))}</span>";
 					print "</div>";
 					print "<div class='month'>";
 					print ${\(date_split($week_limit_lower, 1))} eq ${\(date_split($week_limit_upper, 1))} ? "<span class='hito'>${\(date_split($dst_musi_week_limit_lower, 1))}</span>" : "<span class='futa'><sup>${\(date_split($week_limit_lower, 1))}</sup>⁄<sub>${\(date_split($week_limit_upper, 1))}</sub></span>";
@@ -864,6 +867,13 @@ sub navi {
 		print "<div class='maegaki'>";
 			#print "<p class='alt $Kahifu::Junbi::langa'>${\(Kahifu::Template::dict('HYOUKA_MAEGAKI', $Kahifu::Junbi::langa))}</p>";
 			print "<p>${\(Kahifu::Template::dict('HYOUKA_MAEGAKI'))}</p>";
+			print "<div class='jikanseido type_$sanjyuujikan_seido'>";
+				print "<form method='post'>";
+				print "<img src='https://kahifu.net/node/img/prim/mokkoubara.png'>";
+				print "<span>${\( defined $sanjyuujikan_seido && $sanjyuujikan_seido == 1 ? Kahifu::Infra::fuji('三十時間制') : Kahifu::Infra::fuji('二十四時間制') )}</span>";
+				print "<input type='submit' name='jikansei' value='${\(defined $sanjyuujikan_seido && $sanjyuujikan_seido == 1 ? 0 : 1 )}'>";
+				print "</form>";
+			print "</div>";
 		print "</div>";
 		print "<div class='kinkyou'>";
 			print "<p><span>${\(Kahifu::Template::dict('KINKYOU_HEADING'))}</span>さあ、どうでしょうね。</p>";
@@ -1123,7 +1133,7 @@ if($paginate == 1){
 				print "</div>";
 				# 履歴を初期化する Initialize "rireki"
 				print "<div id='a_$v->{id}' class='activity'>";
-				print "<div class='rireki_kakera'><div class='rirekinai_jyoukyou'><div class='jyoukyou'><span class='jyoukyou_type_1'>${\(Kahifu::Template::dict('HAJIMARI_JYOU'))}</span></div></div><div class='rirekinai_hiduke${\( sub { return ' mikakutei\'><span class=\'mikakutei_kome\'>※</span><span class=\'' if $v->{mikakutei}==1 }->() )}'>", date($v->{hajimari}, $v->{mikakutei}, 1),"</span></div></div>";
+				print "<div class='rireki_kakera'><div class='rirekinai_jyoukyou'><div class='jyoukyou'><span class='jyoukyou_type_1'>${\(Kahifu::Template::dict('HAJIMARI_JYOU'))}</span></div></div><div class='rirekinai_hiduke${\( sub { return ' mikakutei\'><span class=\'mikakutei_kome\'>※</span><span class=\'' if $v->{mikakutei}==1 }->() )}'>", date($v->{hajimari}, $v->{mikakutei}, $sanjyuujikan_seido),"</span></div></div>";
 				my $kansyou_kaisuu = 0;
 				foreach(@r){
 					if ($_->[1] == $v->{id}){
@@ -1137,9 +1147,9 @@ if($paginate == 1){
 								$kansyou_kaisuu++ if $_->[5] eq '終';
 								print "<span class='kaisuu'>${\(Kahifu::Infra::nihon_suuji($kansyou_kaisuu))}</span>" if defined $kansyou_kaisuu && $kansyou_kaisuu > 1 && $_->[5] eq '終';
 							print "</div>";
-							print "<div title='", date_split($_->[2], 8, 1),"' class='rirekinai_hiduke'>";
+							print "<div title='", date_split($_->[2], 8, $sanjyuujikan_seido),"' class='rirekinai_hiduke'>";
 							print defined $_->[7] && $_->[7]== 1 ? "<span class='mikakutei_kome'>※</span>" : "";
-							print date($_->[2], $_->[7], 1);
+							print date($_->[2], $_->[7], $sanjyuujikan_seido);
 							print "</div>";
 							print "<div class='rirekinai_sinkou'>";
 							print $_->[3];
@@ -1360,7 +1370,7 @@ if($paginate == 1){
 				print "<div class='jyou'>";
 					print "<div class='jyoukyou' data-jyoutype='$w->{jyoukyou}' data-jyoukyou='$w->{id}'>";
 						my $jyoukyou_syori = jyoukyou_settei($w->{jyoukyou}, $w->{hajimari}, $w->{owari}, 90, $w->{eternal}, $w->{syuuryou});
-						print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
+						print "<span title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $jyoukyou_type{$jyoukyou_syori}))}' class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 						print $jyoukyou_syori;
 						$jyoukyou_colle{$jyoukyou_syori}++;
 						print "</span>";
@@ -1765,14 +1775,16 @@ if($paginate == 1){
 					print "<span class='syurui type_$v->{jyoukyou}'>", Kahifu::Template::dict('KUTIKOMI_TYPE_'.$v->{jyoukyou}), "</span>" if $v->{hantyuu} == 700 && !Kahifu::Infra::mobile();
 					print "<p id='$v->{id}' class='midasi $v->{id}' data-kansou='$v->{id}'>";
 					my $tekisetu_reference = midasi_tekisetuka($v->{midasi}, $v->{betumei}, $v->{colle}, $sitei_gengo);
+					print "<a href='${\(url_get_tuke(\%url_get, 'id', $v->{sid}))}'>";
 					print midasi_settei($tekisetu_reference, $v->{mikakutei}, $v->{current}, $kensaku) if (defined $last_sakuhin && $last_sakuhin ne "" && $last_sakuhin ne $v->{sid}) || not defined $last_sakuhin;
+					print "</a>";
 					print "</p>";	
 				print "</div>";
 				if($v->{hantyuu} != 700){
 				print "<div class='jyou'>";
 					print "<div class='jyoukyou' data-jyoutype='$v->{jyoukyou}' data-jyoukyou='$v->{id}'>";
 						my $jyoukyou_syori = jyoukyou_settei($v->{jyoukyou}, 0, $v->{jiten}, 609, 609, $v->{syuuryou});
-						print "<span class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
+						print "<span title='${\(Kahifu::Template::dict('HYOUKA_JYOU_KAISETU_' . $jyoukyou_type{$jyoukyou_syori}))}' class='jyoukyou_type_$jyoukyou_type{$jyoukyou_syori} $jyoukyou_class{$jyoukyou_syori}'>";
 						print $jyoukyou_syori;
 						print "</span>";
 					print "</div>";

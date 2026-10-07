@@ -282,6 +282,62 @@ div.commander > div.migi > div.maegaki {
 	/*flex-grow: 1;*/
 }
 
+div.commander > div.migi > div.maegaki > div.jikanseido {
+	position: absolute;
+	right: 0.5em;
+	bottom: -1.5em;
+	filter: brightness(1.1) contrast(1.4);
+	height: 3em;
+	width: 3em;
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido.type_0 {
+	filter: brightness(1.1) contrast(1.4) hue-rotate(210deg);
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido > form {
+	display: block;
+	width: 100%;
+	height: 100%;
+	position: absolute;
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido > form > img {
+	position: absolute;
+	height: 3em;
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido > form > span {
+	position: absolute;
+	display: block;
+	width: 6em;
+	text-align: center;
+	text-shadow: 1px 1px white;
+	font-weight: bold;
+	top: 1.5em;
+	left: 1.5em;
+	transform: translate(-50%, -50%);
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido > form > input {
+	position: absolute;
+	left: 0;
+	top: 0;
+	background: transparent;
+	border: none !important;
+	font-size: 0;
+	width: 3rem;
+	height: 3rem;
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido:hover {
+	filter: hue-rotate(90deg);
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido:active {
+	filter: hue-rotate(180deg) brightness(1.4);
+}
+
 /*div.commander > div.migi > div.maegaki > p.main {
 	position: relative;
 }
