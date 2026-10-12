@@ -412,7 +412,9 @@ div.sakuhinbako > div.migi {
 
 div.sakuhinbako > div.migi > div.tensuu,
 div.sakuhinbako > div.migi > div.colle,
-div.sakuhinbako > div.migi > div.kansyourirekisyo {
+div.sakuhinbako > div.migi > div.kansyourirekisyo,
+div.sakuhinbako > div.migi > div.isbn,
+div.sakuhinbako > div.migi > div.ndc {
 	max-width: initial;
 }
 
@@ -572,4 +574,9 @@ body > div.body > div.frame > div.podium > div.keitai_last > div.sengen {
 	-webkit-backdrop-filter: invert(1);*/
 	flex-basis: 100%;
 	padding-bottom: 3em;
+}
+
+div.commander > div.migi > div.maegaki > div.jikanseido {
+	right: 1em;
+	top: -2em;
 }
