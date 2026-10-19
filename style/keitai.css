@@ -580,3 +580,31 @@ div.commander > div.migi > div.maegaki > div.jikanseido {
 	right: 1em;
 	top: -2em;
 }
+
+@media only screen and (min-height: 625px) and (max-height: 630px) and (min-width: 885px) and (max-width: 890px) {
+	/* iPhone Duo 横に開いた状態専用ルール */
+	div.commander {
+		flex-wrap: initial;
+	}
+
+	div.commander > div.hidari > div.navi {
+		border-bottom: initial;
+		margin-bottom: initial;
+	}
+
+	div.commander > div.migi {
+		flex-shrink: initial;
+	}
+
+	div.commander > div.migi > div.open {
+		display: none;
+	}
+
+	div.commander > div.hidari {
+		width: initial;
+	}
+
+	div.commander > div.hidari > div.hamarimono {
+		width: initial;
+	}
+}
