@@ -1035,6 +1035,7 @@ if($paginate == 1){
 		print "<div class='jyou'>${\(Kahifu::Template::dict('HEADING_JYOUKYOU'))}</div>";
 		print "<div class='hantyuu'>${\(Kahifu::Template::dict('HEADING_HANTYUU'))}</div>";
 		print "<div class='ten'>${\(Kahifu::Template::dict('HEADING_POINT'))}</div>" if $narabi == 4;
+		print "<div class='date'>${\(Kahifu::Template::dict('HEADING_DATE'))}</div>" if $narabi == 5;
 		print "</div>";
 		#print decode_utf8(param('kensaku')) if param('kensaku');
 		#$dbh->trace(2); #debug sql
@@ -1072,6 +1073,9 @@ if($paginate == 1){
 					print "</a>";
 				print "</div>";
 				print "<div class='ten'>", $v->{point}, "</div>" if $narabi == 4;
+				if($narabi == 5){
+					print "<div class='date'>${\( defined $v->{kaisi} && $v->{kaisi} != '' ? substr($v->{kaisi}, 0, 4) : '' )}<span class='cour_${\( defined $v->{cour} ? (substr($v->{cour}, 4, 1) eq '冬' ? '1' : (substr($v->{cour}, 4, 1) eq '春' ? '2' : (substr($v->{cour}, 4, 1) eq '夏' ? '3' : (substr($v->{cour}, 4, 1) eq '秋' ? '4' : '5')))) : '' )}'>${\( defined $v->{kaisi} && length(sprintf(\"%04d\", $v->{kaisi})) == 8 ? '<sup>' . (substr($v->{kaisi}, 4, 1) eq '0' ? substr($v->{kaisi}, 5, 1) : substr($v->{kaisi}, 4, 2)) . '</sup>&frasl;<sub>' . (substr($v->{kaisi}, 6, 1) eq '0' ? substr($v->{kaisi}, 7, 1) : substr($v->{kaisi}, 6, 2)) . '</sub>' : (defined $v->{kaisi} && length(sprintf(\"%04d\", $v->{kaisi})) == 6 ? '<sup>' . (substr($v->{kaisi}, 4, 1) eq '0' ? substr($v->{kaisi}, 5, 1) : substr($v->{kaisi}, 4, 2)) . '</sup>&frasl;<sub>x</sub>' : '') )}</span></div>";
+				}
 				# 更新するために Initialize "activity_kousin"
 				print "<div id='ak_$v->{id}' class='activity_kousin'>";
 				print "<form method='post' action='kousin.pl'>";

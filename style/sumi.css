@@ -581,9 +581,49 @@ div.koumoku > div.hantyuu {
 	width: 22.5%;
 }
 
+div.info > div.hantyuu:has(+div.ten),
+div.koumoku > div.hantyuu:has(+div.ten),
+div.info > div.hantyuu:has(+div.date),
+div.koumoku > div.hantyuu:has(+div.date) {
+	width: 12.5%;
+}
+
 div.info > div.ten,
-div.koumoku > div.ten {
+div.koumoku > div.ten,
+div.info > div.date,
+div.koumoku > div.date {
 	width: 10%;
+}
+
+div.koumoku > div.date > span {
+	margin-left: 0em;
+}
+
+div.koumoku > div.date > span,
+div.koumoku > div.date > span > sup,
+div.koumoku > div.date > span > sub {
+	line-height: 0;
+}
+
+div.koumoku > div.date > span:not(.cour_5){
+	text-shadow: 1px 1px 1px white;
+	margin-left: 0.125em;
+}
+
+div.koumoku > div.date > span.cour_1 {
+	color: blue;
+}
+
+div.koumoku > div.date > span.cour_2 {
+	color: green;
+}
+
+div.koumoku > div.date > span.cour_3 {
+	color: coral;
+}
+
+div.koumoku > div.date > span.cour_4 {
+	color: red;
 }
 
 div.koumoku > div:not(.kansou) {
@@ -1500,6 +1540,8 @@ div.koyomi > div.sihanki > div > span{
 div.koyomi .highlight_syuu {
 	font-weight: bold;
 	text-shadow: 0px 0px 10px white, 0px 0px 10px white, 0px 0px 10px white, 0px 0px 10px white, 0px 0px 10px white, 0px 0px 10px white, 0px 0px 10px white, 0px 0px 10px white, 0px 0px 10px white !important;
+	z-index: 100;
+	overflow: visible;
 }
 
 div.koyomi .type_dead.highlight_syuu {
