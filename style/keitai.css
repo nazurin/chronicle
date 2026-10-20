@@ -573,7 +573,7 @@ body > div.body > div.frame > div.podium > div.keitai_last > div.sengen {
 	/*backdrop-filter: invert(1);
 	-webkit-backdrop-filter: invert(1);*/
 	flex-basis: 100%;
-	padding-bottom: 3em;
+	padding-bottom: 3.5em;
 }
 
 div.commander > div.migi > div.maegaki > div.jikanseido {
