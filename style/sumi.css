@@ -3040,6 +3040,37 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama
 	color: rgb(0, 0, 0);
 }
 
+div.hondana {
+	border: inset brown 4px;
+}
+
+div.hondana > div {
+	display: flex;
+	border: inset brown 4px;
+}
+
+div.hondana > div > div {
+	display: flex;
+	flex-basis: 5%;
+	width: 5%;
+	align-items: center;
+	writing-mode: vertical-rl;
+}
+
+div.hondana > div > div > span > span.suuji,
+div.hondana > div > div > svg span {
+	text-combine-upright: all;
+}
+
+div.hondana > div > div > div.midasi {
+	height: 12em;
+}
+
+div.hondana > div > div > span.sakka {
+	flex-basis: 30%;
+	max-height: 12em;
+}
+
 .hantyuu_bungakukei_tate {
 	font-weight: bold;
 	background: conic-gradient( #FFECC0, #FDB7DE, #F9CBEF, #F4B5CD 48%, #E8F0AE 50%, #E1EEB7 50%, #F0C5E3 52%, #e6bbd7, #f0b3db, #E6E6E6);
