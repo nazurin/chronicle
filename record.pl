@@ -111,7 +111,7 @@ print "<div class='record'>";
 
     my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
     if(defined param('mkdir')){
-        my $record = $dbh->prepare("select *, concat(coalesce(catalog1, ''), '-', coalesce(catalog2, '')) as catalog from record group by catalog");
+        my $record = $dbh->prepare("select *, concat(coalesce(catalog1, ''), '-', coalesce(catalog2, '')) as catalog from record group by catalog order by id");
         $record->execute();
         while(my $v = $record->fetchrow_hashref){
             my $date_seisiki = defined $v->{date} && $v->{date} ne '' ? length $v->{date} == 8 ? substr($v->{date}, 0, 4) . '.' . substr($v->{date}, 4, 2) . '.' . substr($v->{date}, 6, 2) : (length $v->{date} == 6 ? substr($v->{date}, 0, 4) . '.' . substr($v->{date}, 4, 2) . '.' . 'xx' : (length $v->{date} == 4 ? substr($v->{date}, 0, 4) . '.' . 'xx' . '.' . 'xx' : undef ) ) : undef;
