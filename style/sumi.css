@@ -93,7 +93,8 @@ div.keitai_last div.navi a:active {
 }
 
 div.commander > div.hidari > div.navi > span:hover,
-div.keitai_last div.navi span:hover {
+div.keitai_last div.navi span:hover,
+div.podium > div.navi > span.navi:hover {
 	cursor: pointer;
 	background-color: #fffc9e;
 	border: 1px solid orange;
@@ -102,7 +103,8 @@ div.keitai_last div.navi span:hover {
 }
 
 div.commander > div.hidari > div.navi > span:active,
-div.keitai_last div.navi span:active {
+div.keitai_last div.navi span:active,
+div.podium > div.navi > span.navi:active {
 	cursor: pointer;
 	background-color: orange;
 	border: 1px solid orange;
@@ -2266,6 +2268,78 @@ div.sakuhinbako > div.migi > div.ndc > div.category:nth-child(5) > span.keta {
 	text-shadow: black 1px 1px;
 }
 
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami {
+	display: flex;
+	width: 100%;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate {
+	writing-mode: vertical-rl;
+	flex-direction: column;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame {
+	flex-shrink: 1;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame > img {
+	max-width: 10em;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami > div {
+	padding: 0.25em;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami > div.jyouhou {
+	flex-grow: 1;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami > div.jyouhou > div.item > span {
+	font-weight: bold;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo {
+	background-color: hsla(0, 0%, 100%, 0.6);
+	color: black;
+	width: 100%;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.hantyuu {
+	font-weight: bold;
+	text-shadow: 1px 1px white;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.date > div {
+	display: flex;
+	padding: 0 0.25em 0 1em;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.date > div > span:first-child {
+	width: 5em;
+	flex-basis: 5em;
+	flex-shrink: 0;
+	font-size: 0.8em;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.date > div > span:last-child {
+	flex-grow: 1;
+	text-align: right;
+	font-size: 0.8em;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.yarite {
+	margin-top: 0.25em;
+	text-align: right;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.yarite > span.shop {
+	font-size: 0.9em;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.yarite > span.shop > span.saki {
+	font-weight: bold;
+}
+
 div.sakuhinbako > div.migi > div.kansyourirekisyo > form > div.midasi {
 	font-weight: bold;
 }
@@ -3040,16 +3114,49 @@ body > div.body > div.migi > div.box.daizu > div.zu > div > div.retu > div.drama
 	color: rgb(0, 0, 0);
 }
 
+/* 本棚用 */
+div.podium > div.navi {
+	background-color: brown;
+	padding: 0.25em 0.5em;
+	color: hsl(50, 100%, 95%, 1);
+}
+
+div.podium > div.navi > a {
+	text-decoration: none;
+}
+
+div.podium > div.navi > a:first-of-type {
+	margin-right: 0.25em;
+}
+
+div.podium > div.navi > a.migi {
+	float: right;
+}
+
+div.podium > div.navi > a:link,
+div.podium > div.navi > a:visited {
+	color: inherit;
+}
+
+div.podium > div.navi > a:hover {
+	color: yellow;
+}
+
+div.podium > div.navi > a:active {
+	color: red;
+}
+
 div.hondana {
 	border: inset brown 4px;
 }
 
-div.hondana > div {
+div.hondana > div.dann {
 	display: flex;
 	border: inset brown 4px;
+	background-color: brown;
 }
 
-div.hondana > div > div {
+div.hondana > div.dann > div.syoseki {
 	display: flex;
 	flex-basis: 5%;
 	width: 5%;
@@ -3062,13 +3169,56 @@ div.hondana > div > div > svg span {
 	text-combine-upright: all;
 }
 
+div.hondana > div > div > div > svg > text {
+	dominant-baseline: ideographic;
+}
+
 div.hondana > div > div > div.midasi {
 	height: 12em;
 }
 
-div.hondana > div > div > span.sakka {
-	flex-basis: 30%;
-	max-height: 12em;
+div.hondana > div.dann > div.syoseki {
+	background-color: blue;
+	color: rgba(255, 255, 255, 0.9);
+	fill: rgba(255, 255, 255, 0.9);
+	padding: 0.5em 0 0 0;
+}
+
+div.hondana > div.dann > div.syoseki > div.sakka {
+	flex-grow: 1;
+}
+
+div.hondana > div.dann > div.syoseki > div.jyouhou {
+	background-color: white;
+	border-radius: 0.125em;
+	height: 4em;
+	margin: 0.5em 0em;
+	padding: 0 0.125em;
+	color: black;
+	display: flex;
+}
+
+div.hondana > div.dann > div.syoseki > div.jyouhou > div:not(:empty) {
+	writing-mode: horizontal-tb;
+	text-align: center;
+	flex-grow: 1;
+	align-content: center;
+}
+
+div.hondana > div.dann > div.syoseki > div.hid {
+	writing-mode: horizontal-tb;
+	text-align: center;
+	width: 100%;
+	border-top: 3px double black;
+}
+
+div.hondana > div.dann > div.syoseki > div.jyouhou > div:not(:empty),
+div.hondana > div.dann > div.syoseki > div.hid > span {
+	font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+}
+
+div.hondana > div.dann > div.syoseki > div.hid > span {
+	font-size: 0.8em;
 }
 
 .hantyuu_bungakukei_tate {

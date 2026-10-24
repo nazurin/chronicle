@@ -49,6 +49,7 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 	my $hantyuu_raw = defined param('hantyuu') && param('hantyuu') ? decode_utf8(param('hantyuu')) : "";
 	my $sakka = defined param('sakka') && param('sakka') ? decode_utf8(param('sakka')) : "";
 	my $colle = defined param('collection') && param('collection') ? decode_utf8(param('collection')) : "";	
+	my $lib = defined param('hondana') && param('hondana') ? decode_utf8(param('hondana')) : "";	
 	my @betumei_key = defined param('betumei_key') && param('betumei_key') ? decode_utf8(param('betumei_key')) : "";	
 	my @betumei_val = defined param('betumei_val') && param('betumei_val') ? decode_utf8(param('betumei_val')) : "";	
 	my @betumei_key_fuku = defined param('betumei_key_fuku') && param('betumei_key_fuku') ? decode_utf8(param('betumei_key_fuku')) : "";	
@@ -151,6 +152,54 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 		my $colle_send = $dbh->prepare($colle_settei);
 		$colle_send->execute($turu_new, @sitazi_bind, $i);
 	}
+
+	my @lib_prev = split(',', $info->{$id}{lib});
+	my @lib_current = split(',', $lib);
+	
+	my @lib_list_get = $dbh->selectall_array("select id from library");
+	for(my $i=0; $i<scalar(@lib_list_get); $i++){$lib_list_get[$i] = $lib_list_get[$i][0]}
+	my %to_delete_lib = map { $_ => 1 } @lib_list_get;
+	@lib_current = grep { $to_delete_lib{$_} } @lib_current;
+	
+	my @lib_tuke = array_minus(@lib_current, @lib_prev);
+	my @lib_hazusi = array_minus(@lib_prev, @lib_current);
+	my $lib_turu = join(',', @lib_current);
+
+	for my $i (@lib_hazusi){
+		my @sitazi_bind;
+		my $read_turu;
+		my $turu_get_query = "select turu from library where id = ?";
+		my $turu_get = $dbh->prepare($turu_get_query);
+		$turu_get->execute($i);
+		while(my $v = $turu_get->fetchrow_arrayref){
+			$read_turu = $v->[0];
+		}
+		my @maki = split(',', $read_turu);
+		@maki = grep {$_ ne $id} @maki;
+		my $turu_new = join(',', @maki);
+		# `turu` = concat(ifnull(`turu`,''), ?) ←更新する場合
+		my $lib_settei = "update library set `turu` = ? where `id` = ?";
+		my $lib_send = $dbh->prepare($lib_settei);
+		$lib_send->execute($turu_new, @sitazi_bind, $i);
+	}
+
+	for my $i (@lib_tuke){
+		my @sitazi_bind;
+		my $read_turu;
+		my $turu_get_query = "select turu from library where id = ?";
+		my $turu_get = $dbh->prepare($turu_get_query);
+		$turu_get->execute($i);
+		while(my $v = $turu_get->fetchrow_arrayref){
+			$read_turu = $v->[0];
+		}
+		my @maki = split(',', $read_turu);
+		push @maki, $id;
+		my $turu_new = join(',', @maki);
+		# `turu` = concat(ifnull(`turu`,''), ?) ←更新する場合
+		my $lib_settei = "update library set `turu` = ? where `id` = ?";
+		my $lib_send = $dbh->prepare($lib_settei);
+		$lib_send->execute($turu_new, @sitazi_bind, $i);
+	}
 		
 	my $hantyuu_get_query = "select hantyuu, fukuhantyuu from hantyuu_alias where kotoba = ?";
 	my $hantyuu_get = $dbh->prepare($hantyuu_get_query);
@@ -169,10 +218,10 @@ if(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kous
 		$sounyuu_jikkou->execute($id, $genzai, $char, $kansou);
 	}
 		
-	my $meirei = "update sakuhin set yotei = ?, sakifuku = ?, mal_id = ?, al_id = ?, midasi = ?, fukumidasi = ?, hantyuu = ?, fukuhantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, isbn = ?, isbn13 = ?, ndc = ?, ddc = ?, kaisi = ?, syuuryou = ?, cour = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ? where id = ? ";
+	my $meirei = "update sakuhin set yotei = ?, sakifuku = ?, mal_id = ?, al_id = ?, midasi = ?, fukumidasi = ?, hantyuu = ?, fukuhantyuu = ?, sakka = ?, betumei = ?, fukubetumei = ?, sakkabetumei = ?, isbn = ?, isbn13 = ?, ndc = ?, ddc = ?, kaisi = ?, syuuryou = ?, cour = ?, theme = ?, gyousuu = ?, bg_img = ?, eternal = ?, current = ?, kansou = ?, mikakutei = ?, colle = ?, lib = ? where id = ? ";
 	
 	my $sakuhin_kousin = $dbh->prepare($meirei);
-	$sakuhin_kousin->execute($yotei, $sakifuku, $mal_id, $al_id, $midasi, $fukumidasi, $hantyuu, $fukuhantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $isbn, $isbn13, $ndc, $ddc, $kaisi, $syuuryou, $cour, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $id);
+	$sakuhin_kousin->execute($yotei, $sakifuku, $mal_id, $al_id, $midasi, $fukumidasi, $hantyuu, $fukuhantyuu, $sakka, $betumei_json, $fukubetumei_json, $sakkabetumei_json, $isbn, $isbn13, $ndc, $ddc, $kaisi, $syuuryou, $cour, $theme, $gyousuu, $haikei, $eternal, $current, $kansou, $mikakutei, $colle_turu, $lib_turu, $id);
 } elsif(request_method eq 'POST' && Kahifu::Template::tenmei() && defined param('kanri') && param('kanri') eq 'del') {
 	my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
 	

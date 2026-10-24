@@ -411,6 +411,61 @@ if(defined param('id') && param('id')){
 				}
 				print "</div>";
 			}
+			if(defined $sakuhin_info->{$passthrough_id}{lib}){
+				my (@turu, $turu_sitazi);
+				@turu = split /,/,$sakuhin_info->{$passthrough_id}{lib};
+				for(my $i=0; $i<scalar(@turu); $i++){$turu_sitazi .= '?,'}
+				$turu_sitazi =~ s/,\s*$//; #　後端のコンマを削除す
+				$turu_sitazi = '0' if not defined $turu_sitazi;
+				my $hondana_meirei = ("select * from library where `id` in (${turu_sitazi})");
+				my $hondana_syutoku = $dbh->prepare($hondana_meirei);
+				$hondana_syutoku->execute(@turu);
+				print "<div class='baitai'>";
+					while(my $v = $hondana_syutoku->fetchrow_hashref){
+						print "<div class='item' style='${\( defined $v->{color} ? \"color: hsl($v->{color});\" : (defined $v->{haikei} ? '' : (((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100 > 55 ? 'color: black;' : 'color: white;') ) )}${\(defined $v->{haikei} ? \"background-color: hsl($v->{haikei});\" : \"background-color: hsl(${\(Kahifu::Infra::sitei_rand($v->{sakka}, 360))}, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%);\")}'>";
+							print "<div class='kami lang_${\( ($v->{item} =~ /[\p{Han}\p{Hiragana}\p{Katakana}]/ || $v->{sakka} =~ /(?![＝訳著編])[\p{Han}\p{Hiragana}\p{Katakana}]/) && defined $v->{img} && $v->{img} ? 'tate' : 'yoko')}'>";
+								print "<div class='jyouhou'>";
+									print "<div class='item'><span>$v->{item}</span></div>";
+									print "<div class='sakka'><span>$v->{sakka}</span></div>";
+								print "</div>";
+								print "<div class='mitame'>";
+									print "<img width='100%' src='/img/ref/chronicle/cover/syoseki/$v->{img}'>" if defined $v->{img} && $v->{img};
+								print "</div>";
+							print "</div>";
+							print "<div class='simo'>";
+								print "<div class='hantyuu'>";
+									print "<span class='hannyou type_$v->{hantyuu}'>${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}</span>";
+								print "</div>";
+	;							print "<div class='date'>";
+									my @insatubi = split '/', $v->{insatubi};
+									if(defined $v->{hakkoubi} && $v->{hakkoubi}){
+									print "<div class='hakkoubi'>";
+										print "<span>${\(defined $v->{hakkoubi} && $v->{insatubi} && $v->{hakkoubi} eq $insatubi[0] ? Kahifu::Template::dict('HONDANA_SYOHAN') : Kahifu::Template::dict('HONDANA_HAKKOUBI'))}</span>";
+										print "<span class='hakkoubi'>${\(date($v->{hakkoubi}, 1, 0, 0))}</span>";
+									print "</div>";
+									}
+									if(defined $insatubi[1] && $insatubi[1] > 1){
+										print "<div class='insatubi'>";
+											(my $insatu_hidarigawa = Kahifu::Template::dict('HONDANA_INSATUBI_TOKUTEI')) =~ s/\?/$insatubi[1]/;
+											print "<span>${\(defined $insatubi[1] && $insatubi[1] ?  $insatu_hidarigawa : ${\(Kahifu::Template::dict('HONDANA_INSATUBI'))} )}</span>";
+											print "<span class='insatubi'>${\(date($insatubi[0], 1, 0, 0))}</span>";
+										print "</div>";
+									}
+									print "<div class='syutokubi'>";
+										print "<span>${\(Kahifu::Template::dict('HONDANA_NYUUSYUBI'))}</span>";
+										print "<span>${\(date($v->{date}, 1, 0))}</span>";
+									print "</div>";
+								print "</div>";
+								print "<div class='yarite'>";
+										my @yarite = split '/', $v->{yarite};
+										(my $yori = Kahifu::Template::dict('HONDANA_YORI')) =~ s/\?/<span class='saki'>$yarite[0]<\/span>/;
+										print "<span class='${\(defined $yarite[1] ? 'shop' : 'watasi')}'>$yori</span>";
+									print "</div>";
+							print "</div>";
+						print "</div>";
+					}
+				print "</div>";
+			}
 			print "<div class='kansyourirekisyo'>";
 			print "<form action='sakunai.pl' method='post'>";
 			# 鑑賞履歴（作品ページ内）
@@ -1217,8 +1272,9 @@ if($paginate == 1){
 					print "<div class='ext'><div><div><a target='_blank' href='https://myanimelist.net/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/${\( sub { return $v->{mal_id} if defined $v->{mal_id}}->() ) }'>MALID</a></div><div><input name='mal_id' value='${\( sub { return $v->{mal_id} if defined $v->{mal_id}}->() ) }' type='number' placeholder='${\( sub { return $v->{mal_id} if defined $v->{mal_id}}->() ) }'></div></div><div><div><a target='_blank' href='https://anilist.co/${\( sub { return $v->{hantyuu} == 13 ? 'manga' : 'anime' }->() )}/${\( sub { return $v->{al_id} if defined $v->{al_id}}->() ) }'>ALID</a></div><div><input name='al_id' value='${\( sub { return $v->{al_id} if defined $v->{al_id}}->() ) }' type='number' placeholder='${\( sub { return $v->{al_id} if defined $v->{al_id}}->() ) }'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 13, 14, 17;
 					print "<div class='ext isbn'><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN</a></div><div><input name='isbn' value='${\( sub { return $v->{isbn} if defined $v->{isbn}}->() ) }' type='text' placeholder='${\( sub { return $v->{isbn} if defined $v->{isbn}}->() ) }'></div></div><div><div><a target='_blank' href='https://isbnsearch.org/isbn/${\( sub { return defined $v->{isbn} && $v->{isbn} ne '' ? $v->{isbn} : (defined $v->{isbn13} && $v->{isbn13} ne '' ? $v->{isbn13} : '' ) }->() )}/'>ISBN-13</a></div><div><input name='isbn13' value='${\( sub { return $v->{isbn13} if defined $v->{isbn13}}->() ) }' type='text' placeholder='${\( sub { return $v->{isbn13} if defined $v->{isbn13}}->() ) }'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 6,7,16,24,68,67,103,11,25,26,18,13; #bungakukei
 					print "<div class='ext isbn'><div><div><a target='_blank' href='https://www.librarything.com/mds/${\( sub { return defined $v->{ddc} && $v->{ddc} ne '' ? $v->{ddc} : '' }->() )}'>DDC</a></div><div><input name='ddc' value='${\( sub { return $v->{ddc} if defined $v->{ddc}}->() ) }' type='text' placeholder='${\( sub { return $v->{ddc} if defined $v->{ddc}}->() ) }'></div></div><div><div><a target='_blank' href='https://ci.nii.ac.jp/books/search${\( sub { return defined $v->{ndc} && $v->{ndc} ne '' ? '?clas=' . $v->{ndc} : '' }->() )}/'>NDC</a></div><div><input name='ndc' value='${\( sub { return $v->{ndc} if defined $v->{ndc}}->() ) }' type='text' placeholder='${\( sub { return $v->{ndc} if defined $v->{ndc}}->() ) }'></div></div></div>" if grep{$_ eq $v->{hantyuu}} 6,7,16,24,68,67,103,11,25,26,18,13; #bungakukei
-					print "<div class='cour'><div><div>${\(Kahifu::Template::dict('KIROKU_COLLECTION_ALT'))}</div><div><input type='text' size='10' name='kaisi' placeholder='${\( sub { return $v->{kaisi} if defined $v->{kaisi}}->() ) }' value='${\( sub { return $v->{kaisi} if defined $v->{kaisi}}->() ) }'><input type='text' size='10' name='syuuryou' placeholder='${\( sub { return $v->{syuuryou} if defined $v->{syuuryou}}->() ) }' value='${\( sub { return $v->{syuuryou} if defined $v->{syuuryou}}->() ) }'></div><div><input type='text' size='6' name='cour' placeholder='${\( sub { return $v->{cour} if defined $v->{cour}}->() ) }' value='${\( sub { return $v->{cour} if defined $v->{cour}}->() ) }'></div></div></div>";
+					print "<div class='cour'><div><div>${\(Kahifu::Template::dict('KIROKU_KIKAN'))}</div><div><input type='text' size='10' name='kaisi' placeholder='${\( sub { return $v->{kaisi} if defined $v->{kaisi}}->() ) }' value='${\( sub { return $v->{kaisi} if defined $v->{kaisi}}->() ) }'><input type='text' size='10' name='syuuryou' placeholder='${\( sub { return $v->{syuuryou} if defined $v->{syuuryou}}->() ) }' value='${\( sub { return $v->{syuuryou} if defined $v->{syuuryou}}->() ) }'></div><div><input type='text' size='6' name='cour' placeholder='${\( sub { return $v->{cour} if defined $v->{cour}}->() ) }' value='${\( sub { return $v->{cour} if defined $v->{cour}}->() ) }'></div></div></div>";
 					print "<div class='colle'><div><div>${\(Kahifu::Template::dict('KIROKU_COLLECTION_ALT'))}</div><div><input type='text' size='30' name='collection' placeholder='' value='", $v->{colle}//'', "'></div></div></div>";
+					print "<div class='colle'><div><div>${\(Kahifu::Template::dict('KIROKU_HONDANA'))}</div><div><input type='text' size='30' name='hondana' placeholder='' value='", $v->{lib}//'', "'></div></div></div>";
 					print "<div class='bunsyou'><textarea name='kansou' form='kansou_$v->{id}'>", $v->{kansou}//'', "</textarea></div>";
 					print "<div class='meirei'><input type='submit' name='kousin' value='${\(Kahifu::Template::dict('KIROKU_KOUSIN'))}'></div>";
 					print "</form>";

@@ -414,8 +414,14 @@ div.sakuhinbako > div.migi > div.tensuu,
 div.sakuhinbako > div.migi > div.colle,
 div.sakuhinbako > div.migi > div.kansyourirekisyo,
 div.sakuhinbako > div.migi > div.isbn,
-div.sakuhinbako > div.migi > div.ndc {
+div.sakuhinbako > div.migi > div.ndc,
+div.sakuhinbako > div.migi > div.baitai {
 	max-width: initial;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami > div.mitame {
+	text-align: center;
+	flex-grow: 1;
 }
 
 div.sakuhinbako > div.migi > div.colle {
@@ -579,6 +585,11 @@ body > div.body > div.frame > div.podium > div.keitai_last > div.sengen {
 div.commander > div.migi > div.maegaki > div.jikanseido {
 	right: 1em;
 	top: -2em;
+}
+
+div.hondana > div.dann > div.syoseki {
+	flex-basis: 10%;
+	width: 10%;
 }
 
 @media only screen and (min-height: 625px) and (max-height: 630px) and (min-width: 885px) and (max-width: 890px) {
