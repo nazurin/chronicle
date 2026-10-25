@@ -2268,6 +2268,10 @@ div.sakuhinbako > div.migi > div.ndc > div.category:nth-child(5) > span.keta {
 	text-shadow: black 1px 1px;
 }
 
+div.sakuhinbako > div.migi > div.baitai > div.item {
+	border: 1px solid black;
+}
+
 div.sakuhinbako > div.migi > div.baitai > div.item > div.kami {
 	display: flex;
 	width: 100%;
@@ -2309,6 +2313,10 @@ div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.hantyuu {
 	text-shadow: 1px 1px white;
 }
 
+div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.hantyuu > span {
+	padding-left: 0.25em;
+}
+
 div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.date > div {
 	display: flex;
 	padding: 0 0.25em 0 1em;
@@ -2330,10 +2338,11 @@ div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.date > div >
 div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.yarite {
 	margin-top: 0.25em;
 	text-align: right;
+	font-size: 0.7em;
 }
 
 div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.yarite > span.shop {
-	font-size: 0.9em;
+
 }
 
 div.sakuhinbako > div.migi > div.baitai > div.item > div.simo > div.yarite > span.shop > span.saki {
