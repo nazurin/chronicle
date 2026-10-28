@@ -419,9 +419,22 @@ div.sakuhinbako > div.migi > div.baitai {
 	max-width: initial;
 }
 
+div.sakuhinbako > div.migi > div.baitai > div.item:has(div.kami.lang_tate) {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
 div.sakuhinbako > div.migi > div.baitai > div.item > div.kami > div.mitame {
 	text-align: center;
 	flex-grow: 1;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item:has(div.kami.lang_tate) > div.simo > div.date > div {
+	flex-wrap: wrap;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item:has(div.kami.lang_tate) > div.simo > div.date > div > span:last-child {
+	flex-shrink: 0;
 }
 
 div.sakuhinbako > div.migi > div.colle {
