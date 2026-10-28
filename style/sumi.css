@@ -94,7 +94,7 @@ div.keitai_last div.navi a:active {
 
 div.commander > div.hidari > div.navi > span:hover,
 div.keitai_last div.navi span:hover,
-div.podium > div.navi > span.navi:hover {
+div.podium > div.navi > div.page > span.navi:hover {
 	cursor: pointer;
 	background-color: #fffc9e;
 	border: 1px solid orange;
@@ -104,7 +104,7 @@ div.podium > div.navi > span.navi:hover {
 
 div.commander > div.hidari > div.navi > span:active,
 div.keitai_last div.navi span:active,
-div.podium > div.navi > span.navi:active {
+div.podium > div.navi > div.page > span.navi:active {
 	cursor: pointer;
 	background-color: orange;
 	border: 1px solid orange;
@@ -3128,31 +3128,45 @@ div.podium > div.navi {
 	background-color: brown;
 	padding: 0.25em 0.5em;
 	color: hsl(50, 100%, 95%, 1);
+	display: flex;
 }
 
-div.podium > div.navi > a {
+div.podium > div.navi  a {
 	text-decoration: none;
 }
 
-div.podium > div.navi > a:first-of-type {
+div.podium > div.navi a:first-of-type {
 	margin-right: 0.25em;
 }
 
-div.podium > div.navi > a.migi {
+div.podium > div.navi a.migi {
 	float: right;
 }
 
-div.podium > div.navi > a:link,
-div.podium > div.navi > a:visited {
+div.podium > div.navi a:link,
+div.podium > div.navi a:visited {
 	color: inherit;
 }
 
-div.podium > div.navi > a:hover {
+div.podium > div.navi a:hover {
 	color: yellow;
 }
 
-div.podium > div.navi > a:active {
+div.podium > div.navi a:active {
 	color: red;
+}
+
+div.podium > div.navi > div.page {
+	flex-grow: 1;
+}
+
+div.podium > div.navi > div.siborikomi,
+div.podium > div.navi > a {
+	background-color:maroon;
+}
+
+div.podium > div.navi > div.siborikomi > form > div {
+	display: inline-block;
 }
 
 div.hondana {
@@ -3162,7 +3176,7 @@ div.hondana {
 div.hondana > div.dann {
 	display: flex;
 	border: inset brown 4px;
-	background-color: brown;
+	background-color: #501717;
 }
 
 div.hondana > div.dann > div.syoseki {

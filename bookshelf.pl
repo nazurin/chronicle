@@ -23,11 +23,46 @@ my %cookie = CGI::Cookie->fetch;
 my $query = CGI->new;
 my %url_get = $query->Vars();
 
+if(request_method eq 'POST'){
+    if(defined param('kensaku_kettei')){
+        delete($url_get{kensaku_kettei});
+		$uri = url_get_tuke(\%url_get, 'kensaku', decode_utf8(param('kensaku'))) if defined param('kensaku') && param('kensaku') ne '';
+        if(!(defined param('kensaku') && param('kensaku') ne '') && defined param('hantyuu') && param('hantyuu') >= 200){
+            $uri = url_get_tuke(\%url_get, 'hantyuu', param('hantyuu'));
+        }
+	} elsif (defined param('kaijyo')){
+		delete($url_get{kaijyo});
+		$uri = url_get_hazusi(\%url_get, 'kensaku');
+	}
+    print $query->redirect($uri);
+}
+
 our $ninsyou = (defined $cookie{kangeiroku_ninsyou} && unpack('H*', sha256($cookie{kangeiroku_ninsyou})) == Kahifu::Key::hyouka_sesame) || Kahifu::Template::tenmei;
 my $dbh = Kahifu::Setuzoku::sql('kangeiroku');
 
-my $count_sitami = $dbh->prepare("select `id` from `library`");
-$count_sitami->execute();
+my ($kensaku, $kensaku_sitazi, $siborikomi_hantyuu, $hantyuu_sibori_sitazi, $hantyuu_turu_sitazi, @sitazi_bind);
+if (defined param('kensaku') && param('kensaku')){
+    $kensaku = "${\(decode_utf8(param('kensaku')))}";
+    $kensaku_sitazi = "and (`item` like ? or `sakka` like ? or `yarite` like ? or `set` like ? or `hassou` like ?)";
+    push @sitazi_bind, ("%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%", "%${kensaku}%");
+} else { $kensaku_sitazi = ""; }
+
+if (defined param('hantyuu') && param('hantyuu') >= 200){ 
+    $siborikomi_hantyuu = param('hantyuu');
+	if(index($siborikomi_hantyuu, ',') != -1){
+		my @hantyuu_turu = split /,/,$siborikomi_hantyuu;
+		for(my $i=0; $i<scalar(@hantyuu_turu); $i++){$hantyuu_turu_sitazi .= '?,'}
+		$hantyuu_turu_sitazi =~ s/,\s*$//; #　後端のコンマを削除す
+		$hantyuu_sibori_sitazi = "and (`hantyuu` in (" . $hantyuu_turu_sitazi . "))";
+		push @sitazi_bind, (@hantyuu_turu);
+	} else {
+		$hantyuu_sibori_sitazi = "and (`hantyuu` in (?))";
+		push @sitazi_bind, ($siborikomi_hantyuu);
+	}
+} else { $hantyuu_sibori_sitazi = ""; }
+
+my $count_sitami = $dbh->prepare("select `id` from `library` where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi}");
+$count_sitami->execute(@sitazi_bind);
 my $syosekisuu = $count_sitami->rows();
 
 my $page = (defined param('page') && param('page') != 1 && $ninsyou) ? param('page') : 1;
@@ -36,9 +71,9 @@ my $page_offset = ($page != 1) ? $page_count * (param('page')-1) : 0;
 
 my $page_subete = ceil((($syosekisuu - $page_count) / $page_count) + 1);
 
-my $meirei = "select * from `library` limit ?, ?";
+my $meirei = "select * from `library` where 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} limit ?, ?";
 my $syoseki_syutoku = $dbh->prepare($meirei);
-$syoseki_syutoku->execute($page_offset, $page_count);
+$syoseki_syutoku->execute(@sitazi_bind, $page_offset, $page_count);
 my $syoseki_page_total = $syoseki_syutoku->rows;
 
 print "Content-type: text/html\n\n";
@@ -61,15 +96,36 @@ while(my $v = $jyoukyou_list->fetchrow_hashref){
 my ($echo);
 print "<div class='navi'>";
     print "<a href='default.pl'>${\(Kahifu::Template::dict('MODORU'))}</a>";
-    $echo .= "<a href='${\(url_get_tuke(\%url_get, 'page', ${\($page-1)}))}'>←</a>" if $page != 1;
-    $echo .= "<span class='navi'>";
-    $echo .= "page ";
-    $echo .= my $page = (defined param('page')) ? param('page') : 1;
-    $echo .= "${\(Kahifu::Template::dict('SLASH'))}";
-    $echo .= $page_subete;
-    $echo .= "</span>";
-    $echo .= "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
-    print $echo;
+    print "<div class='page'>";
+        $echo .= "<a href='${\(url_get_tuke(\%url_get, 'page', ${\($page-1)}))}'>←</a>" if $page != 1;
+        $echo .= "<span class='navi'>";
+        $echo .= "page ";
+        $echo .= my $page = (defined param('page')) ? param('page') : 1;
+        $echo .= "${\(Kahifu::Template::dict('SLASH'))}";
+        $echo .= $page_subete;
+        $echo .= "</span>";
+        $echo .= "<a class='migi' href='${\(url_get_tuke(\%url_get, 'page', ${\($page+1)}))}'>→</a>" if $page + 1 <= $page_subete;
+        print $echo;
+    print "</div>";
+    print "<div class='siborikomi'>";
+        print "<form method='post'>";
+        print "<div>";
+            print "<input type='text' name='kensaku' ${\(Kahifu::Template::dict('KENSAKU_PLACEHOLDER'))}' value='${\( sub { return $kensaku if defined ${kensaku} }->() )}'>";
+        print "</div>";
+        print "<div>";
+            print "<select name='hantyuu'>";
+            my $hantyuu_syutoku = $dbh->prepare('select * from hantyuu where kei > 54 and kei <= 58');
+            $hantyuu_syutoku->execute();
+            print "<option class='hantyuu_all'>${\(Kahifu::Template::dict('HYOUKA_HANTYUU_50'))}</option>";
+            while(my $v = $hantyuu_syutoku->fetchrow_hashref){
+                print "<option class='hantyuu_$v->{class}' value='$v->{hantyuu}' ${\( sub { return 'selected=selected' if ${siborikomi_hantyuu} eq $v->{hantyuu} }->() )}>${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}</option>";
+            }
+            print "</select>";
+        print "</div>";
+        print "<input type='submit' value='${\(Kahifu::Template::dict('KETTEI'))}' name='kensaku_kettei'>";
+        print "<input type='submit' value='${\(Kahifu::Template::dict('KAIJYO'))}' name='kaijyo'>" if (param('kensaku'));
+        print "</form>";
+    print "</div>";
 print "</div>";
 print "<div class='hondana'>";
 my $i;
@@ -132,7 +188,7 @@ print "</div>";
 print "<script>
 \$(function()
         {
-        \$('div.navi > span').click(function()
+        \$('div.navi > div.page > span').click(function()
             {
             var span = \$(this);
             var text = ${page};
