@@ -420,49 +420,80 @@ if(defined param('id') && param('id')){
 				my $hondana_meirei = ("select * from library where `id` in (${turu_sitazi})");
 				my $hondana_syutoku = $dbh->prepare($hondana_meirei);
 				$hondana_syutoku->execute(@turu);
+				my $hondana_rows = $hondana_syutoku->rows;
 				print "<div class='baitai'>";
+					my ($midasi_sougou_hajime, $sougougyou, $i);
 					while(my $v = $hondana_syutoku->fetchrow_hashref){
-						print "<div class='item' style='${\( defined $v->{color} ? \"color: hsl($v->{color});\" : (defined $v->{haikei} ? '' : (((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100 > 55 ? 'color: black;' : 'color: white;') ) )}${\(defined $v->{haikei} ? \"background-color: hsl($v->{haikei});\" : \"background-color: hsl(${\(Kahifu::Infra::sitei_rand($v->{sakka}, 360))}, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%);\")}'>";
-							print "<div class='kami lang_${\( ($v->{item} =~ /[\p{Han}\p{Hiragana}\p{Katakana}]/ || $v->{sakka} =~ /(?![＝訳著編])[\p{Han}\p{Hiragana}\p{Katakana}]/) && defined $v->{img} && $v->{img} ? 'tate' : 'yoko')}'>";
-								print "<div class='jyouhou'>";
-									print "<div class='item'><span>$v->{item}</span></div>";
-									print "<div class='sakka'><span>$v->{sakka}</span></div>";
-								print "</div>";
-								print "<div class='mitame'>";
-									print "<img width='100%' src='/img/ref/chronicle/cover/syoseki/$v->{img}'>" if defined $v->{img} && $v->{img};
-								print "</div>";
-							print "</div>";
-							print "<div class='simo'>";
-								print "<div class='hantyuu'>";
-									print "<span class='hannyou type_$v->{hantyuu}'>${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}</span>";
-								print "</div>";
-	;							print "<div class='date'>";
-									my @insatubi = split '/', $v->{insatubi};
-									if(defined $v->{hakkoubi} && $v->{hakkoubi}){
-									print "<div class='hakkoubi'>";
-										print "<span>${\(defined $v->{hakkoubi} && $v->{insatubi} && $v->{hakkoubi} eq $insatubi[0] ? Kahifu::Template::dict('HONDANA_SYOHAN') : Kahifu::Template::dict('HONDANA_HAKKOUBI'))}</span>";
-										print "<span class='hakkoubi'>${\(date($v->{hakkoubi}, 1, 0, 0))}</span>";
+						$i = $i + 1;
+						my @midasi_sougou = split /\s+/, $v->{item};
+						if($midasi_sougou_hajime eq $midasi_sougou[0] || $i == 1){
+							push @{$sougougyou->{item}}, $v->{item};
+							push @{$sougougyou->{sakka}}, $v->{sakka} if grep{$_ ne $v->{sakka}} $sougougyou->{sakka};
+							push @{$sougougyou->{img}}, $v->{img} if defined $v->{img} && $v->{img} ne '' && grep{$_ ne $v->{img}} $sougougyou->{img};
+							push @{$sougougyou->{insatubi}}, $v->{insatubi} if defined $v->{insatubi} && $v->{insatubi} ne '' && grep{$_ ne $v->{insatubi}} $sougougyou->{insatubi};
+							push @{$sougougyou->{hakkoubi}}, $v->{hakkoubi} if defined $v->{hakkoubi} && $v->{hakkoubi} ne '' && grep{$_ ne $v->{hakkoubi}} $sougougyou->{hakkoubi};
+							push @{$sougougyou->{yarite}}, $v->{yarite} if defined $v->{yarite} && $v->{yarite} ne '' && grep{$_ ne $v->{yarite}} $sougougyou->{yarite};
+						} elsif ($midasi_sougou_hajime ne $midasi_sougou[0]){
+							$sougougyou = undef;
+							$sougougyou->{item} = $v->{item};
+							$sougougyou->{sakka} = $v->{sakka};
+							$sougougyou->{img} = $v->{img};
+							$sougougyou->{insatubi} = $v->{insatubi};
+							$sougougyou->{hakkoubi} = $v->{hakkoubi};
+							$sougougyou->{yarite} = $v->{yarite};
+						}
+						if( (defined $midasi_sougou_hajime && ($midasi_sougou_hajime ne $midasi_sougou[0] || $i == $hondana_rows)) || $i == 1 && $hondana_rows == 1){
+							# printする際
+							print "<div class='item' style='${\( defined $v->{color} ? \"color: hsl($v->{color});\" : (defined $v->{haikei} ? '' : (((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100 > 55 ? 'color: black;' : 'color: white;') ) )}${\(defined $v->{haikei} ? \"background-color: hsl($v->{haikei});\" : \"background-color: hsl(${\(Kahifu::Infra::sitei_rand($v->{sakka}, 360))}, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%);\")}'>";
+								print "<div class='kami lang_${\( ($v->{item} =~ /[\p{Han}\p{Hiragana}\p{Katakana}]/ || $v->{sakka} =~ /(?![＝訳著編])[\p{Han}\p{Hiragana}\p{Katakana}]/) && defined $v->{img} && $v->{img} ? 'tate' : 'yoko')}'>";
+									print "<div class='jyouhou'>";
+										#print "<div class='item'><span>${\(defined $midasi_sougou[1] && substr($midasi_sougou[1], 0, 1) =~ /[0-9]|[０-９]/ ? $midasi_sougou[0] : (ref($sougougyou->{item}) ne 'ARRAY' ? $sougougyou->{item} : $sougougyou->{item}[$_]++ foreach @$sougougyou->{item} ) )}</span></div>";
+										print "<div class='item'><span>";
+										print "${\( sub { if(ref(@midasi_sougou) eq 'ARRAY' && defined $midasi_sougou[1] && substr($midasi_sougou[1], 0, 1) =~ /[0-9]|[０-９]/){ return $midasi_sougou[0]; } elsif(ref($sougougyou->{item}) ne 'ARRAY'){ return $sougougyou->{item}; } else { print $sougougyou->{item}[$_]++ foreach @{$sougougyou->{item}}; return; } }->() )}";
+										print "</span></div>";
+										print "<div class='sakka'><span>$v->{sakka}</span></div>";
 									print "</div>";
-									}
-									if(defined $insatubi[1] && $insatubi[1] > 1){
-										print "<div class='insatubi'>";
-											(my $insatu_hidarigawa = Kahifu::Template::dict('HONDANA_INSATUBI_TOKUTEI')) =~ s/\?/$insatubi[1]/;
-											print "<span>${\(defined $insatubi[1] && $insatubi[1] ?  $insatu_hidarigawa : ${\(Kahifu::Template::dict('HONDANA_INSATUBI'))} )}</span>";
-											print "<span class='insatubi'>${\(date($insatubi[0], 1, 0, 0))}</span>";
+									print "<div class='mitame${\(defined $sougougyou->{img} && scalar @{$sougougyou->{img}} > 1 ? ' extend' : '')}${\(defined $sougougyou->{img} && scalar @{$sougougyou->{img}} >= 2 && scalar @{$sougougyou->{img}} <= 4 ? ' extend_2' : (defined $sougougyou->{img} && scalar @{$sougougyou->{img}} >= 5 ? ' extend_3' : ' extend_4' ) )}'>";
+										if(defined $sougougyou->{img} && $sougougyou->{img}){
+											for my $j (0 .. scalar @{$sougougyou->{img}} - 1){
+												print "<img src='/img/ref/chronicle/cover/syoseki/$sougougyou->{img}[$j]'>";
+											}
+										}
+									print "</div>";
+								print "</div>";
+								print "<div class='simo'>";
+									print "<div class='hantyuu'>";
+										print "<span class='hannyou type_$v->{hantyuu}'>${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $v->{hantyuu}))}</span>";
+									print "</div>";
+		;							print "<div class='date'>";
+										my @insatubi = split '/', $v->{insatubi};
+										if(defined $v->{hakkoubi} && $v->{hakkoubi}){
+										print "<div class='hakkoubi'>";
+											print "<span>${\(defined $v->{hakkoubi} && $v->{insatubi} && $v->{hakkoubi} eq $insatubi[0] ? Kahifu::Template::dict('HONDANA_SYOHAN') : Kahifu::Template::dict('HONDANA_HAKKOUBI'))}</span>";
+											print "<span class='hakkoubi'>${\(date($v->{hakkoubi}, 1, 0, 0))}</span>";
 										print "</div>";
-									}
-									print "<div class='syutokubi'>";
-										print "<span>${\(Kahifu::Template::dict('HONDANA_NYUUSYUBI'))}</span>";
-										print "<span>${\(date($v->{date}, 1, 0))}</span>";
+										}
+										if(defined $insatubi[1] && $insatubi[1] > 1){
+											print "<div class='insatubi'>";
+												(my $insatu_hidarigawa = Kahifu::Template::dict('HONDANA_INSATUBI_TOKUTEI')) =~ s/\?/$insatubi[1]/;
+												print "<span>${\(defined $insatubi[1] && $insatubi[1] ?  $insatu_hidarigawa : ${\(Kahifu::Template::dict('HONDANA_INSATUBI'))} )}</span>";
+												print "<span class='insatubi'>${\(date($insatubi[0], 1, 0, 0))}</span>";
+											print "</div>";
+										}
+										print "<div class='syutokubi'>";
+											print "<span>${\(Kahifu::Template::dict('HONDANA_NYUUSYUBI'))}</span>";
+											print "<span>${\(date($v->{date}, 1, 0))}</span>";
+										print "</div>";
 									print "</div>";
+									print "<div class='yarite'>";
+											my @yarite = split '/', $v->{yarite};
+											(my $yori = Kahifu::Template::dict('HONDANA_YORI')) =~ s/\?/<span class='saki'>$yarite[0]<\/span>/;
+											print "<span class='${\(defined $yarite[1] ? 'shop' : 'watasi')}'>$yori</span>";
+										print "</div>";
 								print "</div>";
-								print "<div class='yarite'>";
-										my @yarite = split '/', $v->{yarite};
-										(my $yori = Kahifu::Template::dict('HONDANA_YORI')) =~ s/\?/<span class='saki'>$yarite[0]<\/span>/;
-										print "<span class='${\(defined $yarite[1] ? 'shop' : 'watasi')}'>$yori</span>";
-									print "</div>";
 							print "</div>";
-						print "</div>";
+						}
+						$midasi_sougou_hajime = $midasi_sougou[0];
 					}
 				print "</div>";
 			}
@@ -729,7 +760,6 @@ if($paginate == 1){
 
 	@meirei = ("select *, `name` as `midasi`, `album` as `fukumidasi`, `artist` as `sakka`, null as `betumei`, null as `fukubetumei`, null as `sakkabetumei`, null as `hantyuu`, null as `isbn`, null as `isbn13`, null as `jyoukyou` from `listen` having 1=1 ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${ongaku_narabi_tuuka} ${jun_tuuka} limit ${row_count} offset ?");
 }
-
 if(!(Kahifu::Template::tenmei() || $ninsyou)){
 	print "<form action='aikotoba.pl' method='post'>";
 	print "<div class='aikotoba'>";

@@ -2277,6 +2277,10 @@ div.sakuhinbako > div.migi > div.baitai > div.item > div.kami {
 	width: 100%;
 }
 
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_yoko {
+	flex-direction: column;
+}
+
 div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate {
 	writing-mode: vertical-rl;
 	flex-direction: column;
@@ -2286,8 +2290,44 @@ div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mi
 	flex-shrink: 1;
 }
 
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame.extend {
+	/*
+	display: flex;
+	flex-wrap: wrap;
+	flex-grow: 1;
+	writing-mode: horizontal-tb;
+	justify-content: space-evenly;
+	*/
+	display: grid;
+	flex-grow: 1;
+	writing-mode: horizontal-tb;
+	justify-content: space-evenly;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame.extend_2 {
+	grid-template-columns: repeat(2, 5em);
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame.extend_3 {
+	grid-template-columns: repeat(3, 3em);
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame.extend_4 {
+	grid-template-columns: repeat(4, 2.5em);
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_yoko > div.mitame > img {
+	max-width: 10em;
+	width: 100%;
+}
+
 div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame > img {
 	max-width: 10em;
+	width: 100%;
+}
+
+div.sakuhinbako > div.migi > div.baitai > div.item > div.kami.lang_tate > div.mitame.extend > img {
+	margin: 0.25em;
 }
 
 div.sakuhinbako > div.migi > div.baitai > div.item > div.kami > div {
