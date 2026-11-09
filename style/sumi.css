@@ -1062,6 +1062,10 @@ div.colle.koumoku.bikou_hidari .sakuhinmei{
 	width: calc(75% - 28px + 4px);
 }
 
+div.colle.koumoku .bikou.hidari.extra_2 span {
+	background-color: purple;
+}
+
 div.colle.koumoku.bikou_migi .hituzenjyouhou {
 	display: flex;
 }
