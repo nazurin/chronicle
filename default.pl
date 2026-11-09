@@ -21,7 +21,7 @@ use Kahifu::Junbi;
 use Kahifu::Template qw{dict};
 use Kahifu::Setuzoku;
 use Kahifu::Key;
-use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei title_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi url_get_irekae week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku isbn_check isbn_check_13 ordinal cour);
+use Hyouka::Infra qw(jyoukyou_settei midasi_settei sakka_settei title_settei midasi_tekisetuka date date_split url_get_tuke url_get_hazusi url_get_irekae week week_border week_count week_delta hash_max_key color_makase image_makase ten_henkan config_syutoku isbn_check isbn_check_13 ordinal cour bikou_syori);
 
 my $uri = Kahifu::Template::fetch_uri(__FILE__);
 my $ami = Kahifu::Template::fetch_ami($uri);
@@ -447,7 +447,6 @@ if(defined param('id') && param('id')){
 							print "<div class='item' style='${\( defined $v->{color} ? \"color: hsl($v->{color});\" : (defined $v->{haikei} ? '' : (((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100 > 55 ? 'color: black;' : 'color: white;') ) )}${\(defined $v->{haikei} ? \"background-color: hsl($v->{haikei});\" : \"background-color: hsl(${\(Kahifu::Infra::sitei_rand($v->{sakka}, 360))}, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%, ${\(((Kahifu::Infra::sitei_rand($v->{sakka}, 100)/100)**2)*100)}%);\")}'>";
 								print "<div class='kami lang_${\( ($v->{item} =~ /[\p{Han}\p{Hiragana}\p{Katakana}]/ || $v->{sakka} =~ /(?![＝訳著編])[\p{Han}\p{Hiragana}\p{Katakana}]/) && defined $v->{img} && $v->{img} ? 'tate' : 'yoko')}'>";
 									print "<div class='jyouhou'>";
-										#print "<div class='item'><span>${\(defined $midasi_sougou[1] && substr($midasi_sougou[1], 0, 1) =~ /[0-9]|[０-９]/ ? $midasi_sougou[0] : (ref($sougougyou->{item}) ne 'ARRAY' ? $sougougyou->{item} : $sougougyou->{item}[$_]++ foreach @$sougougyou->{item} ) )}</span></div>";
 										print "<div class='item'><span>";
 										print "${\( sub { if(ref(@midasi_sougou) eq 'ARRAY' && defined $midasi_sougou[1] && substr($midasi_sougou[1], 0, 1) =~ /[0-9]|[０-９]/){ return $midasi_sougou[0]; } elsif(ref($sougougyou->{item}) ne 'ARRAY'){ return $sougougyou->{item}; } else { print $sougougyou->{item}[$_]++ foreach @{$sougougyou->{item}}; return; } }->() )}";
 										print "</span></div>";
@@ -469,7 +468,7 @@ if(defined param('id') && param('id')){
 										my @insatubi = split '/', $v->{insatubi};
 										if(defined $v->{hakkoubi} && $v->{hakkoubi}){
 										print "<div class='hakkoubi'>";
-											print "<span>${\(defined $v->{hakkoubi} && $v->{insatubi} && $v->{hakkoubi} eq $insatubi[0] ? Kahifu::Template::dict('HONDANA_SYOHAN') : Kahifu::Template::dict('HONDANA_HAKKOUBI'))}</span>";
+											print "<span>${\(defined $v->{hakkoubi} && $v->{insatubi} && $v->{hakkoubi} eq $insatubi[0] || (defined $insatubi[1] && $insatubi[1] == 1) ? Kahifu::Template::dict('HONDANA_SYOHAN') : Kahifu::Template::dict('HONDANA_HAKKOUBI'))}</span>";
 											print "<span class='hakkoubi'>${\(date($v->{hakkoubi}, 1, 0, 0))}</span>";
 										print "</div>";
 										}
@@ -480,10 +479,12 @@ if(defined param('id') && param('id')){
 												print "<span class='insatubi'>${\(date($insatubi[0], 1, 0, 0))}</span>";
 											print "</div>";
 										}
-										print "<div class='syutokubi'>";
-											print "<span>${\(Kahifu::Template::dict('HONDANA_NYUUSYUBI'))}</span>";
-											print "<span>${\(date($v->{date}, 1, 0))}</span>";
-										print "</div>";
+										if(defined $v->{date} && $v->{date} ne ''){
+											print "<div class='syutokubi'>";
+												print "<span>${\(Kahifu::Template::dict('HONDANA_NYUUSYUBI'))}</span>";
+												print "<span>${\(date($v->{date}, 1, 0))}</span>";
+											print "</div>";
+										}
 									print "</div>";
 									print "<div class='yarite'>";
 											my @yarite = split '/', $v->{yarite};
@@ -850,7 +851,7 @@ sub navi {
 				}
 			print "</div>";
 		} elsif ($paginate == 3) {
-			my $hantyuu_list = $dbh->prepare("select * from `hantyuu`");
+			my $hantyuu_list = $dbh->prepare("select * from `hantyuu` where kakusu <> 1");
 			$hantyuu_list->execute();
 			while(my $v = $hantyuu_list->fetchrow_hashref){
 				push @hantyuu_type, $v->{orig_id};
@@ -1424,8 +1425,6 @@ if($paginate == 1){
 		my $dainiji_meirei = ("select * from sakuhin where `id` in (${turu_sitazi}) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${dainiji_sitazi}");
 		my $sakuhinran = $dbh->prepare($dainiji_meirei);
 		defined $bikou_recall ? $sakuhinran->execute(@turu, @sitazi_bind, @turu) : $sakuhinran->execute(@turu, @sitazi_bind);
-		print "<div class='colle navi'>";
-		print "</div>";
 		print "<div class='colle heading'>";
 			print "<span>";
 			print midasi_settei($v->{midasi});
@@ -1443,8 +1442,8 @@ if($paginate == 1){
 				print "<input type='hidden' name='junban' value='$w->{id}'>";
 				print "<div class='sakuhinmei bikou_$v->{bikouiti}'>";
 					print "<div class='omake id'><span>$w->{id}</span></div>" if defined param('hensyuu');
-					print "<div class='bikou ue'><span>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 2;
-					print "<div class='bikou hidari'><span>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 1;
+					print "<div class='bikou ue${\(defined $bikou_recall ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $bikou_recall ? bikou_syori($bikou->{$w->{id}}) : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 2;
+					print "<div class='bikou hidari${\(defined $bikou_recall ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $bikou_recall ? bikou_syori($bikou->{$w->{id}}, 0) : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 1;
 					print "<div>";
 						print "<p class='fuku_midasi $w->{id}'>" . midasi_tekisetuka($w->{fukumidasi}, $w->{fukubetumei}, $w->{colle}) . "</p>" if $w->{fukumidasi} ne '' && (defined $w->{sakifuku} && $w->{sakifuku} == 1);
 						print "<p id='$w->{id}' class='midasi $w->{id}' data-kansou='$w->{id}'>";
