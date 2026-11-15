@@ -1421,10 +1421,10 @@ if($paginate == 1){
 		#　備考を決まる
 		my $bikou = from_json($v->{bikou});
 		#　第二次命令　→作品欄から抽出す
-		my $dainiji_sitazi = defined $bikou_recall ? "field (id, ${turu_sitazi})" : "kaisi asc";
+		my $dainiji_sitazi = defined $v->{bikou} ? "field (id, ${turu_sitazi})" : "kaisi asc";
 		my $dainiji_meirei = ("select * from sakuhin where `id` in (${turu_sitazi}) ${kensaku_sitazi} ${hantyuu_sibori_sitazi} ${jyoukyou_sibori_sitazi} order by ${dainiji_sitazi}");
 		my $sakuhinran = $dbh->prepare($dainiji_meirei);
-		defined $bikou_recall ? $sakuhinran->execute(@turu, @sitazi_bind, @turu) : $sakuhinran->execute(@turu, @sitazi_bind);
+		defined $v->{bikou} ? $sakuhinran->execute(@turu, @sitazi_bind, @turu) : $sakuhinran->execute(@turu, @sitazi_bind);
 		print "<div class='colle heading'>";
 			print "<span>";
 			print midasi_settei($v->{midasi});
@@ -1443,7 +1443,7 @@ if($paginate == 1){
 				print "<div class='sakuhinmei bikou_$v->{bikouiti}'>";
 					print "<div class='omake id'><span>$w->{id}</span></div>" if defined param('hensyuu');
 					print "<div class='bikou ue${\(defined $v->{bikou} ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $v->{bikou} ? bikou_syori($bikou->{$w->{id}}) : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 2;
-					print "<div class='bikou hidari${\(defined $v->{bikou} ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $v->{bikou} ? bikou_syori($bikou->{$w->{id}}, 0) : date($w->{kaisi} or 0, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 1;
+					print "<div class='bikou hidari${\(defined $v->{bikou} ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $bikou ? bikou_syori($bikou->{$w->{id}}, 0) : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 1;
 					print "<div>";
 						print "<p class='fuku_midasi $w->{id}'>" . midasi_tekisetuka($w->{fukumidasi}, $w->{fukubetumei}, $w->{colle}) . "</p>" if $w->{fukumidasi} ne '' && (defined $w->{sakifuku} && $w->{sakifuku} == 1);
 						print "<p id='$w->{id}' class='midasi $w->{id}' data-kansou='$w->{id}'>";
