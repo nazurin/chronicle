@@ -296,7 +296,7 @@ if(defined param('id') && param('id')){
 					if($v->{tag} eq 'period'){
 						print "<div class='$v->{tag}'>" . date($sakuhin_info->{$passthrough_id}{kaisi}, 7, $sanjyuujikan_seido, 0) . "</div>" if defined $sakuhin_info->{$passthrough_id}{kaisi} && $sakuhin_info->{$passthrough_id}{kaisi} ne '';
 					} else {
-						print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . from_json($v->{bikou})->{param('id')} . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' && defined from_json($v->{bikou})->{param('id')} }->() )} if defined $v->{bikou} && $v->{bikou} ne '';
+						print my $sakuhin_bikou = ${\( sub { return "<div class='$v->{tag}'>" . bikou_syori(from_json($v->{bikou})->{param('id')}) . "</div>" if ref(from_json($v->{bikou})) ne 'ARRAY' && defined from_json($v->{bikou})->{param('id')} }->() )} if defined $v->{bikou} && $v->{bikou} ne '';
 					}
 				print "</div>";
 			}
@@ -1442,8 +1442,8 @@ if($paginate == 1){
 				print "<input type='hidden' name='junban' value='$w->{id}'>";
 				print "<div class='sakuhinmei bikou_$v->{bikouiti}'>";
 					print "<div class='omake id'><span>$w->{id}</span></div>" if defined param('hensyuu');
-					print "<div class='bikou ue${\(defined $bikou_recall ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $bikou_recall ? bikou_syori($bikou->{$w->{id}}) : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 2;
-					print "<div class='bikou hidari${\(defined $bikou_recall ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $bikou_recall ? bikou_syori($bikou->{$w->{id}}, 0) : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 1;
+					print "<div class='bikou ue${\(defined $v->{bikou} ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $v->{bikou} ? bikou_syori($bikou->{$w->{id}}) : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 2;
+					print "<div class='bikou hidari${\(defined $v->{bikou} ? ' extra_' . bikou_syori($bikou->{$w->{id}}, 1) : '')}'><span>${\(defined $v->{bikou} ? bikou_syori($bikou->{$w->{id}}, 0) : date($w->{kaisi} or 0, 7, $sanjyuujikan_seido, 0) )}</span></div>" if $v->{bikouiti} == 1;
 					print "<div>";
 						print "<p class='fuku_midasi $w->{id}'>" . midasi_tekisetuka($w->{fukumidasi}, $w->{fukubetumei}, $w->{colle}) . "</p>" if $w->{fukumidasi} ne '' && (defined $w->{sakifuku} && $w->{sakifuku} == 1);
 						print "<p id='$w->{id}' class='midasi $w->{id}' data-kansou='$w->{id}'>";
@@ -1474,9 +1474,9 @@ if($paginate == 1){
 				print "<div class='hantyuu'>";
 					print "${\(Kahifu::Template::dict('HYOUKA_HANTYUU_' . $w->{hantyuu} . (defined $w->{fukuhantyuu} && $w->{fukuhantyuu} > 0 ? '_' . $w->{fukuhantyuu} : '' ) ))}";
 				print "</div>";
-				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' && defined $bikou_recall; return date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) if !defined $bikou_recall; }->() )}</span></div>" if !defined param('hensyuu') && (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}} && $bikou->{$w->{id}} ne '';
+				print "<div class='bikou migi'><span>${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' && defined $v->{bikou}; return date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) if !defined $v->{bikou}; }->() )}</span></div>" if !defined param('hensyuu') && (! defined $v->{bikouiti} || defined $v->{bikouiti} && $v->{bikouiti} eq 0) && ref($bikou) ne 'ARRAY' && defined $bikou->{$w->{id}} && $bikou->{$w->{id}} ne '';
 				print "<div class='bikou migi'><textarea rows=1 id='colle_box' name='test'>", ${\( sub { return $bikou->{$w->{id}} if ref($bikou) ne 'ARRAY' }->() )},"</textarea></div>" if defined param('hensyuu');
-				print "<div class='bikou sita'>${\(defined $bikou_recall ? $bikou->{$w->{id}} : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</div>" if $v->{bikouiti} == 3 || $v->{bikouiti} == 4;
+				print "<div class='bikou sita'>${\(defined $v->{bikou} ? $bikou->{$w->{id}} : date($w->{kaisi}, 7, $sanjyuujikan_seido, 0) )}</div>" if $v->{bikouiti} == 3 || $v->{bikouiti} == 4;
 				print "<div class='kansou' data-kansou='$v->{id}'>";
 					print Kahifu::Infra::bunsyou($w->{kansou}) if defined $v->{kansou_hyouji} && $v->{kansou_hyouji} == 1;
 				print "</div>";
